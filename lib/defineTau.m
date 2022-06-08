@@ -19,7 +19,7 @@ function [tau_c] = defineTau(str,x0)
         scale = x0(1);
         floor = x0(2);
     else 
-        scale = 3;
+        scale = 4;
         floor = 10e3;
     end
     a = load('bedDragDx5000smth10000Capped.mat');
@@ -32,9 +32,9 @@ function [tau_c] = defineTau(str,x0)
     if(opt)
         scale = x0(1);
         floor = x0(2);
-    else 
-        scale = 1.9;
-        floor = 10e3;
+    else
+        scale = 2;
+        floor = 0e3;
     end
     xi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
     yi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
