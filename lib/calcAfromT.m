@@ -4,7 +4,7 @@ function [A] = calcAfromT(T)
 % Works for scalar, vector, matrix inputs
     T_star = 263;    %[k] transition temp
     A_star = 3.5e-25; %[Pa^-3 s^-1] base prefactor
-    E_star = 5;       %Enhancement (C&P Table 3.5)
+    E_star = 1;       %Enhancement (C&P Table 3.5)
     Q1 = 6e4;        %[J mol^-1] low temp activation energy
     Q2 = 1.15e5;     %[J mol^-1] high temp activation energy
     R  = 8.314;      %[J mol^-1 K^-1] Gas constant
