@@ -33,7 +33,7 @@ function [tau_c] = defineTau(str,x0)
         scale = x0(1);
         floor = x0(2);
     else
-        scale = 2;
+        scale = 3;
         floor = 0e3;
     end
     xi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
@@ -44,12 +44,27 @@ function [tau_c] = defineTau(str,x0)
     
     tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
         (subplus(uB(x,y)-floor)+floor)*scale;
+    elseif(str == "ISSM Tuned")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
+    if(opt)
+        scale = x0(1);
+        floor = x0(2);
+    else
+        scale = 1.5; %1.2
+        floor = 0e3;
+    end
+    load tau_tuned.mat;
+    load gridSiple10000.mat;
     
+    uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_tuned,'natural');
+    
+    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+        (subplus(uB(x,y)-floor)+floor)*scale;
     elseif(str == "PISM1")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
     if(opt)
         scale = x0(1);
     else 
-        scale = 1.4;
+        scale = 3;
+        floor = 0;
     end
     xi   = ncread("~/Documents/MATLAB/ISSM/ARC_PISM1_ctrl/strbasemag_AIS_ARC_PISM1_ctrl.nc","x");
     yi   = ncread("~/Documents/MATLAB/ISSM/ARC_PISM1_ctrl/strbasemag_AIS_ARC_PISM1_ctrl.nc","y");
@@ -58,7 +73,7 @@ function [tau_c] = defineTau(str,x0)
     uB = griddedInterpolant(xx,yy,tau(:,:,21));
     
     tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
-        (subplus(uB(x,y)-1e3)+1e3)*scale;
+        (subplus(uB(x,y)-floor)+floor)*scale;
     elseif(str == "PISM2")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
     if(opt)
         scale = x0(1);
