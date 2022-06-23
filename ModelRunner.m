@@ -35,7 +35,7 @@ buildSystem();
 
 
 %% Thermomechanical coupling loop
-for t_i = 1%:100  
+for t_i = 1:100  
     % Thermocouple fields to update everyloop
     % Strain rate [s^-1]
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object
@@ -186,5 +186,22 @@ colormap(gca, Cmap/255.0)
 view(2)
 axis equal
 
+int_x = scatteredInterpolant(xy(:,1),xy(:,2),u,'natural','none');
+int_y = scatteredInterpolant(xy(:,1),xy(:,2),v,'natural','none');
+[msr_x, msr_y] = measures_interp('velocity',Xi,Yi);
 
+spdModel = (sqrt(u.^2 + v.^2)*3.154E7);
 
+figure()
+quiver(Xi,Yi,msr_x,msr_y)
+hold on 
+quiver(Xi,Yi,int_x(Xi,Yi),int_y(Xi,Yi))
+scatter(xy(spdModel > spd2*2,1),xy(spdModel > spd2*2,2),'r','filled')
+
+% tau_tuned2 = uB(xy(:,1),xy(:,2));
+% 
+% load('tau_tuned.mat');
+% sum(spdModel > spd2*2)
+% tau_tuned(spdModel > spd2*2) = tau_tuned(spdModel > spd2*2)*2;
+% tau_tuned(spdModel > spd2*2)
+% save('tau_tuned','tau_tuned');

@@ -8,7 +8,7 @@ tau  = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_c
 [xx,yy] = ndgrid(xi - 3072000,yi - 3072000);
 uB = griddedInterpolant(xx,yy,tau(:,:,21));
     
-a = load('bedDragDx2000smth10000.mat');
+a = load('bedDragDx5000smth10000Capped.mat');
 
 aB = griddedInterpolant(a.Xi',a.Yi',subplus(a.bed'));
 

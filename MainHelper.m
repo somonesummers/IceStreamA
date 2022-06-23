@@ -18,7 +18,7 @@ clc
 addpath('lib') 
 
 % Name of scenarios to run, only 1 map file used here.
-nameToRun = ["VDV"];
+nameToRun = ["ISSM Tuned"];
 mapsToRun = ["gridSiple10000.mat"];
 
 for j = 1:length(mapsToRun)
