@@ -10,6 +10,8 @@
 % clear
 % close all
 
+fID = fopen('log.txt','w');
+
 %% Initialization
 % Scenario to run if running one at a time comment out below, run this file
 % directly
@@ -18,8 +20,8 @@
 % mapFile = 'gridInstitute5000.mat';
 
 % Comment so we know what's happening, thats always nice.
-disp("Running " + str + " now...");
-
+disp("Running " + str + " " + thin_m + " now...");
+fprintf(fID,'\tRunning %s %d now...\n',str,thin_m);
 % Load input files
 initializeInputs();
 
@@ -38,6 +40,13 @@ buildSystem();
 for t_i = 1:100  
     % Thermocouple fields to update everyloop
     % Strain rate [s^-1]
+        if t_i == 1
+            [u,v] = measures_interp('velocity',xy(:,1),xy(:,2));
+            u = u/3.514e7;
+            v = v/3.514e7;
+	    u(isnan(u)) = 1;
+            v(isnan(v)) = 1;
+        end
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object
         
         if(true)
@@ -72,9 +81,9 @@ for t_i = 1:100
 
     % Calc Enhancement Factors, relax into solution. Have max value for
     % stabilization
-    cap = 30^(-1/nn); %stability cap on enhancement
+%     cap = 30^(-1/nn); %stability cap on enhancement
     e_new = (E_t(xy_c(:,1),xy_c(:,2))).^(-1/nn);
-    e_new(e_new < cap) = cap;  % max enhancement is a min viscosity
+%     e_new(e_new < cap) = cap;  % max enhancement is a min viscosity
     
     if(t_i == 1)
         enhance = e_new;
@@ -84,12 +93,12 @@ for t_i = 1:100
         enhance = (1-nu) * enhance + nu*e_new;
         res = norm(e_new - enhance) / norm(e_new);
         disp("Residual: " + res);
-        
+        fprintf(fID,'\t\t[%d]Residual: %f \n',t_i,res);
         if (res < 1e-3) %check for thermal stabilization
             break; 
         end
     end
-
+    inLoopPlotting;
     %% Solve
     % Unused BCs
     %       v(xy(:,2) > ymax - dx/2) == 0;
@@ -107,10 +116,16 @@ for t_i = 1:100
             v(se_bound) == spd_BC_v_se./3.154E7;
             u(nw_bound) == spd_BC_u_nw./3.154E7;
             v(nw_bound) == spd_BC_v_nw./3.154E7;
+            u(ne_bound) == spd_BC_u_ne./3.154E7;
+            v(ne_bound) == spd_BC_v_ne./3.154E7;
+            u(sw_bound) == spd_BC_u_sw./3.154E7;
+            v(sw_bound) == spd_BC_v_sw./3.154E7;
+            
         minimize(obj)
     cvx_end
     if(~strcmp(cvx_status,"Solved"))
         disp("CVX has issues: " + cvx_status);
+        fprintf(fID,'\t\tCVX has issues: %s',cvx_status);
         if(~contains(cvx_status,"Solved"))
             break;
         end
@@ -118,11 +133,12 @@ for t_i = 1:100
     % u and v are [m/s]    
     %% Visualization in loop 
     %(uncomment to see avg temp, enhancement, and Pe, Lambda, Br every loop
-    inLoopPlotting;
+    
 end
+clear fg1 fg2
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
-save("data/data_" + mpClean + str + "bedmap.mat");
+save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
 
 %% Vis out of loop
 spd2 = measures_interp('speed',xy(:,1),xy(:,2)); %[m/yr]
@@ -138,7 +154,7 @@ hold on
 title('Speed of Measures')
 xlabel('X')
 ylabel('Y')
-% caxis([1  675])
+caxis([10  675])
 f = gca;
 f.ColorScale = 'log';
 view(2)
@@ -149,7 +165,7 @@ axis equal
 subplot(142)
 trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),(sqrt(u.^2 + v.^2)*3.154E7),...
        'edgecolor','none')   
-% caxis([1  675])
+caxis([10  675])
 title('Speed')
 xlabel('X')
 ylabel('Y')
@@ -166,7 +182,7 @@ trisurf(t,xy(:,1),xy(:,2),tau_c(xy(:,1),xy(:,2),u,v)./norms([u,v],2,2),...
 % trisurf(t,xy(:,1),xy(:,2),h_b_init(xy(:,1),xy(:,2)),...
 %        'edgecolor','black','facecolor','none')
 colorbar
-% caxis([0e3 150e3]);
+caxis([0e3 150e3]);
 colormap(gca, Cmap/255.0)
 title('Basal \tau')
 xlabel('X')
@@ -181,7 +197,7 @@ title('Driving force')
 xlabel('X')
 ylabel('Y')
 colorbar
-% caxis([0e3 150e3]);
+caxis([0e3 150e3]);
 colormap(gca, Cmap/255.0)
 view(2)
 axis equal

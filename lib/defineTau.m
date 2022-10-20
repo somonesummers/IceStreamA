@@ -33,7 +33,7 @@ function [tau_c] = defineTau(str,x0)
         scale = x0(1);
         floor = x0(2);
     else
-        scale = 3;
+        scale = 1.2;
         floor = 0e3;
     end
     xi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
@@ -49,7 +49,7 @@ function [tau_c] = defineTau(str,x0)
         scale = x0(1);
         floor = x0(2);
     else
-        scale = 1.5; %1.2
+        scale = 1.05; %1.2
         floor = 0e3;
     end
     load tau_tuned.mat;
@@ -59,11 +59,56 @@ function [tau_c] = defineTau(str,x0)
     
     tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
         (subplus(uB(x,y)-floor)+floor)*scale;
+    elseif(str == "ISSM Speed")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
+    if(opt)
+        scale = x0(1);
+        floor = x0(2);
+    else
+        scale = 1; %1.2
+        floor = 0e3;
+    end
+    load tau_speed.mat;
+    load gridSiple5000.mat;
+    
+    uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_speed,'natural');
+    
+    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+        (scale*subplus(uB(x,y)));
+    elseif(str == "ISSM Shift")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
+    if(opt)
+        scale = x0(1);
+        floor = x0(2);
+    else
+        scale = 1.15; %1.2
+        floor = 0e3;
+    end
+    load tau_shift.mat;
+    load gridSiple5000.mat;
+    
+    uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_shift,'natural');
+    
+    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+        (subplus(uB(x,y)));
+    elseif(str == "ISSM Shift2")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
+    if(opt)
+        scale = x0(1);
+        floor = x0(2);
+    else
+        scale = 1.05; %1.2
+        floor = 0e3;
+    end
+    load tau_shift.mat;
+    load gridSiple5000.mat;
+    
+    uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_shift,'natural');
+    
+    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+       scale.* (subplus(uB(x,y)));
     elseif(str == "PISM1")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
     if(opt)
         scale = x0(1);
     else 
-        scale = 3;
+        scale = 1.1;
         floor = 0;
     end
     xi   = ncread("~/Documents/MATLAB/ISSM/ARC_PISM1_ctrl/strbasemag_AIS_ARC_PISM1_ctrl.nc","x");

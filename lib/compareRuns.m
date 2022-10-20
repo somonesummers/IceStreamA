@@ -2,7 +2,7 @@ clear; close all
 
 %% Load data
 
-for i = 1:2:3
+for i = 4
     if(i == 1)
     data1 = load('data/data_gridInstitute24000MixedElmernoAdvect.mat');
     data2 = load('data/data_gridInstitute24000MixedElmer_streamnoAdvect.mat');
@@ -13,8 +13,8 @@ for i = 1:2:3
     data1 = load('data/data_gridInstitute24000ELMER_centernoAdvect.mat');
     data2 = load('data/data_gridInstitute24000ELMER_center_streamnoAdvect.mat');
     else
-    data1 = load('data/data_gridInstitute24000ISSM_LinearnoAdvect.mat');
-    data2 = load('data/data_gridInstitute24000ISSM_Linear_streamnoAdvect.mat');
+    data1 = load('data/data_gridSipleSmall7500ISSMbedmap50.mat');
+    data2 = load('data/data_gridSipleSmall7500ISSMbedmap0.mat');
     end
     runPlotting(data1,data2);
 end
@@ -22,8 +22,7 @@ end
 
 
 function [] = runPlotting(data1,data2)    
-load institute_antiflow/vel_profile_full.mat
-[antiflow_x, antiflow_y] = ll2ps(profile_lat,profile_lon);
+
 
 ftsize = 18;
 
@@ -52,7 +51,7 @@ subplot(132)
     ylabel('Y')
     colorbar
 
-    caxis([1 3.6]);
+    caxis([1 2.8]);
     view(2)
     axis equal
 
@@ -64,7 +63,7 @@ subplot(133)
     xlabel('X')
     ylabel('Y')
     colorbar
-    caxis([1 3.6]);
+    caxis([1 2.8]);
     view(2)
     axis equal
 
@@ -191,13 +190,12 @@ axis equal
 
 %% Compare to anti-flow model
 figure
-subplot(221)
+subplot(121)
 trisurf(data1.t,data1.xy(:,1),data1.xy(:,2),zeros(size(data1.xy(:,1))),(sqrt(data1.u.^2 + data1.v.^2)*3.154E7),...
        'edgecolor','none')   
-caxis([0.3323  381.5379])
+caxis([10  675])
 hold on
 % quiver(data1.xy(:,1),data1.xy(:,2),data1.u,data1.v)
-plot(antiflow_x,antiflow_y,'r','linewidth',3)
 title('Speed')
 xlabel('X')
 ylabel('Y')
@@ -207,13 +205,12 @@ f.ColorScale = 'log';
 view(2)
 axis equal
 
-subplot(222)
+subplot(122)
 trisurf(data2.t,data2.xy(:,1),data2.xy(:,2),zeros(size(data2.xy(:,1))),(sqrt(data2.u.^2 + data2.v.^2)*3.154E7),...
        'edgecolor','none')   
-caxis([0.3323  381.5379])
+caxis([10 675])
 hold on
 % quiver(data2.xy(:,1),data2.xy(:,2),data2.u,data2.v)
-plot(antiflow_x,antiflow_y,'r','linewidth',3)
 title('Speed')
 xlabel('X')
 ylabel('Y')
@@ -223,14 +220,4 @@ f.ColorScale = 'log';
 view(2)
 axis equal
 
-spd_interp1 = scatteredInterpolant(data1.xy(:,1),data1.xy(:,2),(sqrt(data1.u.^2 + data1.v.^2)*3.154E7));
-spd_interp2 = scatteredInterpolant(data2.xy(:,1),data2.xy(:,2),(sqrt(data2.u.^2 + data2.v.^2)*3.154E7));
-
-subplot(212)
-plot(profile_path-30.5E3,profile_cross,'LineWidth',3)
-hold on
-plot(profile_path-30.5E3,spd_interp1(antiflow_x,antiflow_y),'LineWidth',3)
-plot(profile_path-30.5E3,spd_interp2(antiflow_x,antiflow_y),'LineWidth',3)
-title(data1.str)
-legend('Obs','1','2')
 end

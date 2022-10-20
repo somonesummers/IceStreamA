@@ -16,7 +16,7 @@ a     = 3.5e-25^(-1/3);     % a:     flow parameter pre-factor [Pa s^1/3] @-10C 
 nn    = 3;                  % Glens law power
 p     = 4/3;                % p:     flow parameter power [ ]
 g     = 9.81;               % g:     acceleration due to gravity [m/s^2]
-nu    = .3;                 % Thermal relaxation parameter [ ]
+nu    = .5;                 % Thermal relaxation parameter [ ]
 rho   = 917;                % rho:   density of ice [kg/m^3]
 rho_w = 1000;               % rho_w: density of water [kg/m^3]
 C_p   = 2050;               % specific heat of ice [J/Kg/K]
@@ -50,8 +50,8 @@ bm_s =  bedmachine_interp('surface',Xi,Yi);
 % Numerator is the window we're smoothing over in [m], spacing of these grids
 % is actually dx/2 for bm_X grids hence the extra "*2".
 
-smoothbed = imgaussfilt(bm_b,2e3*2/dx);
-smoothsurf = imgaussfilt(bm_s,10e3*2/dx);
+smoothbed = bm_b;%imgaussfilt(bm_b,2e3*2/dx);
+smoothsurf = bm_s;%imgaussfilt(bm_s,10e3*2/dx);
 
 % smoothbed = sgolayfilt(bm_b,2,2*floor(10e3/dx)+1);
 % smoothsurf = sgolayfilt(bm_s,2,2*floor(10e3/dx)+1);
@@ -67,8 +67,8 @@ h_b_init =@(x,y) interp2(xi,yi,smoothbed,x,y);
 h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y);
 phi_init =@(x,y) rho/rho_w*h_s_init(x,y) + (rho_w-rho)/rho_w*h_b_init(x,y); %hydropotential per unit water weight
 clear bm_b bm_s;
-h = subplus(h_s_init(xy(:,1),xy(:,2)) - h_b_init(xy(:,1),xy(:,2))); %h: smoothed ice thickness [m]
-h_re = subplus(h_real(xy(:,1),xy(:,2))); % non-smoothed ice thickness [m]
+h_init =@(x,y) subplus(h_s_init(x,y) - h_b_init(x,y)-1+thin_m)+1; %h: smoothed ice thickness [m]
+h = h_init(xy(:,1),xy(:,2));
 
 %% Define a few globals vars
 phi_max = max(max(phi_init(xy(:,1),xy(:,2))));

@@ -15,4 +15,11 @@
 *.bin
 *.b
 *cvx/*
+*cvx_mac/*
 *.zip
+*.asv
+lib/._*
+._*
+sherlockOutputs*
+log.txt
+*matlab_test.*

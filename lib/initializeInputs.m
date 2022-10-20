@@ -26,6 +26,8 @@ load(mapFile);
 
 if(sum(isnan(spd_BC_v_se)) > 0)
     warning("NaN values in SE boundary condition: " + sum(isnan(spd_BC_v_se))); 
+    spd_BC_u_se(isnan(spd_BC_u_se)) = 0;
+    spd_BC_v_se(isnan(spd_BC_v_se)) = 0;
 end
 if(sum(isnan(spd_BC_v_ne)) > 0)
     warning("NaN values in NE boundary condition: " + sum(isnan(spd_BC_v_ne))); 
@@ -34,6 +36,8 @@ if(sum(isnan(spd_BC_v_ne)) > 0)
 end
 if(sum(isnan(spd_BC_v_sw)) > 0)
     warning("NaN values in SW boundary condition: " + sum(isnan(spd_BC_v_sw)));
+    spd_BC_u_sw(isnan(spd_BC_u_sw)) = 0;
+    spd_BC_v_sw(isnan(spd_BC_v_sw)) = 0;	
 end
 if(sum(isnan(spd_BC_v_nw)) > 0)
     warning("NaN values in NW boundary condition: " + sum(isnan(spd_BC_v_nw)));

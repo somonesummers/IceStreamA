@@ -22,11 +22,11 @@ rho_w = 1000;
 g = 9.81;
 B = 1.6e8; % A = 2.4e-25 Pa^(-3) s^(-1)
 A = 2.4e-25;
-overgrab = 10;
-xmax =  max(xbox);
-xmin = min(xbox);
-ymax =  max(ybox);
-ymin =  min(ybox);
+overgrab = 0;
+xmax =  -2.5e5;
+xmin =  -5.0e5;
+ymax =  -3.5e5;
+ymin =  -6.0e5;
 
 dx = 2e3;
 smth = 10e3;
@@ -183,44 +183,50 @@ setFontSize(16);
 c = colorbar;
 c.Label.String = 'Bed Elevation [m]';
 
-%%
+%% Hydropotential
 figure(2)
 clf
-ax(1) = subplot(121);
+tiledlayout(1,2, 'Padding', 'tight', 'TileSpacing', 'tight');
+ax1 = nexttile(1);
 p = surf(Xi,Yi,zeros(size(phi_raw)),phi_raw);
 hold on
 contour(xi,yi,spd2, [10, 10] , 'k:','HandleVisibility','off')
 contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
 contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
+
+contour(xi,yi,phi_raw, [0:10:700] ,'color',rgb('purple'),'LineWidth',1,'HandleVisibility','off')
+contour(xi,yi,phi_raw, [0:50:700] ,'color',rgb('purple'),'LineWidth',2,'HandleVisibility','off')
 title('Hydro Potential (hydroequalib assumption)')
 set(p, 'edgecolor', 'none');
-colormap(ax(1),'jet');
-% caxis([0 700])
+colormap(ax1,cbrewer('seq','BuPu',256));
+caxis([0 700])
 view(2)
 axis equal
 setFontSize(16);
 c = colorbar;
 c.Label.String = '\Phi [?]';
 
-ax(2) = subplot(122);
+ax2 = nexttile(2);
 [phi_x, phi_y] = gradient(phi,dx,dx);
+phi_x_n = phi_x./sqrt(phi_x.^2 + phi_y.^2);
+phi_y_n = phi_y./sqrt(phi_x.^2 + phi_y.^2);
 [b_x, b_y] = gradient(b,dx,dx);
 sp = 3;
 p = surf(Xi,Yi,zeros(size(phi_raw)),sqrt(phi_x.^2 + phi_y.^2));
 hold on
 set(p, 'edgecolor', 'none');
-quiver(xi(1:sp:end),yi(1:sp:end),-phi_x(1:sp:end,1:sp:end),-phi_y(1:sp:end,1:sp:end));
-quiver(xi(1:sp:end),yi(1:sp:end),-b_x(1:sp:end,1:sp:end),-b_y(1:sp:end,1:sp:end));
+quiver(xi(1:sp:end),yi(1:sp:end),-phi_x_n(1:sp:end,1:sp:end),-phi_y_n(1:sp:end,1:sp:end));
+% quiver(xi(1:sp:end),yi(1:sp:end),-b_x(1:sp:end,1:sp:end),-b_y(1:sp:end,1:sp:end));
 contour(xi,yi,spd2, [10, 10] , 'k:','HandleVisibility','off')
 contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
 contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
 hold off
 colorbar
-colormap(ax(2),flipud(pink))
+colormap(ax2,flipud(pink))
 caxis([0 .05])
 title('Gradients')
-legend('|\nabla \Phi|','\nabla \Phi','\nabla Bed')
+legend('|\nabla \Phi|','\nabla \Phi')
 view(2)
 axis equal
 setFontSize(16);

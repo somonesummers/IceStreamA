@@ -15,16 +15,21 @@ clear
 close all
 clc
 
+%Start-up business on sherlock is hard 
 addpath('lib') 
+addpath(genpath('/home/groups/jsuckale/psummers/MATLAB'))
+run /home/groups/jsuckale/psummers/MATLAB/startup.m
+
 
 % Name of scenarios to run, only 1 map file used here.
-nameToRun = ["ISSM Tuned"];
-mapsToRun = ["gridSiple10000.mat"];
-
+nameToRun = ["ISSM Shift2"];
+mapsToRun = ["gridSipleXXSmall2000.mat"];
+thinToRun = [-50,20,0,20,50];
 for j = 1:length(mapsToRun)
-    for i = 1:length(nameToRun)
-        clearvars -except nameToRun mapsToRun i j
-        str = nameToRun(i);
+    for i = 1:length(thinToRun)
+        clearvars -except nameToRun mapsToRun thinToRun i j
+        thin_m = thinToRun(i);
+        str = nameToRun(1);
         mapFile = mapsToRun(j);
         ModelRunner;
     end
