@@ -1,4 +1,10 @@
 clear
+if(~ismac)
+    %Start-up business on sherlock is hard 
+    addpath('lib') 
+    addpath(genpath('/home/groups/jsuckale/psummers/MATLAB'))
+    run /home/groups/jsuckale/psummers/MATLAB/startup.m
+end
 % siple
 % xbox = [-6.2457 -4.0000   -2.5000   -4.0000  -6.2457]*1e5;
 % ybox = [-4.600 -2.7000   -4.9350   -6.3000   -4.600]*1e5;
