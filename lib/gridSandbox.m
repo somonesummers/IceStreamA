@@ -2,10 +2,11 @@
 %% Make Grid
 clear
 % close all
-addpath(genpath('/home/groups/jsuckale/psummers/MATLAB'))
-run /home/groups/jsuckale/psummers/MATLAB/startup.m
-
-dx = 1e3;    %dx: nominal grid spacing [m]
+if(~ismac)
+    addpath(genpath('/home/groups/jsuckale/psummers/MATLAB'))
+    run /home/groups/jsuckale/psummers/MATLAB/startup.m
+end
+dx = 15e3;    %dx: nominal grid spacing [m]
 
 fname = ('ice-stream-a/ice-stream-a-domain.geojson');
 fid = fopen(fname); 
@@ -44,7 +45,7 @@ nw_bound = (ybox(2)-ybox(1))/(xbox(2)-xbox(1))*xy(:,1) - xy(:,2)  < (ybox(2)-ybo
 sw_bound = (ybox(1)-ybox(4))/(xbox(1)-xbox(4))*xy(:,1) - xy(:,2)  > (ybox(1)-ybox(4))/(xbox(1)-xbox(4))*xbox(4) - ybox(4)-dx/3;
 
 
-save("gridSiple" + dx + ".mat");
+% save("gridSiple" + dx + ".mat");
 
 %%
 if(ismac)
