@@ -24,7 +24,7 @@ end
 fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
 nameToRun = ["ISSM Shift2"];
-mapsToRun = ["gridSipleXXSmall2000.mat"];
+mapsToRun = ["gridRefinedXSM.mat"];
 thinToRun = [-50,20,0,20,50];
 for j = 1:length(mapsToRun)
     for i = 1:length(thinToRun)

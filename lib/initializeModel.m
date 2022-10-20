@@ -16,7 +16,7 @@ a     = 3.5e-25^(-1/3);     % a:     flow parameter pre-factor [Pa s^1/3] @-10C 
 nn    = 3;                  % Glens law power
 p     = 4/3;                % p:     flow parameter power [ ]
 g     = 9.81;               % g:     acceleration due to gravity [m/s^2]
-nu    = .5;                 % Thermal relaxation parameter [ ]
+nu    = .3;                 % Thermal relaxation parameter [ ]
 rho   = 917;                % rho:   density of ice [kg/m^3]
 rho_w = 1000;               % rho_w: density of water [kg/m^3]
 C_p   = 2050;               % specific heat of ice [J/Kg/K]
@@ -35,7 +35,7 @@ dz = .1;  %vertical resolution of thermal depth profiles (frac of H) [ ]
 %% Import bedMachine data and smooth 
 % import data on higher resolution square grid that is larger than the model grid by
 % 'overgrab'
-overgrab = 20;
+overgrab = 0;
 xi = xmin-dx*overgrab:dx/2:xmax+dx*overgrab;
 yi = ymin-dx*overgrab:dx/2:ymax+dx*overgrab;
 [Xi,Yi] = meshgrid(xi,yi);

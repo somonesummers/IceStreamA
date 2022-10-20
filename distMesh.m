@@ -69,7 +69,7 @@ fh=@(p) ones(size(p,1),1) - fun(p(:,1),p(:,2))/6;
 
 figure
 
-[xy,t]=distmesh2d(fd,fh,.025,[xmin,ymin;xmax,ymax]/1e5,pv/1e5);
+[xy,t]=distmesh2d(fd,fh,.01,[xmin,ymin;xmax,ymax]/1e5,pv/1e5);
 
 xy = xy*1e5;
 se_bound = (ybox(4)-ybox(3))/(xbox(4)-xbox(3))*xy(:,1) - xy(:,2)  > (ybox(4)-ybox(3))/(xbox(4)-xbox(3))*xbox(3) - ybox(3)-dx/3;
@@ -77,4 +77,4 @@ ne_bound = (ybox(3)-ybox(2))/(xbox(3)-xbox(2))*xy(:,1) - xy(:,2)  < (ybox(3)-ybo
 nw_bound = (ybox(2)-ybox(1))/(xbox(2)-xbox(1))*xy(:,1) - xy(:,2)  < (ybox(2)-ybox(1))/(xbox(2)-xbox(1))*xbox(1) - ybox(1)+dx/3;
 sw_bound = (ybox(1)-ybox(4))/(xbox(1)-xbox(4))*xy(:,1) - xy(:,2)  > (ybox(1)-ybox(4))/(xbox(1)-xbox(4))*xbox(4) - ybox(4)-dx/3;
 
-
+save('gridRefinedXSM01.mat');
