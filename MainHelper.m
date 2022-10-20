@@ -27,7 +27,7 @@ mapsToRun = ["gridSipleXXSmall2000.mat"];
 thinToRun = [-50,20,0,20,50];
 for j = 1:length(mapsToRun)
     for i = 1:length(thinToRun)
-        clearvars -except nameToRun mapsToRun thinToRun i j
+        clearvars -except nameToRun mapsToRun thinToRun i j fID
         thin_m = thinToRun(i);
         str = nameToRun(1);
         mapFile = mapsToRun(j);
