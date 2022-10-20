@@ -15,11 +15,12 @@ clear
 close all
 clc
 
-%Start-up business on sherlock is hard 
-addpath('lib') 
-addpath(genpath('/home/groups/jsuckale/psummers/MATLAB'))
-run /home/groups/jsuckale/psummers/MATLAB/startup.m
-
+if(~ismac)
+    %Start-up business on sherlock is hard 
+    addpath('lib') 
+    addpath(genpath('/home/groups/jsuckale/psummers/MATLAB'))
+    run /home/groups/jsuckale/psummers/MATLAB/startup.m
+end
 fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
 nameToRun = ["ISSM Shift2"];

@@ -46,3 +46,16 @@ sw_bound = (ybox(1)-ybox(4))/(xbox(1)-xbox(4))*xy(:,1) - xy(:,2)  > (ybox(1)-ybo
 
 save("gridSiple" + dx + ".mat");
 
+%%
+if(ismac)
+    figure
+    spd = measures_interp('speed',xy(:,1),xy(:,2));
+    trisurf(t,xy(:,1),xy(:,2),zeros(size(spd)),(spd),...
+           'edgecolor','none')
+    view(2)
+    hold on
+    plot(pv(:,1),pv(:,2),'r-','linewidth',2)
+end
+
+
+
