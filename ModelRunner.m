@@ -44,7 +44,7 @@ for t_i = 1:100
             [u,v] = measures_interp('velocity',xy(:,1),xy(:,2));
             u = u/3.514e7;
             v = v/3.514e7;
-	    u(isnan(u)) = 1;
+            u(isnan(u)) = 1;
             v(isnan(v)) = 1;
         end
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object

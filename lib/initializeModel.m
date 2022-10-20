@@ -35,7 +35,7 @@ dz = .1;  %vertical resolution of thermal depth profiles (frac of H) [ ]
 %% Import bedMachine data and smooth 
 % import data on higher resolution square grid that is larger than the model grid by
 % 'overgrab'
-overgrab = 0;
+overgrab = 20;
 xi = xmin-dx*overgrab:dx/2:xmax+dx*overgrab;
 yi = ymin-dx*overgrab:dx/2:ymax+dx*overgrab;
 [Xi,Yi] = meshgrid(xi,yi);
