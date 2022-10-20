@@ -10,7 +10,7 @@
 % clear
 % close all
 
-fID = fopen('log.txt','w');
+% fID = fopen('log.txt','w');
 
 %% Initialization
 % Scenario to run if running one at a time comment out below, run this file

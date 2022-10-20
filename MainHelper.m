@@ -20,7 +20,7 @@ addpath('lib')
 addpath(genpath('/home/groups/jsuckale/psummers/MATLAB'))
 run /home/groups/jsuckale/psummers/MATLAB/startup.m
 
-
+fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
 nameToRun = ["ISSM Shift2"];
 mapsToRun = ["gridSipleXXSmall2000.mat"];
