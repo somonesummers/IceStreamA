@@ -44,8 +44,13 @@ for t_i = 1:100
             [u,v] = measures_interp('velocity',xy(:,1),xy(:,2));
             u = u/3.514e7;
             v = v/3.514e7;
-            u(isnan(u)) = 1;
-            v(isnan(v)) = 1;
+            if(sum(isnan(u)) + sum(isnan(v)) > 0)
+                uFill = scatteredInterpolant(xy(~isnan(u),1),xy(~isnan(u),2),u(~isnan(u)));
+                vFill = scatteredInterpolant(xy(~isnan(v),1),xy(~isnan(v),2),v(~isnan(v)));
+                u(isnan(u)) = uFill(xy(isnan(u),1),xy(isnan(u),2));
+                v(isnan(v)) = vFill(xy(isnan(v),1),xy(isnan(v),2));
+                clear uFill vFill
+            end
         end
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object
         
