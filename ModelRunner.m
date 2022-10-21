@@ -31,7 +31,8 @@ initializeModel();
 %% Define \tau
 % Define map of basal strength according to named scenario. 
 tau_c = defineTau(str);
-
+% old_tau = load('data/data_gridSipleXXSmall5000ISSM Shift2bedmap0.mat');
+% tau_c = old_tau.tau_c;
 %% Build System
 buildSystem();
 
