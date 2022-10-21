@@ -134,6 +134,21 @@ function [tau_c] = defineTau(str,x0)
     
     tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
        scale.* (subplus(uB(x,y)));
+   elseif(str == "ISSM Shift6")  %1.3 stag, .7 moving from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
+    if(opt)
+        scale = x0(1);
+        floor = x0(2);
+    else
+        scale = 1.00; %1.2
+        floor = 0e3;
+    end
+    load tau_shift6.mat;
+    load gridSiple1000.mat;
+    
+    uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_shift,'natural');
+    
+    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+       scale.* (subplus(uB(x,y)));
     elseif(str == "PISM1")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
     if(opt)
         scale = x0(1);
