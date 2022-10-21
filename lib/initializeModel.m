@@ -42,16 +42,16 @@ yi = ymin-dx*overgrab:dx/2:ymax+dx*overgrab;
 
 % % Raw fields
 bm_b =  bedmap2_interp(Xi,Yi,'bed');
-% bm_s =  bedmap2_interp(Xi,Yi,'surface');
+bm_s =  bedmap2_interp(Xi,Yi,'surface');
 % bm_b =  bedmachine_interp('bed',Xi,Yi);
-bm_s =  bedmachine_interp('surface',Xi,Yi);
+% bm_s =  bedmachine_interp('surface',Xi,Yi);
 
 % Smoothing
 % Numerator is the window we're smoothing over in [m], spacing of these grids
 % is actually dx/2 for bm_X grids hence the extra "*2".
 
 smoothbed = bm_b;%imgaussfilt(bm_b,2e3*2/dx);
-smoothsurf = bm_s;%imgaussfilt(bm_s,10e3*2/dx);
+smoothsurf = imgaussfilt(bm_s,10e3/dx);
 
 % smoothbed = sgolayfilt(bm_b,2,2*floor(10e3/dx)+1);
 % smoothsurf = sgolayfilt(bm_s,2,2*floor(10e3/dx)+1);

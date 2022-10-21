@@ -143,7 +143,7 @@ end
 clear fg1 fg2
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
-save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
+save("data/diag_" + mpClean + str + "bedmap" + thin_m + ".mat");
 
 %% Vis out of loop
 spd2 = measures_interp('speed',xy(:,1),xy(:,2)); %[m/yr]

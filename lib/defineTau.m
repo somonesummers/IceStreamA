@@ -79,7 +79,7 @@ function [tau_c] = defineTau(str,x0)
         scale = x0(1);
         floor = x0(2);
     else
-        scale = 1.15; %1.2
+        scale = 1; %1.2
         floor = 0e3;
     end
     load tau_shift.mat;
@@ -94,7 +94,7 @@ function [tau_c] = defineTau(str,x0)
         scale = x0(1);
         floor = x0(2);
     else
-        scale = 1.05; %1.2
+        scale = 1.00; %1.2
         floor = 0e3;
     end
     load tau_shift.mat;

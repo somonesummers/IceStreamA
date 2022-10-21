@@ -6,11 +6,11 @@ if(~ismac)
     run /home/groups/jsuckale/psummers/MATLAB/startup.m
 end
 % siple
-xbox = [-6.2457 -4.0000   -2.5000   -4.0000  -6.2457]*1e5;
-ybox = [-4.600 -2.7000   -4.9350   -6.3000   -4.600]*1e5;
+% xbox = [-6.2457 -4.0000   -2.5000   -4.0000  -6.2457]*1e5;
+% ybox = [-4.600 -2.7000   -4.9350   -6.3000   -4.600]*1e5;
 % xsmall
-% xbox = [-4.517 -3.260   -2.4500   -3.742   -4.517]*1e5;
-% ybox = [-4.000 -3.658   -5.0350   -5.600   -4.000]*1e5;
+xbox = [-4.517 -3.260   -2.4500   -3.742   -4.517]*1e5;
+ybox = [-4.000 -3.658   -5.0350   -5.600   -4.000]*1e5;
 
 
 xmax =  max(xbox);
@@ -22,10 +22,11 @@ pv = [xbox; ybox]';
 
 figure(1)
 
-[xy,t]=distmesh2d(@dpoly,@huniform,.1,[xmin,ymin;xmax,ymax]/1e5,pv/1e5,pv/1e5);
+[xy,t]=distmesh2d(@dpoly,@huniform,.02,[xmin,ymin;xmax,ymax]/1e5,pv/1e5,pv/1e5);
 xy = xy*1e5;
 [u,v] = measures_interp('velocity',xy(:,1),xy(:,2));
 
+%%
 if(sum(isnan(u)) + sum(isnan(v)) > 0)
     uFill = scatteredInterpolant(xy(~isnan(u),1),xy(~isnan(u),2),u(~isnan(u)));
     vFill = scatteredInterpolant(xy(~isnan(v),1),xy(~isnan(v),2),v(~isnan(v)));
@@ -109,4 +110,4 @@ trisurf(t,xy(:,1),xy(:,2),zeros(size(xy(:,1))),u,...
 view(2)
 colorbar   
 
-save("gridRefinedSM" + strrep(string(edgeLength),"0.","") + ".mat");
+save("gridRefinedXSM" + strrep(string(edgeLength),"0.","") + ".mat");
