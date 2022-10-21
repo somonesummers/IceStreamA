@@ -131,7 +131,7 @@ for t_i = 1:100
     cvx_end
     if(~strcmp(cvx_status,"Solved"))
         disp("CVX has issues: " + cvx_status);
-        fprintf(fID,'\t\tCVX has issues: %s',cvx_status);
+        fprintf(fID,'\t\tCVX has issues: %s\n',cvx_status);
         if(~contains(cvx_status,"Solved"))
             break;
         end
