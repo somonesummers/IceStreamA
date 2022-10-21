@@ -9,13 +9,13 @@ cases = [-50,-20,0,20,50];
 figure('Position',[300 300 1000 1000])
 tiledlayout(2,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-data2 = load("data/data_gridSipleXXSmall5000ISSM Shift2bedmap0.mat");
+data2 = load("data/data_gridRefinedXSM025ISSM Shift5bedmap0.mat");
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
-    if(isfile("data/data_gridSipleXXSmall5000ISSM Shift2bedmap"+cases(j)+".mat"))
-        data1 = load("data/data_gridSipleXXSmall5000ISSM Shift2bedmap"+cases(j)+".mat");    
+    if(isfile("data/data_gridRefinedXSM025ISSM Shift5bedmap"+cases(j)+".mat"))
+        data1 = load("data/data_gridRefinedXSM025ISSM Shift5bedmap"+cases(j)+".mat");    
         ax1 = nexttile(j);  
         plotSpeed(data1,0,ax1);
         if(j == 1)
@@ -71,28 +71,29 @@ h  =  bedmachine_interp('thickness',xx,yy);
 spd        = measures_interp('speed',xx,yy);
 [sx ,  sy] = gradient(sf,dx,dx);
 
-p = surf(xx,yy,zeros(size(h)),h./(sqrt(sx.^2+sy.^2)*200e3));
+% p = surf(xx,yy,zeros(size(h)),h./(sqrt(sx.^2+sy.^2)*200e3));
+p = surf(xx,yy,zeros(size(h)),spd);
 hold on
 plot(pv(:,1),pv(:,2),'k-','LineWidth', 4)
 contour(x,y,spd, [10, 10] , 'k:','HandleVisibility','off')
 contour(x,y,spd, [30, 30] , 'k--','HandleVisibility','off')
 contour(x,y,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(x,y,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
-[C,hh] = contour(x,y,h./(sqrt(sx.^2+sy.^2)*200e3),[.1,.3,1,3,10], 'r-','HandleVisibility','off');  
-clabel(C,hh)
+% [C,hh] = contour(x,y,h./(sqrt(sx.^2+sy.^2)*200e3),[.1,.3,1,3,10], 'r-','HandleVisibility','off');  
+% clabel(C,hh)
 % title('\xi factor')
 f = gca;
 f.ColorScale = 'log';
 view(2)
 colorbar
-colormap(cmocean('curl'))
+% colormap(cmocean('curl'))
 set(p, 'edgecolor', 'none');
-caxis([1*10^(-1.5) 1*10^(1.5)])
+caxis([10^1 10^3.6]) 
 axis equal
 ylabel('Northing [m]')
 xlabel('Easting [m]')
 c = colorbar;
-c.Label.String = '\xi [ ]';
+c.Label.String = 'Ice Speed [m/yr]';
 c.FontSize = ftsize;   
 view(2)
 f = gca;

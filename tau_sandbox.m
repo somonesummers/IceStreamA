@@ -17,7 +17,7 @@ spd = measures_interp('speed',xy(:,1),xy(:,2));
 spd(isnan(spd)) = 1;
 
 tau_shift = zeros(size(tau_ISSM));
-tau_shift(spd<100) = tau_ISSM(spd<100).* 2.1; 
+tau_shift(spd<100) = tau_ISSM(spd<100).* 1.3; 
 tau_shift(spd>100) = tau_ISSM(spd>100).* .7; 
 figure(10)
 clf
@@ -54,4 +54,4 @@ nexttile(3)
 
 
 
-save('tau_shift3.mat','tau_shift')
+save('tau_shift6.mat','tau_shift')

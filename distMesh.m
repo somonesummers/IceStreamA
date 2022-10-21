@@ -110,4 +110,4 @@ trisurf(t,xy(:,1),xy(:,2),zeros(size(xy(:,1))),u,...
 view(2)
 colorbar   
 
-save("gridRefinedXSM" + strrep(string(edgeLength),"0.","") + ".mat");
+% save("gridRefinedXSM" + strrep(string(edgeLength),"0.","") + ".mat");
