@@ -8,7 +8,7 @@ function [resid] = modelOpt(x0,str)
 
 %% Initialization
 
-mapFile = "gridRefinedXSM03.mat";
+mapFile = "gridRefinedXSM01.mat";
 % Load input files
 thin_m = 0;
 initializeInputs();
@@ -37,8 +37,9 @@ for t_i = 1:1%00
         Pe =@(x,y) rho*C_p.*Acc(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y))./K;
 
         % Vertical Peclet number  [ ]
-        La =@(x,y) lambda(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y)));
-        
+        %La =@(x,y) lambda(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y)));
+        La =@(x,y) zeros(size(x));
+
         % Critical Strain [s^-1]
         ep_star =@(x,y) ((La(x,y)/2 + ((Pe(x,y).^2)/2)./(Pe(x,y)-1+exp(-Pe(x,y))))).^(nn/(nn+1))...
         .*(K*(T_m-T_s(x,y))./(A_m.^(-1/nn).*(subplus(h_s_init(x,y)-h_b_init(x,y))).^2)).^(nn/(nn+1));

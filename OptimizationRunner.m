@@ -1,5 +1,13 @@
 clear; clc; close all
 
+if(~ismac)
+    %Start-up business on sherlock is hard 
+    addpath('lib') 
+    addpath(genpath('/home/groups/jsuckale/psummers/MATLAB'))
+    run /home/groups/jsuckale/psummers/MATLAB/startup.m
+end
+fID = fopen('log.txt','w');
+
 x0 = [1.4,.7];
 str = "ISSM Shift";
 
