@@ -1,4 +1,4 @@
-function [resid] = modelOpt(x0,str)
+function [resid] = modelOpt(x0,str,fg1,fg2)
 % Mapview code, bringing in Tau constraints from SedMap estimates.
 % Requires download and install the following software: 
 % Distmesh https://popersson.github.io/distmesh/index.html
@@ -8,7 +8,7 @@ function [resid] = modelOpt(x0,str)
 
 %% Initialization
 
-mapFile = "gridRefinedXSM025.mat";
+mapFile = "gridRefinedXSM03.mat";
 % Load input files
 thin_m = 0;
 initializeInputs();
@@ -116,17 +116,22 @@ if(sum(isnan(u2)) + sum(isnan(v2)) > 0)
     uFill = scatteredInterpolant(xy(~isnan(u2),1),xy(~isnan(u2),2),u2(~isnan(u2)));
     vFill = scatteredInterpolant(xy(~isnan(v2),1),xy(~isnan(v2),2),v2(~isnan(v2)));
     u2(isnan(u2)) = uFill(xy(isnan(u2),1),xy(isnan(u2),2));
-    v2(isnan(v2)) = vFill(xy(isnan(v2),1),xy(isnan(v2),2));
-    spd2 = sqrt(u2.^2 + v2.^2);
+    v2(isnan(v2)) = vFill(xy(isnan(v2),1),xy(isnan(v2),2));    
     clear uFill vFill
 end
 
+spd2 = sqrt(u2.^2 + v2.^2);
 spd_star = sqrt(v.^2+u.^2)*3.154E7;		
-gamma = 6e3; % 1e4 is even point, above weights log speeds more (3e5 for base cases)
+gamma = 1e3; % 4e3 is about even point
 resid_xy = ((u*3.154e7-u2).^2 + (v*3.154e7-v2).^2 + gamma*log((spd_star+1)./(spd2+1)).^2).*F'/1e7; %% should weight each by D matrix
+resid_xy(xy(:,2)>-4.4e5) = 0; %don't care about upper region.
 resid = sum(resid_xy);
 
-figure(1)
+if exist('fg1','var') == 1
+    set(0,'CurrentFigure',fg1);
+else 
+    fg1 = figure(1);
+end
 clf
 trisurf(t,xy(:,1),xy(:,2),resid_xy,...
        'edgecolor','none')
@@ -187,7 +192,11 @@ gamma = (resid1+resid2)./resid3;
 
 
 %figure('Position', [0 0 1200 600]);
-figure(3)
+if exist('fg2','var') == 1
+    set(0,'CurrentFigure',fg2);
+else 
+    fg2 = figure(3);
+end
 clf
 set(gcf, 'defaultAxesFontName', 'National Park Regular',...
 'defaultTextFontName', 'National Park Regular');
