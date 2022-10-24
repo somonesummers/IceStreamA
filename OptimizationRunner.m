@@ -8,12 +8,12 @@ if(~ismac)
 end
 fID = fopen('log.txt','w');
 
-x0 = [1.4,.5];
+x0 = [1.8,.7];
 str = "ISSM Shift";
 fg1 = figure(1);
 fg2 = figure(2);
 fun = @(x)modelOpt(x,str,fg1,fg2);
-options = optimset('Display','iter','PlotFcns',@optimplotfval,'TolX',1e-2    ,'TolFun',1e4);	
+options = optimset('Display','iter','PlotFcns',@optimplotfval,'TolX',1e-1    ,'TolFun',1e4);	
 [x,fval,exitflag,output] = fminsearch(fun,x0,options) 
 
-save("optOutput_"+ str); 
+save("optOutput_025Therm"+ str); 

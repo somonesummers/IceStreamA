@@ -8,7 +8,7 @@ function [resid] = modelOpt(x0,str,fg1,fg2)
 
 %% Initialization
 
-mapFile = "gridRefinedXSM03.mat";
+mapFile = "gridRefinedXSM025.mat";
 % Load input files
 thin_m = 0;
 initializeInputs();
@@ -24,7 +24,7 @@ tau_c = defineTau(str,x0);
 buildSystem();
 
 %% Thermomechanical coupling loop
-for t_i = 1:1%00  
+for t_i = 1:100  
     % Thermocouple fields to update everyloop
     % Strain rate [s^-1]
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object
