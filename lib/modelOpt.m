@@ -8,7 +8,7 @@ function [resid] = modelOpt(x0,str)
 
 %% Initialization
 
-mapFile = "gridRefinedXSM01.mat";
+mapFile = "gridRefinedXSM025.mat";
 % Load input files
 thin_m = 0;
 initializeInputs();
@@ -111,6 +111,14 @@ end
 %% Vis out of loop
 spd2 = measures_interp('speed',xy(:,1),xy(:,2));
 [u2,v2] = measures_interp('velocity',xy(:,1),xy(:,2)); %[m/yr]
+
+if(sum(isnan(u2)) + sum(isnan(v2)) > 0)
+                uFill = scatteredInterpolant(xy(~isnan(u2),1),xy(~isnan(u2),2),u2(~isnan(u2)));
+                vFill = scatteredInterpolant(xy(~isnan(v2),1),xy(~isnan(v2),2),v2(~isnan(v2)));
+                u2(isnan(u2)) = uFill(xy(isnan(u2),1),xy(isnan(u2),2));
+                v2(isnan(v2)) = vFill(xy(isnan(v2),1),xy(isnan(v2),2));
+                clear uFill vFill
+            end
 
 spd_star = sqrt(v.^2+u.^2)*3.154E7;		
 gamma = 6e3; % 1e4 is even point, above weights log speeds more (3e5 for base cases)
