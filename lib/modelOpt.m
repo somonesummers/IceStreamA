@@ -8,8 +8,9 @@ function [resid] = modelOpt(x0,str)
 
 %% Initialization
 
-mapFile = "gridInstitute24000.mat";
+mapFile = "gridRefinedXSM03.mat";
 % Load input files
+thin_m = 0;
 initializeInputs();
 
 % Build model bed, geometery, functions
@@ -84,12 +85,14 @@ for t_i = 1:1%00
               F*tau_c(xy(:,1),xy(:,2),u,v) + ...
               rho*g*sum(h_av.*((A*h_s).*(D*u) + (B*h_s).*(D*v)));
         subject to
-            u(dwnSt_bound) == spd_BC_u./3.154E7;
-            v(dwnSt_bound) == spd_BC_v./3.154E7;
-            u(upSt_bound) == spd_BC_u2./3.154E7;
-            v(upSt_bound) == spd_BC_v2./3.154E7;
-            u(lfSt_bound) == spd_BC_uL./3.154E7;
-            v(lfSt_bound) == spd_BC_vL./3.154E7;
+            u(se_bound) == spd_BC_u_se./3.154E7;
+            v(se_bound) == spd_BC_v_se./3.154E7;
+            u(nw_bound) == spd_BC_u_nw./3.154E7;
+            v(nw_bound) == spd_BC_v_nw./3.154E7;
+            u(ne_bound) == spd_BC_u_ne./3.154E7;
+            v(ne_bound) == spd_BC_v_ne./3.154E7;
+            u(sw_bound) == spd_BC_u_sw./3.154E7;
+            v(sw_bound) == spd_BC_v_sw./3.154E7;
         minimize(obj)
     cvx_end
     if(~strcmp(cvx_status,"Solved"))
@@ -109,7 +112,7 @@ spd2 = measures_interp('speed',xy(:,1),xy(:,2));
 [u2,v2] = measures_interp('velocity',xy(:,1),xy(:,2)); %[m/yr]
 
 spd_star = sqrt(v.^2+u.^2)*3.154E7;		
-gamma = 1e4; % 1e4 is even point, above weights log speeds more (3e5 for base cases)
+gamma = 6e3; % 1e4 is even point, above weights log speeds more (3e5 for base cases)
 resid_xy = ((u*3.154e7-u2).^2 + (v*3.154e7-v2).^2 + gamma*log((spd_star+1)./(spd2+1)).^2).*F'/1e7; %% should weight each by D matrix
 resid = sum(resid_xy);
 
@@ -124,10 +127,10 @@ colorbar
 view(2)
 % axis equal
 drawnow
-% resid1 = sum((u*3.154e7-u2).^2)
-% resid2 = sum((v*3.154e7-v2).^2)
-% resid3 = sum(log((spd_star+1)./(spd2+1)).^2)
-% gamma = (resid1+resid2)./resid3
+resid1 = sum((u*3.154e7-u2).^2);
+resid2 = sum((v*3.154e7-v2).^2);
+resid3 = sum(log((spd_star+1)./(spd2+1)).^2);
+gamma = (resid1+resid2)./resid3;
 % figure
 % clf
 % trisurf(t_c,xy_c(:,1),xy_c(:,2),enhance.^(-nn),...
