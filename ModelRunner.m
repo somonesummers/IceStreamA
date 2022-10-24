@@ -104,6 +104,8 @@ for t_i = 1:100
             break; 
         end
     end
+    %% Visualization in loop 
+    %(uncomment to see avg temp, enhancement, and Pe, Lambda, Br every loop
     inLoopPlotting;
     %% Solve
     % Unused BCs
@@ -137,14 +139,16 @@ for t_i = 1:100
         end
     end
     % u and v are [m/s]    
-    %% Visualization in loop 
-    %(uncomment to see avg temp, enhancement, and Pe, Lambda, Br every loop
+    if(t_i == 1)
+        u_init = u;
+        v_init = v;
+    end
     
 end
 clear fg1 fg2
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
-save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
+% save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
 
 %% Vis out of loop
 spd2 = measures_interp('speed',xy(:,1),xy(:,2)); %[m/yr]
@@ -220,10 +224,13 @@ hold on
 quiver(Xi,Yi,int_x(Xi,Yi),int_y(Xi,Yi))
 scatter(xy(spdModel > spd2*2,1),xy(spdModel > spd2*2,2),'r','filled')
 
-% tau_tuned2 = uB(xy(:,1),xy(:,2));
-% 
-% load('tau_tuned.mat');
-% sum(spdModel > spd2*2)
-% tau_tuned(spdModel > spd2*2) = tau_tuned(spdModel > spd2*2)*2;
-% tau_tuned(spdModel > spd2*2)
-% save('tau_tuned','tau_tuned');
+figure
+trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),(sqrt(u.^2 + v.^2)*3.154E7),...
+       'edgecolor','none')
+title('Coupling Speedup')
+xlabel('X')
+ylabel('Y')
+colorbar
+cmap redblue
+view(2)
+axis equal

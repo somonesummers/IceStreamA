@@ -16,4 +16,5 @@ fun = @(x)modelOpt(x,str,fg1,fg2);
 options = optimset('Display','iter','PlotFcns',@optimplotfval,'TolX',1e-1    ,'TolFun',1e4);	
 [x,fval,exitflag,output] = fminsearch(fun,x0,options) 
 
-save("optOutput_025Therm"+ str); 
+clear fg1 fg2
+save("optOutput_"+ str); 

@@ -79,15 +79,15 @@ function [tau_c] = defineTau(str,x0)
         stag = x0(1);
         moving = x0(2);
     else
-        stag = 1.4; %1.2
-        moving = 0.7;
+        stag = 1.9044;
+        moving = 0.2035;
     end
     load tauShiftable.mat;
     load gridSiple1000.mat;
     
     tau_shift = zeros(size(tau_ISSM));
-    tau_shift(spd<100) = tau_ISSM(spd<100).* stag; 
-    tau_shift(spd>100) = tau_ISSM(spd>100).* moving; 
+    tau_shift(spd<50) = tau_ISSM(spd<50).* stag; 
+    tau_shift(spd>50) = tau_ISSM(spd>50).* moving; 
     
     uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_shift,'natural');
     
