@@ -152,7 +152,7 @@ if(ismac)
 end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
-% save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
+save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
 
 
 %% Vis out of loop
