@@ -15,13 +15,18 @@
 %% Initialization
 % Scenario to run if running one at a time comment out below, run this file
 % directly
-
+saveData = true;
 % str = 'Mixed';
 % mapFile = 'gridInstitute5000.mat';
 
 % Comment so we know what's happening, thats always nice.
 disp("Running " + str + " " + thin_m + " now...");
 fprintf(fID,'\tRunning %s %d now...\n',str,thin_m);
+if(~saveData)
+    disp("Data will not be saved");
+    fprintf(fID,'Data will not be saved');
+end
+
 % Load input files
 initializeInputs();
 
@@ -152,8 +157,12 @@ if(ismac)
 end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
-% save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
-
+if(saveData)
+    save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
+else
+    warn('Data not being saved');
+    Disp('Data not being saved');
+end
 
 %% Vis out of loop
 spd2 = measures_interp('speed',xy(:,1),xy(:,2)); %[m/yr]
