@@ -106,7 +106,9 @@ for t_i = 1:100
     end
     %% Visualization in loop 
     %(uncomment to see avg temp, enhancement, and Pe, Lambda, Br every loop
-    inLoopPlotting;
+    if(ismac)
+        inLoopPlotting;
+    end
     %% Solve
     % Unused BCs
     %       v(xy(:,2) > ymax - dx/2) == 0;
@@ -145,7 +147,9 @@ for t_i = 1:100
     end
     
 end
-clear fg1 fg2
+if(ismac)
+    clear fg1 fg2
+end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
 % save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");

@@ -79,7 +79,7 @@ function [tau_c] = defineTau(str,x0)
         stag = x0(1);
         moving = x0(2);
     else
-        stag = 1.2395;
+        stag = 1.55;
         moving = 0.6699;
     end
     load tauShiftable.mat;

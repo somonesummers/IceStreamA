@@ -9,13 +9,13 @@ cases = [-50,-20,0,20,50];
 figure('Position',[300 300 1300 680])
 tiledlayout(2,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-data2 = load("data/data_gridRefinedXSM025ISSM Shift6bedmap0.mat");
+data2 = load("data/data_gridRefinedXSM025ISSM Shift5bedmap0.mat");
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
-    if(isfile("data/data_gridRefinedXSM025ISSM Shift6bedmap"+cases(j)+".mat"))
-        data1 = load("data/data_gridRefinedXSM025ISSM Shift6bedmap"+cases(j)+".mat");    
+    if(isfile("data/data_gridRefinedXSM025ISSM Shift5bedmap"+cases(j)+".mat"))
+        data1 = load("data/data_gridRefinedXSM025ISSM Shift5bedmap"+cases(j)+".mat");    
         ax1 = nexttile(j);  
         plotSpeed(data1,0,ax1);
         if(j == 1)
