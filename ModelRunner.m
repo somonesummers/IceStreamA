@@ -150,6 +150,7 @@ clear fg1 fg2
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
 % save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
 
+
 %% Vis out of loop
 spd2 = measures_interp('speed',xy(:,1),xy(:,2)); %[m/yr]
 
@@ -225,12 +226,13 @@ quiver(Xi,Yi,int_x(Xi,Yi),int_y(Xi,Yi))
 scatter(xy(spdModel > spd2*2,1),xy(spdModel > spd2*2,2),'r','filled')
 
 figure
-trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),(sqrt(u.^2 + v.^2)*3.154E7),...
+trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),((sqrt(u.^2 + v.^2))-(sqrt(u_init.^2 + v_init.^2)))*3.154E7,...
        'edgecolor','none')
 title('Coupling Speedup')
 xlabel('X')
 ylabel('Y')
 colorbar
-cmap redblue
+colormap redblue
+caxis([-300 300])
 view(2)
 axis equal

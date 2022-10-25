@@ -2,7 +2,7 @@ clear; clc; close all
 
 if(~ismac)
     %Start-up business on sherlock is hard 
-            addpath('lib') 
+    addpath('lib') 
     addpath(genpath('/home/groups/jsuckale/psummers/MATLAB'))
     run /home/groups/jsuckale/psummers/MATLAB/startup.m
 end
