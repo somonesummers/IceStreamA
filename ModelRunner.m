@@ -160,7 +160,7 @@ mpClean = erase(mapFile, [".mat","workingGrid_"]);
 if(saveData)
     save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
 else
-    warn('Data not being saved');
+    warning('Data not being saved');
     Disp('Data not being saved');
 end
 
@@ -238,14 +238,16 @@ hold on
 quiver(Xi,Yi,int_x(Xi,Yi),int_y(Xi,Yi))
 scatter(xy(spdModel > spd2*2,1),xy(spdModel > spd2*2,2),'r','filled')
 
-figure
-trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),((sqrt(u.^2 + v.^2))-(sqrt(u_init.^2 + v_init.^2)))*3.154E7,...
-       'edgecolor','none')
-title('Coupling Speedup')
-xlabel('X')
-ylabel('Y')
-colorbar
-colormap redblue
-caxis([-300 300])
-view(2)
-axis equal
+if(exist('u_init','var'))
+    figure
+    trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),((sqrt(u.^2 + v.^2))-(sqrt(u_init.^2 + v_init.^2)))*3.154E7,...
+           'edgecolor','none')
+    title('Coupling Speedup')
+    xlabel('X')
+    ylabel('Y')
+    colorbar
+    colormap redblue
+    caxis([-300 300])
+    view(2)
+    axis equal
+end
