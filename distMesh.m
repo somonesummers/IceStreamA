@@ -9,9 +9,11 @@ end
 % xbox = [-6.2457 -4.0000   -2.5000   -4.0000  -6.2457]*1e5;
 % ybox = [-4.600 -2.7000   -4.9350   -6.3000   -4.600]*1e5;
 % xsmall
-xbox = [-4.517 -3.260   -2.4500   -3.742   -4.517]*1e5;
-ybox = [-4.000 -3.658   -5.0350   -5.600   -4.000]*1e5;
-
+% xbox = [-4.517 -3.260   -2.4500   -3.742   -4.517]*1e5;
+% ybox = [-4.000 -3.658   -5.0350   -5.600   -4.000]*1e5;
+% All of Ridge
+xbox = [-4.9500  -3.6000   -2.7000   -4.1000   -4.9500]*1e5;
+ybox = [-3.8000  -3.5300   -5.2250   -5.6700   -3.8000]*1e5;
 
 xmax =  max(xbox);
 xmin = min(xbox);
@@ -22,9 +24,19 @@ pv = [xbox; ybox]';
 
 figure(1)
 
-[xy,t]=distmesh2d(@dpoly,@huniform,.02,[xmin,ymin;xmax,ymax]/1e5,pv/1e5,pv/1e5);
+[xy,t]=distmesh2d(@dpoly,@huniform,.05,[xmin,ymin;xmax,ymax]/1e5,pv/1e5,pv/1e5);
 xy = xy*1e5;
 [u,v] = measures_interp('velocity',xy(:,1),xy(:,2));
+
+[xx,yy] = meshgrid(xmin:1e3:xmax,ymin:1e3:ymax);
+spd = measures_interp('speed',xx,yy);
+figure
+surf(xx,yy,zeros(size(spd)),log10(spd),'edgecolor','none')
+hold on 
+view(2)
+plot(pv(:,1),pv(:,2),'r-')
+axis equal
+
 
 %%
 if(sum(isnan(u)) + sum(isnan(v)) > 0)
@@ -90,7 +102,7 @@ fd=@(p) dpoly(p,pv/1e5);
 fh=@(p) ones(size(p,1),1) - fun(p(:,1),p(:,2))/6;
 
 figure
-edgeLength = .03;
+edgeLength = .01;
 [xy,t]=distmesh2d(fd,fh,edgeLength,[xmin,ymin;xmax,ymax]/1e5,pv/1e5);
 
 xy = xy*1e5;
@@ -110,4 +122,4 @@ trisurf(t,xy(:,1),xy(:,2),zeros(size(xy(:,1))),u,...
 view(2)
 colorbar   
 
-% save("gridRefinedXSM" + strrep(string(edgeLength),"0.","") + ".mat");
+save("gridRefinedRise" + strrep(string(edgeLength),"0.","") + ".mat");
