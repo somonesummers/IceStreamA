@@ -14,7 +14,7 @@
 clear
 close all
 clc
-
+addpath('grids')
 if(~ismac)
     %Start-up business on sherlock is hard 
     addpath('lib') 
@@ -24,8 +24,8 @@ end
 fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
 nameToRun = ["ISSM Shift"];
-mapsToRun = ["gridRefinedXSM025.mat"];
-thinToRun = [0,-50,-20,20,50];
+mapsToRun = ["gridRefinedRise03.mat"];
+thinToRun = [0]%,-50,-20,20,50];
 for j = 1:length(mapsToRun)
     for i = 1:length(thinToRun)
         clearvars -except nameToRun mapsToRun thinToRun i j fID

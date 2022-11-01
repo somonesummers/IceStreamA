@@ -5,7 +5,7 @@ load Dawn.mat;
 icey = cbrewer('div','BrBG',48);
 
 %% Load Grid
-load(mapFile);
+load("grids/"+mapFile);
 
 %% Load Lake Locations, make polygons in polar stereographic projection
 % Sl = shaperead('tc-11-451-2017-supplement/Thw_lakes_supplemental_data/Thw_lakes_outlines.shp');
