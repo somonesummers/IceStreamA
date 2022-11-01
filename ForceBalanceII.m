@@ -10,8 +10,15 @@ str = char(raw');
 fclose(fid); 
 val = jsondecode(str);
 
-xbox = val.features.geometry.coordinates(:,:,1);
-ybox = val.features.geometry.coordinates(:,:,2);
+xbox = [-4.9500  -3.6000   -2.7000   -4.1000   -4.9500]*1e5;
+ybox = [-3.8000  -3.5300   -5.2250   -5.6700   -3.8000]*1e5;
+
+xmax =  max(xbox);
+xmin = min(xbox);
+ymax =  max(ybox);
+ymin =  min(ybox);
+
+pv = [xbox; ybox]';
 
 
 
@@ -23,13 +30,13 @@ g = 9.81;
 B = 1.6e8; % A = 2.4e-25 Pa^(-3) s^(-1)
 A = 2.4e-25;
 overgrab = 0;
-xmax =  -2.5e5;
-xmin =  -5.0e5;
-ymax =  -3.5e5;
-ymin =  -6.0e5;
+% xmax =  -2.5e5;
+% xmin =  -5.0e5;
+% ymax =  -3.5e5;
+% ymin =  -6.0e5;
 
-dx = 2e3;
-smth = 10e3;
+dx = 1e3;
+smth = 6e3;
 xi = xmin-dx*overgrab:dx:xmax+dx*overgrab;
 yi = ymin-dx*overgrab:dx:ymax+dx*overgrab;
 [Xi,Yi] = meshgrid(xi,yi);

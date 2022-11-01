@@ -1,21 +1,23 @@
 %% Plot all figures
 clear
-% close all
-saveFigs = false;
+close all
+saveFigs = true;
 
 %% Cases of thickness
-
+groupName = 'XXS5000';
 cases = [-50,-20,0,20,50];
 figure('Position',[300 300 1300 680])
 tiledlayout(2,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-data2 = load("data/data_gridRefinedXSM025ISSM Shift5bedmap0.mat");
+baseFile = "data/data_gridSipleXXSmall5000ISSM Shift2bedmap0.mat";
+data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
-    if(isfile("data/data_gridRefinedXSM025ISSM Shift5bedmap"+cases(j)+".mat"))
-        data1 = load("data/data_gridRefinedXSM025ISSM Shift5bedmap"+cases(j)+".mat");    
+    
+    if(isfile(strrep(baseFile,"0.mat",cases(j)+".mat")))
+        data1 = load(strrep(baseFile,"0.mat",cases(j)+".mat"));    
         ax1 = nexttile(j);  
         plotSpeed(data1,0,ax1);
         if(j == 1)
@@ -30,6 +32,9 @@ for j = 1:numel(cases)
         end
         xlabel("");
         title("Case " + cases(j))
+        if(j == 3)
+            title(groupName)
+        end
         ax2 = nexttile(j+numel(cases));
         plotDiff(data1,data2,0,ax2);
         if(j == 1)
@@ -52,8 +57,8 @@ end
 
 if(saveFigs)
     fig = gcf;
-    savePng("figs/fig_" + fig.Number);
-    saveVect("figs/fig_" + fig.Number);
+    savePng("figs/fig_" + groupName + fig.Number);
+%     saveVect("figs/fig_groupName" + fig.Number);
 end
 
 
@@ -105,8 +110,59 @@ xlim([-5e5, -2e5])
 ylim([-6e5, -3e5])
 if(saveFigs)
     fig = gcf;
-    savePng("figs/fig_" + fig.Number);
-    saveVect("figs/fig_" + fig.Number);
+    savePng("figs/fig_" + groupName + fig.Number);
+%     saveVect("figs/fig_" + fig.Number);
+end
+
+%% Plot Chi
+ftsize = 20;
+load('gridSipleXXSmall3000.mat');
+dx = 1e3;
+figure('Position',[300 300 700 850])
+x = [-5e5:dx:-2e5];
+y = [-6e5:dx: -3e5];
+[xx,yy] = meshgrid(x,y);
+sf_raw =  bedmachine_interp('surface',xx,yy);
+sf = imgaussfilt(sf_raw,5e3/dx);
+h  =  bedmachine_interp('thickness',xx,yy);
+spd        = measures_interp('speed',xx,yy);
+[sx ,  sy] = gradient(sf,dx,dx);
+
+p = surf(xx,yy,zeros(size(h)),h./(sqrt(sx.^2+sy.^2)*200e3));
+hold on
+plot(pv(:,1),pv(:,2),'k-','LineWidth', 4)
+contour(x,y,spd, [10, 10] , 'k:','HandleVisibility','off')
+contour(x,y,spd, [30, 30] , 'k--','HandleVisibility','off')
+contour(x,y,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
+contour(x,y,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
+[C,hh] = contour(x,y,h./(sqrt(sx.^2+sy.^2)*200e3),[.1,.3,1,3,10], 'r-','HandleVisibility','off');  
+clabel(C,hh)
+title('\xi factor')
+f = gca;
+% f.ColorScale = 'log';
+view(2)
+colorbar
+colormap(cmocean('curl'))
+set(p, 'edgecolor', 'none');
+caxis([0 2]) 
+axis equal
+ylabel('Northing [m]')
+xlabel('Easting [m]')
+c = colorbar;
+c.Label.String = '\xi [ ]';
+c.FontSize = ftsize;   
+view(2)
+f = gca;
+f.XAxis.FontSize = ftsize-2;
+f.YAxis.FontSize = ftsize-2;
+view(2)
+axis equal
+xlim([-5e5, -2e5])
+ylim([-6e5, -3e5])
+if(saveFigs)
+    fig = gcf;
+    savePng("figs/fig_" + groupName + fig.Number);
+%     saveVect("figs/fig_" + fig.Number);
 end
 
 
