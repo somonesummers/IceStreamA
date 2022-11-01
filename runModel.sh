@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-#SBATCH --job-name=Isa501
+#SBATCH --job-name=1Thm025
 #SBATCH --output=matlab_Main.“%j”.out
 #SBATCH --error=matlab_Main.“%j”.err
 #SBATCH --partition=serc
-#SBATCH --time=24:00:00
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=96G
+#SBATCH --time=6:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
 #SBATCH --mail-type=ALL
 module load matlab
 matlab -nodisplay < MainHelper.m

@@ -80,7 +80,7 @@ function [tau_c] = defineTau(str,x0)
         moving = x0(2);
     else
         stag = 1.55;
-        moving = 0.6699;
+        moving = 0.7;
     end
     load tauShiftable.mat;
     load gridSiple1000.mat;

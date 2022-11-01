@@ -158,7 +158,7 @@ end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
 if(saveData)
-    save("data/data_" + mpClean + str + "bedmap" + thin_m + ".mat");
+    save("data/data_" + mpClean + str + "bedmap_2_" + thin_m + ".mat");
 else
     warning('Data not being saved');
     Disp('Data not being saved');
