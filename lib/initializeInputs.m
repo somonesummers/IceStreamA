@@ -19,6 +19,10 @@ load("grids/"+mapFile);
 % clear i
 
 %% Get speed from measures for BCs
+%clip boundaries from each other, north wins
+se_bound = se_bound & ~ne_bound;
+sw_bound = sw_bound & ~nw_bound;
+
 [spd_BC_u_se, spd_BC_v_se] = measures_interp('velocity',xy(se_bound,1),xy(se_bound,2));
 [spd_BC_u_ne, spd_BC_v_ne] = measures_interp('velocity',xy(ne_bound,1),xy(ne_bound,2));
 [spd_BC_u_sw, spd_BC_v_sw] = measures_interp('velocity',xy(sw_bound,1),xy(sw_bound,2));

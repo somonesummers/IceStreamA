@@ -26,7 +26,7 @@ fID = fopen('log.txt','w');
 nameToRun = ["ISSM Shift"];
 mapsToRun = ["gridRefinedRise03.mat"];
 thinToRun = [0];%,-50,-20,20,50];
-speedUpToRun = [1.2];%,-50,-20,20,50];
+speedUpToRun = [1.05];%,-50,-20,20,50];
 for j = 1:length(speedUpToRun)
     for i = 1:length(thinToRun)
         clearvars -except nameToRun mapsToRun thinToRun speedUpToRun i j fID
