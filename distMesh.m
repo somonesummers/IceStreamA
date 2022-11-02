@@ -12,8 +12,8 @@ end
 % xbox = [-4.517 -3.260   -2.4500   -3.742   -4.517]*1e5;
 % ybox = [-4.000 -3.658   -5.0350   -5.600   -4.000]*1e5;
 % All of Ridge
-xbox = [-4.9500  -3.6000   -2.7000   -4.1000   -4.9500]*1e5;
-ybox = [-3.8000  -3.5300   -5.2250   -5.6700   -3.8000]*1e5;
+xbox = [-4.8000  -3.6000   -2.7000   -4.1000   -4.8000]*1e5;
+ybox = [-4.1000  -3.9000   -5.2250   -5.6700   -4.1000]*1e5;
 
 xmax =  max(xbox);
 xmin = min(xbox);
@@ -113,7 +113,7 @@ fh=@(p) ones(size(p,1),1) - fun(p(:,1),p(:,2))/6;
 if(ismac)
 	figure
 end
-edgeLength = .005;
+edgeLength = .01;
 [xy,t]=distmesh2d(fd,fh,edgeLength,[xmin,ymin;xmax,ymax]/1e5,pv/1e5);
 disp("Successfully meshed at " + edgeLength);
 xy = xy*1e5;
@@ -135,5 +135,5 @@ if(ismac)
 	colorbar   
 end
 
-save("gridRefinedRise" + strrep(string(edgeLength),"0.","") + ".mat");
+save("grids/gridRefinedRiseB" + strrep(string(edgeLength),"0.","") + ".mat");
 disp("Successfully Saved")
