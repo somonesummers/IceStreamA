@@ -161,7 +161,7 @@ if(saveData && contains(cvx_status,"Solved"))
     save("data/data_" + mpClean + str +"Thin" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
 else
     warning('Data not being saved');
-    Disp('Data not being saved');
+    disp('Data not being saved');
 end
 
 %% Vis out of loop
