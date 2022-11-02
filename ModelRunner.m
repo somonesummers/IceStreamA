@@ -165,89 +165,91 @@ else
 end
 
 %% Vis out of loop
-spd2 = measures_interp('speed',xy(:,1),xy(:,2)); %[m/yr]
+if(ismac)
+    spd2 = measures_interp('speed',xy(:,1),xy(:,2)); %[m/yr]
 
-figure('Position', [0 0 1200 600]);
-clf
-sgtitle(str);
-subplot(141)
+    figure('Position', [0 0 1200 600]);
+    clf
+    sgtitle(str);
+    subplot(141)
 
-trisurf(t,xy(:,1),xy(:,2),zeros(size(spd2)),(spd2),...
-       'edgecolor','none')
-hold on
-title('Speed of Measures')
-xlabel('X')
-ylabel('Y')
-caxis([10  675])
-f = gca;
-f.ColorScale = 'log';
-view(2)
-colorbar
-view(2)
-axis equal
-
-subplot(142)
-trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),(sqrt(u.^2 + v.^2)*3.154E7),...
-       'edgecolor','none')   
-caxis([10  675])
-title('Speed')
-xlabel('X')
-ylabel('Y')
-colorbar
-f = gca;
-f.ColorScale = 'log';
-view(2)
-axis equal
-
-subplot(143)
-trisurf(t,xy(:,1),xy(:,2),tau_c(xy(:,1),xy(:,2),u,v)./norms([u,v],2,2),...
-       'edgecolor','none')
-% hold on
-% trisurf(t,xy(:,1),xy(:,2),h_b_init(xy(:,1),xy(:,2)),...
-%        'edgecolor','black','facecolor','none')
-colorbar
-caxis([0e3 150e3]);
-colormap(gca, Cmap/255.0)
-title('Basal \tau')
-xlabel('X')
-ylabel('Y')
-view(2)
-axis equal
-
-subplot(144)
-trisurf(t_c,xy_c(:,1),xy_c(:,2),df,...
-    'edgecolor','none');
-title('Driving force')
-xlabel('X')
-ylabel('Y')
-colorbar
-caxis([0e3 150e3]);
-colormap(gca, Cmap/255.0)
-view(2)
-axis equal
-
-int_x = scatteredInterpolant(xy(:,1),xy(:,2),u,'natural','none');
-int_y = scatteredInterpolant(xy(:,1),xy(:,2),v,'natural','none');
-[msr_x, msr_y] = measures_interp('velocity',Xi,Yi);
-
-spdModel = (sqrt(u.^2 + v.^2)*3.154E7);
-
-figure()
-quiver(Xi,Yi,msr_x,msr_y)
-hold on 
-quiver(Xi,Yi,int_x(Xi,Yi),int_y(Xi,Yi))
-scatter(xy(spdModel > spd2*2,1),xy(spdModel > spd2*2,2),'r','filled')
-
-if(exist('u_init','var'))
-    figure
-    trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),((sqrt(u.^2 + v.^2))-(sqrt(u_init.^2 + v_init.^2)))*3.154E7,...
+    trisurf(t,xy(:,1),xy(:,2),zeros(size(spd2)),(spd2),...
            'edgecolor','none')
-    title('Coupling Speedup')
+    hold on
+    title('Speed of Measures')
+    xlabel('X')
+    ylabel('Y')
+    caxis([10  675])
+    f = gca;
+    f.ColorScale = 'log';
+    view(2)
+    colorbar
+    view(2)
+    axis equal
+
+    subplot(142)
+    trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),(sqrt(u.^2 + v.^2)*3.154E7),...
+           'edgecolor','none')   
+    caxis([10  675])
+    title('Speed')
     xlabel('X')
     ylabel('Y')
     colorbar
-    colormap redblue
-    caxis([-300 300])
+    f = gca;
+    f.ColorScale = 'log';
     view(2)
     axis equal
+
+    subplot(143)
+    trisurf(t,xy(:,1),xy(:,2),tau_c(xy(:,1),xy(:,2),u,v)./norms([u,v],2,2),...
+           'edgecolor','none')
+    % hold on
+    % trisurf(t,xy(:,1),xy(:,2),h_b_init(xy(:,1),xy(:,2)),...
+    %        'edgecolor','black','facecolor','none')
+    colorbar
+    caxis([0e3 150e3]);
+    colormap(gca, Cmap/255.0)
+    title('Basal \tau')
+    xlabel('X')
+    ylabel('Y')
+    view(2)
+    axis equal
+
+    subplot(144)
+    trisurf(t_c,xy_c(:,1),xy_c(:,2),df,...
+        'edgecolor','none');
+    title('Driving force')
+    xlabel('X')
+    ylabel('Y')
+    colorbar
+    caxis([0e3 150e3]);
+    colormap(gca, Cmap/255.0)
+    view(2)
+    axis equal
+
+    int_x = scatteredInterpolant(xy(:,1),xy(:,2),u,'natural','none');
+    int_y = scatteredInterpolant(xy(:,1),xy(:,2),v,'natural','none');
+    [msr_x, msr_y] = measures_interp('velocity',Xi,Yi);
+
+    spdModel = (sqrt(u.^2 + v.^2)*3.154E7);
+
+    figure()
+    quiver(Xi,Yi,msr_x,msr_y)
+    hold on 
+    quiver(Xi,Yi,int_x(Xi,Yi),int_y(Xi,Yi))
+    scatter(xy(spdModel > spd2*2,1),xy(spdModel > spd2*2,2),'r','filled')
+
+    if(exist('u_init','var'))
+        figure
+        trisurf(t,xy(:,1),xy(:,2),h_s_init(xy(:,1),xy(:,2)),((sqrt(u.^2 + v.^2))-(sqrt(u_init.^2 + v_init.^2)))*3.154E7,...
+               'edgecolor','none')
+        title('Coupling Speedup')
+        xlabel('X')
+        ylabel('Y')
+        colorbar
+        colormap redblue
+        caxis([-300 300])
+        view(2)
+        axis equal
+    end
 end
