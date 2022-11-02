@@ -127,14 +127,14 @@ for t_i = 1:100
               F*tau_c(xy(:,1),xy(:,2),u,v) + ...
               rho*g*sum(h_av.*((A*h_s).*(D*u) + (B*h_s).*(D*v)));
         subject to
-            u(se_bound) == spd_BC_u_se./3.154E7;
-            v(se_bound) == spd_BC_v_se./3.154E7;
+            u(se_bound) == spd_BC_u_se./3.154E7*speedUp;
+            v(se_bound) == spd_BC_v_se./3.154E7*speedUp;
             u(nw_bound) == spd_BC_u_nw./3.154E7;
             v(nw_bound) == spd_BC_v_nw./3.154E7;
             u(ne_bound) == spd_BC_u_ne./3.154E7;
             v(ne_bound) == spd_BC_v_ne./3.154E7;
-            u(sw_bound) == spd_BC_u_sw./3.154E7;
-            v(sw_bound) == spd_BC_v_sw./3.154E7;
+            u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
+            v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
             
         minimize(obj)
     cvx_end
@@ -158,7 +158,7 @@ end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
 if(saveData)
-    save("data/data_" + mpClean + str + thin_m + ".mat");
+    save("data/data_" + mpClean + str +"Thin" + thin_m + "SpeedUp" + speedUp + ".mat");
 else
     warning('Data not being saved');
     Disp('Data not being saved');

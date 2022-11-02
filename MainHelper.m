@@ -24,14 +24,16 @@ end
 fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
 nameToRun = ["ISSM Shift"];
-mapsToRun = ["gridRefinedRise01.mat"];
-thinToRun = [0,-50,-20,20,50];
-for j = 1:length(mapsToRun)
+mapsToRun = ["gridRefinedRise03.mat"];
+thinToRun = [0];%,-50,-20,20,50];
+speedUpToRun = [1.2];%,-50,-20,20,50];
+for j = 1:length(speedUpToRun)
     for i = 1:length(thinToRun)
-        clearvars -except nameToRun mapsToRun thinToRun i j fID
+        clearvars -except nameToRun mapsToRun thinToRun speedUpToRun i j fID
         thin_m = thinToRun(i);
+        speedUp = speedUpToRun(j);
         str = nameToRun(1);
-        mapFile = mapsToRun(j);
+        mapFile = mapsToRun(1);
         ModelRunner;
     end
 end
