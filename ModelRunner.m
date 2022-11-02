@@ -157,8 +157,8 @@ if(ismac)
 end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
-if(saveData)
-    save("data/data_" + mpClean + str +"Thin" + thin_m + "SpeedUp" + speedUp + ".mat");
+if(saveData && contains(cvx_status,"Solved"))
+    save("data/data_" + mpClean + str +"Thin" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
 else
     warning('Data not being saved');
     Disp('Data not being saved');
