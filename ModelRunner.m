@@ -47,6 +47,7 @@ for t_i = 1:100
     % Thermocouple fields to update everyloop
     % Strain rate [s^-1]
         if t_i == 1
+            % Real Strain initialization
             [u,v] = measures_interp('velocity',xy(:,1),xy(:,2));
             u = u/3.514e7;
             v = v/3.514e7;
@@ -57,15 +58,18 @@ for t_i = 1:100
                 v(isnan(v)) = vFill(xy(isnan(v),1),xy(isnan(v),2));
                 clear uFill vFill
             end
+            % Zero Strain initialization
+            u = zeros(size(xy(:,1)));
+            v = zeros(size(xy(:,1)));
         end
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object
         
-        if(true)
+%         if(true)
             T_calc = T;
-        else
-            T_calc = T_bar(xy(:,1),xy(:,2));
-        end
-        lambda  = calcAdvection(T_calc,u,v,xy,dx,rho,C_p); 
+%         else
+%             T_calc = T_bar(xy(:,1),xy(:,2));
+%         end
+%         lambda  = calcAdvection(T_calc,u,v,xy,dx,rho,C_p); 
 
         % Brinkman number [ ]
         Br =@(x,y) 2*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y))).*((subplus(ep_dot(x,y)).^(nn+1))/A_m).^(1/nn);
