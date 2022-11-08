@@ -96,7 +96,7 @@ for t_i = 1:100
 
     % Calc Enhancement Factors, relax into solution. Have max value for
     % stabilization
-    cap = 20^(-1/nn); %stability cap on enhancement
+%     cap = 20^(-1/nn); %stability cap on enhancement
     e_new = (E_t(xy_c(:,1),xy_c(:,2))).^(-1/nn);
 %     e_new(e_new < cap) = cap;  % max enhancement is a min viscosity
     
@@ -135,8 +135,8 @@ for t_i = 1:100
             v(se_bound) == spd_BC_v_se./3.154E7*speedUp;
             u(nw_bound) == spd_BC_u_nw./3.154E7;
             v(nw_bound) == spd_BC_v_nw./3.154E7;
-            u(ne_bound) == spd_BC_u_ne./3.154E7;
-            v(ne_bound) == spd_BC_v_ne./3.154E7;
+            u(ne_bound) == spd_BC_u_ne./3.154E7*speedUp;
+            v(ne_bound) == spd_BC_v_ne./3.154E7*speedUp;
             u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
             v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
             
