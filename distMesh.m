@@ -12,8 +12,8 @@ end
 % xbox = [-4.517 -3.260   -2.4500   -3.742   -4.517]*1e5;
 % ybox = [-4.000 -3.658   -5.0350   -5.600   -4.000]*1e5;
 % All of Ridge
-xbox = [-4.8000  -3.6000   -2.7000   -4.0000   -4.8000]*1e5;
-ybox = [-4.1000  -3.9000   -5.1000   -5.5500   -4.1000]*1e5;
+xbox = [-4.8000  -3.6000   -2.8000   -4.0000   -4.8000]*1e5;
+ybox = [-4.1000  -3.9000   -5.2000   -5.5500   -4.1000]*1e5;
 
 xmax =  max(xbox);
 xmin = min(xbox);
@@ -135,5 +135,5 @@ if(ismac)
 	colorbar   
 end
 
-save("grids/gridRefinedRiseD" + strrep(string(edgeLength),"0.","") + ".mat");
+save("grids/gridRefinedRiseE" + strrep(string(edgeLength),"0.","") + ".mat");
 disp("Successfully Saved")
