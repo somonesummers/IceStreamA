@@ -43,7 +43,7 @@ buildSystem();
 
 
 %% Thermomechanical coupling loop
-for t_i = 1:100  
+for t_i = 1:500  
     % Thermocouple fields to update everyloop
     % Strain rate [s^-1]
         if t_i == 1
@@ -135,8 +135,8 @@ for t_i = 1:100
             v(se_bound) == spd_BC_v_se./3.154E7*speedUp;
             u(nw_bound) == spd_BC_u_nw./3.154E7;
             v(nw_bound) == spd_BC_v_nw./3.154E7;
-            u(ne_bound) == spd_BC_u_ne./3.154E7*speedUp;
-            v(ne_bound) == spd_BC_v_ne./3.154E7*speedUp;
+            u(ne_bound) == spd_BC_u_ne./3.154E7;
+            v(ne_bound) == spd_BC_v_ne./3.154E7;
             u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
             v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
             

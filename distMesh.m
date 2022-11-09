@@ -113,7 +113,7 @@ fh=@(p) ones(size(p,1),1) - fun(p(:,1),p(:,2))/6;
 if(ismac)
 	figure
 end
-edgeLength = .02;
+edgeLength = .005;
 [xy,t]=distmesh2d(fd,fh,edgeLength,[xmin,ymin;xmax,ymax]/1e5,pv/1e5);
 disp("Successfully meshed at " + edgeLength);
 xy = xy*1e5;
