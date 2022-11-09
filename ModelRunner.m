@@ -20,8 +20,8 @@ saveData = true;
 % mapFile = 'gridInstitute5000.mat';
 
 % Comment so we know what's happening, thats always nice.
-disp("Running " + str + " " + thin_m + " now...");
-fprintf(fID,'\tRunning %s %d now...\n',str,thin_m);
+disp("Running " + str + " " + thin_m + " speed  " + speedUp + " now...");
+fprintf(fID,'\tRunning %s %d %d now...\n',str,thin_m,speedUp);
 if(~saveData)
     disp("Data will not be saved");
     fprintf(fID,'Data will not be saved');
@@ -107,8 +107,8 @@ for t_i = 1:500
     if(t_i ~= 1) %first step we don't relax, we use E = 1 everywhere (zero strain is also an options)
         enhance = (1-nu) * enhance + nu*e_new;
         res = norm(e_new - enhance) / norm(e_new);
-        disp("Residual: " + res);
-        fprintf(fID,'\t\t[%d]Residual: %f \n',t_i,res);
+        disp("    [" + t_i + "]" + " Residual: " + res);
+        fprintf(fID,'\t[%d]Residual: %f \n',t_i,res);
         if (res < 1e-3) %check for thermal stabilization
             break; 
         end
@@ -143,7 +143,7 @@ for t_i = 1:500
         minimize(obj)
     cvx_end
     if(~strcmp(cvx_status,"Solved"))
-        disp("CVX has issues: " + cvx_status);
+        disp("        CVX has issues: " + cvx_status);
         fprintf(fID,'\t\tCVX has issues: %s\n',cvx_status);
         if(~contains(cvx_status,"Solved"))
             break;
