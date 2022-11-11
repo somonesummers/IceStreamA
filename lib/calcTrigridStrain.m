@@ -1,4 +1,5 @@
 function [int] = calcTrigridStrain(u,v,xy,dx)
+    % [int] = calcTrigridStrain(u,v,xy,dx) 
     % Calculates strain on triangular nodes, returns on intpolation
     % function
     % elements

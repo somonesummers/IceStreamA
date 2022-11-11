@@ -41,10 +41,10 @@ yi = ymin-dx*overgrab:dx/2:ymax+dx*overgrab;
 [Xi,Yi] = meshgrid(xi,yi);
 
 % % Raw fields
-bm_b =  bedmap2_interp(Xi,Yi,'bed');
-bm_s =  bedmap2_interp(Xi,Yi,'surface');
-% bm_b =  bedmachine_interp('bed',Xi,Yi);
-% bm_s =  bedmachine_interp('surface',Xi,Yi);
+% bm_b =  bedmap2_interp(Xi,Yi,'bed');
+% bm_s =  bedmap2_interp(Xi,Yi,'surface');
+bm_b =  bedmachine_interp('bed',Xi,Yi);
+bm_s =  bedmachine_interp('surface',Xi,Yi);
 
 % Smoothing
 % Numerator is the window we're smoothing over in [m], spacing of these grids

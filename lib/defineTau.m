@@ -5,30 +5,7 @@ function [tau_c] = defineTau(str,x0)
     if(nargin == 2)
         opt = true;
     end
-    if(str == "Uniform") % Uniform Plastic Bed, for reference, not in paper
-     if(opt)
-        yield_base = x0;
-    else
-        yield_base = 100e3;
-     end
-    
-    tau_c = @(x,y,u,v) norms([u,v],2,2)... 
-       .*yield_base; 
-    elseif(str == "VDV")  
-    if(opt)
-        scale = x0(1);
-        floor = x0(2);
-    else 
-        scale = 4;
-        floor = 10e3;
-    end
-    a = load('bedDragDx5000smth10000Capped.mat');
-
-    uB = griddedInterpolant(a.Xi',a.Yi',abs(a.bed'));
-    
-    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
-        (subplus(uB(x,y)-floor)+floor)*scale;
-    elseif(str == "ISSM")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
+    if(str == "ISSM")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
     if(opt)
         scale = x0(1);
         floor = x0(2);
@@ -59,28 +36,32 @@ function [tau_c] = defineTau(str,x0)
     
     tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
         (subplus(uB(x,y)-floor)+floor)*scale;
-    elseif(str == "ISSM Speed")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
-    if(opt)
-        scale = x0(1);
-        floor = x0(2);
-    else
-        scale = 1; %1.2
-        floor = 0e3;
-    end
-    load tau_speed.mat;
-    load gridSiple5000.mat;
-    
-    uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_speed,'natural');
-    
-    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
-        (scale*subplus(uB(x,y)));
     elseif(str == "ISSM Shift")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
     if(opt)
         stag = x0(1);
         moving = x0(2);
     else
+        stag = 1.7;%1.55
+        moving = 1.3;%.7
+    end
+    load tauShiftable.mat;
+    load gridSiple1000.mat;
+    
+    tau_shift = zeros(size(tau_ISSM));
+    tau_shift(spd<50) = tau_ISSM(spd<50).* stag; 
+    tau_shift(spd>50) = tau_ISSM(spd>50).* moving; 
+    
+    uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_shift,'natural');
+    
+    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+        (subplus(uB(x,y)));
+    elseif(str == "ISSM Overburden")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
+    if(opt)
+        stag = x0(1);
+        moving = x0(2);
+    else
         stag = 1.55;%1.55
-        moving = 1;%.7
+        moving = .7;%.7
     end
     load tauShiftable.mat;
     load gridSiple1000.mat;

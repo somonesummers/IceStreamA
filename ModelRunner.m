@@ -122,7 +122,9 @@ for t_i = 1:500
     % Unused BCs
     %       v(xy(:,2) > ymax - dx/2) == 0;
     %       v(xy(:,2) < ymin - dx/2) == 0;
-    
+%     
+%             u(ne_bound) == spd_BC_u_ne./3.154E7;
+%             v(ne_bound) == spd_BC_v_ne./3.154E7;
     % Options include     cvx_precision low, cvx_begin quiet
     % CVX may throw a warning about non-empty problems here, that is OK.
     cvx_begin quiet
@@ -133,10 +135,10 @@ for t_i = 1:500
         subject to
             u(se_bound) == spd_BC_u_se./3.154E7*speedUp;
             v(se_bound) == spd_BC_v_se./3.154E7*speedUp;
-            u(nw_bound) == spd_BC_u_nw./3.154E7;
-            v(nw_bound) == spd_BC_v_nw./3.154E7;
             u(ne_bound) == spd_BC_u_ne./3.154E7;
             v(ne_bound) == spd_BC_v_ne./3.154E7;
+            u(nw_bound) == spd_BC_u_nw./3.154E7;
+            v(nw_bound) == spd_BC_v_nw./3.154E7;
             u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
             v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
             
@@ -162,7 +164,7 @@ end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
 if(saveData && contains(cvx_status,"Solved"))
-    save("data/data_" + mpClean + str +"Thin" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
+    save("data/data_Machine" + mpClean + str +"Thin" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
 else
     warning('Data not being saved');
     disp('Data not being saved');
@@ -256,4 +258,21 @@ if(ismac)
         view(2)
         axis equal
     end
+    
+%     figure
+%     alpha = atan(v./u);
+%     e_xy = 1/2*(B*u+A*v);
+%     ux = A*u;
+%     vy = B*v;
+%     e_shr = (vy-ux).*cos(alpha).*sin(alpha) + e_xy.*(cos(alpha).^2 - (sin(alpha).^2));
+%     trisurf(t,xy(:,1),xy(:,2),ep_dot(xy(:,1),xy(:,2)),...
+%                'edgecolor','none')
+%     title('Shear Strain')
+%     xlabel('X')
+%     ylabel('Y')
+%     colorbar
+%     colormap(cmocean('curl'))
+%     view(2)
+%     axis equal
+%     caxis([-1e-9 1e-9])
 end
