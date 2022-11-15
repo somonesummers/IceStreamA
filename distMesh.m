@@ -41,13 +41,15 @@ contour(xi,yi,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(xi,yi,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
 title('Quiver')
 plot(pv(:,1),pv(:,2),'-*b')
-h1 = streamline(xi,yi,ui,vi,pv(1,1)-1e4,pv(1,2));
-h2 = streamline(xi,yi,ui,vi,pv(2,1),pv(2,2));
-set(h1,'Color','red');
-set(h2,'Color','red');
-plot(h1.XData(1:100:2700),h1.YData(1:100:2700),'*-','color',rgb('Forest Green'))
-plot(h2.XData(1:100:1300),h2.YData(1:100:1300),'*-','color',rgb('Forest Green'))
-pv_new = [h1.XData(1:10:2700)',h1.YData(1:10:2700)';flipud(h2.XData(1:10:1300)'),flipud(h2.YData(1:10:1300)');h1.XData(1), h1.YData(1)];
+h1 = stream2(xi,yi,ui,vi,pv(1,1)-1e4,pv(1,2));
+h2 = stream2(xi,yi,ui,vi,pv(2,1),pv(2,2));
+line1 = streamline(h1);
+line2 = streamline(h2);
+set(line1,'Color','red');
+set(line2,'Color','red');
+plot(h1{1,1}(1:100:2700,1),h1{1,1}(1:100:2700,2),'*-','color',rgb('Forest Green'))
+plot(h2{1,1}(1:100:1300,1),h2{1,1}(1:100:1300,2),'*-','color',rgb('Forest Green'))
+pv_new = [h1{1,1}(1:10:2700,1),h1{1,1}(1:10:2700,2);flipud(h2{1,1}(1:10:1300,1)),flipud(h2{1,1}(1:10:1300,2));h1{1,1}(1,1), h1{1,1}(1,2)];
 plot(pv_new(:,1),pv_new(:,2))
 
 pv = pv_new;
@@ -146,8 +148,8 @@ figure
 clf
 scatter(xy(:,1),xy(:,2),'k.')
 hold on
-idxSw = knnsearch(xy,[h1.XData(1:10:2700)',h1.YData(1:10:2700)']);
-idxNe = knnsearch(xy,[h2.XData(1:10:1300)',h2.YData(1:10:1300)']);
+idxSw = knnsearch(xy,[h1{1,1}(1:10:2700,1),h1{1,1}(1:10:2700,2)]);
+idxNe = knnsearch(xy,[h2{1,1}(1:10:1300,1),h2{1,1}(1:10:1300,2)]);
 idxNw = knnsearch(xy,[linspace(pv(end-1,1),pv(end,1),100)',linspace(pv(end-1,2),pv(end,2),100)']);
 pvPick = 270;
 idxSe = knnsearch(xy,[linspace(pv(pvPick,1),pv(pvPick+1,1),100)',linspace(pv(pvPick,2),pv(pvPick+1,2),100)']);
@@ -193,5 +195,5 @@ if(ismac)
 	colorbar   
 end
 
-save("grids/gridFlowRiseB" + strrep(string(edgeLength),"0.","") + ".mat");
-disp("Successfully Saved")
+% save("grids/gridFlowRiseB" + strrep(string(edgeLength),"0.","") + ".mat");
+% disp("Successfully Saved")
