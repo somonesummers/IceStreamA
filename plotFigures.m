@@ -1,23 +1,23 @@
 %% Plot all figures
 clear
 close all
-saveFigs = true;
+saveFigs = false;
 
 %% Cases of thickness
-groupName = 'XXS5000';
+groupName = 'GridD';
 cases = [-50,-20,0,20,50];
 figure('Position',[300 300 1300 680])
 tiledlayout(2,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/data_gridSipleXXSmall5000ISSM Shift2bedmap0.mat";
+baseFile = "data/data_gridRefinedRiseF02ISSM ShiftThin0SpeedUp0.mat";
 data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
     
-    if(isfile(strrep(baseFile,"0.mat",cases(j)+".mat")))
-        data1 = load(strrep(baseFile,"0.mat",cases(j)+".mat"));    
+    if(isfile(strrep(baseFile,"Thin0","Thin" + cases(j))))
+        data1 = load(strrep(baseFile,"Thin0","Thin" + cases(j)));    
         ax1 = nexttile(j);  
         plotSpeed(data1,0,ax1);
         if(j == 1)
@@ -64,7 +64,7 @@ end
 
 %% Plot speed
 ftsize = 20;
-load('gridSipleXXSmall3000.mat');
+load('grids/gridRefinedRiseD02.mat');
 dx = 1e3;
 figure('Position',[300 300 700 850])
 x = [-5e5:dx:-2e5];

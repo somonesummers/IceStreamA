@@ -29,7 +29,7 @@ rho_w = 1000;
 g = 9.81;
 B = 1.6e8; % A = 2.4e-25 Pa^(-3) s^(-1)
 A = 2.4e-25;
-overgrab = 0;
+overgrab = 50;
 % xmax =  -2.5e5;
 % xmin =  -5.0e5;
 % ymax =  -3.5e5;
@@ -48,10 +48,10 @@ yi = ymin-dx*overgrab:dx:ymax+dx*overgrab;
  mask = ones(size(Xi)); %make mask all ones for now
 
 %Raw fields
-% b_raw =  bedmachine_interp('bed',Xi,Yi);
-% sf_raw =  bedmachine_interp('surface',Xi,Yi);
-b_raw =  bedmap2_interp(Xi,Yi,'bed');
-sf_raw =  bedmap2_interp(Xi,Yi,'surface');
+b_raw =  bedmachine_interp('bed',Xi,Yi);
+sf_raw =  bedmachine_interp('surface',Xi,Yi);
+% b_raw =  bedmap2_interp(Xi,Yi,'bed');
+% sf_raw =  bedmap2_interp(Xi,Yi,'surface');
 phi_raw = rho/rho_w.*sf_raw + (rho_w-rho)/rho_w.*b_raw;
 
 [u, v] = measures_interp('velocity',Xi,Yi);

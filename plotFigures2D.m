@@ -2,15 +2,16 @@
 clear
 close all
 saveFigs = false;
+addpath('data');
 
 %% Cases of thickness
 groupName = 'GridD';
-cases = [-50,-20,0,20,50];
-speeds = ["-05",0,"05"];
+cases = [-100,50,0,100];
+speeds = ["-5","-2","0","2","5"];
 figure('Position',[300 300 1300 680])
 tiledlayout(numel(speeds),numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/data_gridRefinedRiseD02ISSM ShiftThin0SpeedUp0.mat";
+baseFile = "data/data_MachinegridRefinedRiseF02ISSM ShiftThin0SpeedUp0.mat";
 data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
@@ -43,6 +44,46 @@ for i = 1:numel(speeds)
         end
     end
 end
+
+if(saveFigs)
+    fig = gcf;
+    savePng("figs/fig_" + groupName + fig.Number);
+%     saveVect("figs/fig_groupName" + fig.Number);
+end
+
+figure('Position',[300 300 1300 680])
+tiledlayout(numel(speeds),numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
+
+for i = 1:numel(speeds)
+    for j = 1:numel(cases)
+
+        if(isfile(strrep(strrep(baseFile,"Up0","Up" + speeds(i)),"Thin0","Thin" + cases(j))))
+            data1 = load(strrep(strrep(baseFile,"Up0","Up" + speeds(i)),"Thin0","Thin" + cases(j)));    
+            ax1 = nexttile(j + (i-1)*numel(cases));  
+            plotSpeed(data1,0,ax1);
+            title("");
+            if(i ==1)
+                title("\Delta z = " + cases(j))
+            end
+            if(j == 1)
+                ylabel("Speed = " + speeds(i),'fontsize',18);
+            end
+            if(j == numel(cases))
+                c = colorbar;
+                c.Label.String = 'Speed [m/yr]';
+                c.FontSize = 18;
+            end
+            xlabel("Easting [m]",'fontsize',18);
+%             caxis([-100,100])
+            xlabel("");
+    %         ax3 = nexttile(j+8);
+    %         plotTau(data1,j,ax3);
+        else
+            warning("File not found: " + strrep(strrep(baseFile,"Up0","Up" + speeds(i)),"Thin0","Thin" + cases(j)));
+        end
+    end
+end
+
 if(saveFigs)
     fig = gcf;
     savePng("figs/fig_" + groupName + fig.Number);
@@ -52,7 +93,7 @@ end
 
 %% Plot speed
 ftsize = 20;
-load('grids/gridRefinedRiseD02.mat');
+load('grids/gridRefinedRiseF02.mat');
 dx = 1e3;
 figure('Position',[300 300 700 850])
 x = [-5e5:dx:-2e5];
@@ -62,7 +103,7 @@ sf_raw =  bedmachine_interp('surface',xx,yy);
 sf = imgaussfilt(sf_raw,5e3/dx);
 h  =  bedmachine_interp('thickness',xx,yy);
 spd        = measures_interp('speed',xx,yy);
-[sx ,  sy] = gradient(sf,dx,dx);
+% [sx ,  sy] = gradient(sf,dx,dx);
 
 % p = surf(xx,yy,zeros(size(h)),h./(sqrt(sx.^2+sy.^2)*200e3));
 p = surf(xx,yy,zeros(size(h)),spd);
