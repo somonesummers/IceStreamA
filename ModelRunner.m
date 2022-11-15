@@ -125,6 +125,8 @@ for t_i = 1:500
 %     
 %             u(ne_bound) == spd_BC_u_ne./3.154E7;
 %             v(ne_bound) == spd_BC_v_ne./3.154E7;
+%             u(se_bound) == spd_BC_u_se./3.154E7;
+%             v(se_bound) == spd_BC_v_se./3.154E7;
     % Options include     cvx_precision low, cvx_begin quiet
     % CVX may throw a warning about non-empty problems here, that is OK.
     cvx_begin quiet
@@ -133,12 +135,8 @@ for t_i = 1:500
               F*tau_c(xy(:,1),xy(:,2),u,v) + ...
               rho*g*sum(h_av.*((A*h_s).*(D*u) + (B*h_s).*(D*v)));
         subject to
-            u(se_bound) == spd_BC_u_se./3.154E7*speedUp;
-            v(se_bound) == spd_BC_v_se./3.154E7*speedUp;
-            u(ne_bound) == spd_BC_u_ne./3.154E7;
-            v(ne_bound) == spd_BC_v_ne./3.154E7;
-            u(nw_bound) == spd_BC_u_nw./3.154E7;
-            v(nw_bound) == spd_BC_v_nw./3.154E7;
+            u(ne_bound) == spd_BC_u_ne./3.154E7*speedUp;
+            v(ne_bound) == spd_BC_v_ne./3.154E7*speedUp;
             u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
             v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
             
