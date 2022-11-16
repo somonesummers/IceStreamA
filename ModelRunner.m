@@ -42,6 +42,9 @@ tau_c = defineTau(str);
 buildSystem();
 
 
+% Peclet number, constant throughout thermocouple loop  [ ]
+Pe =@(x,y) rho*C_p.*Acc(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y))./K;
+
 %% Thermomechanical coupling loop
 for t_i = 1:500  
     % Thermocouple fields to update everyloop
@@ -64,21 +67,11 @@ for t_i = 1:500
         end
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object
         
-%         if(true)
-            T_calc = T;
-%         else
-%             T_calc = T_bar(xy(:,1),xy(:,2));
-%         end
-%         lambda  = calcAdvection(T_calc,u,v,xy,dx,rho,C_p); 
-
         % Brinkman number [ ]
         Br =@(x,y) 2*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y))).*((subplus(ep_dot(x,y)).^(nn+1))/A_m).^(1/nn);
 
-        % Peclet number  [ ]
-        Pe =@(x,y) rho*C_p.*Acc(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y))./K;
-
         % Horizontal Peclet number  [ ]
-%         La =@(x,y) lambda(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y)));
+%       La =@(x,y) lambda(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y)));
         La =@(x,y) zeros(size(x)); %exclude advection
         
         % Critical Strain [s^-1]
