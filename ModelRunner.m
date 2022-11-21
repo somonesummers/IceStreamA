@@ -45,6 +45,10 @@ buildSystem();
 % Peclet number, constant throughout thermocouple loop  [ ]
 Pe =@(x,y) rho*C_p.*Acc(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y))./K;
 
+% factor by which height above floation as changes from 0 thinning
+N_ef = subplus((h_init(xy(:,1),xy(:,2))+rho_w/rho*h_b_init(xy(:,1),xy(:,2)))...
+    ./(h_init(xy(:,1),xy(:,2))-thin_m+rho_w/rho*h_b_init(xy(:,1),xy(:,2))));
+
 %% Thermomechanical coupling loop
 for t_i = 1:500  
     % Thermocouple fields to update everyloop
@@ -125,7 +129,7 @@ for t_i = 1:500
     cvx_begin quiet
         variables u(nN) v(nN)
         obj = 2.*a./p.*sum(enhance.*h_av.*tau_area.*pow_pos(norms([A*u,B*v,1/2*(B*u+A*v)],2,2),p)) + ...
-              F*tau_c(xy(:,1),xy(:,2),u,v) + ...
+              F*(N_ef.*tau_c(xy(:,1),xy(:,2),u,v)) + ...
               rho*g*sum(h_av.*((A*h_s).*(D*u) + (B*h_s).*(D*v)));
         subject to
             u(ne_bound) == spd_BC_u_ne./3.154E7*speedUp;
@@ -155,7 +159,7 @@ end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
 if(saveData && contains(cvx_status,"Solved"))
-    save("data/data_Machine" + mpClean + str +"Thin" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
+    save("data/data_N" + mpClean + str +"Thin" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
 else
     warning('Data not being saved');
     disp('Data not being saved');
@@ -249,6 +253,20 @@ if(ismac)
         view(2)
         axis equal
     end
+    
+    figure
+    trisurf(t,xy(:,1),xy(:,2),N_ef,...
+               'edgecolor','none')
+    title('Change in N')
+    xlabel('X')
+    ylabel('Y')
+    colorbar
+    colormap(cmocean('curl'))
+    mm = max(abs(1-N_ef))+eps;
+    caxis([1-mm 1+mm]);
+    view(2)
+    axis equal
+    
     
 %     figure
 %     alpha = atan(v./u);

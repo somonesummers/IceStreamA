@@ -1,5 +1,5 @@
 function [tau_c] = defineTau(str,x0)
-% [tau_c] = defineTau(str,h_s_init,h_b_init,phi_init,phi_max,phi_min,[x0])
+% [tau_c] = defineTau(str,[x0])
 % returns tau and string for requested string-name of tau scenario. 
     opt = false;
     if(nargin == 2)
@@ -10,14 +10,14 @@ function [tau_c] = defineTau(str,x0)
         scale = x0(1);
         floor = x0(2);
     else
-        scale = 1.2;
+        scale = 1.38;
         floor = 0e3;
     end
     xi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
     yi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
     tau  = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_ctrl.nc","strbasemag");
-    [xx,yy] = ndgrid(xi - 3072000,yi - 3072000);
-    uB = griddedInterpolant(xx,yy,tau(:,:,21));
+%     [xx,yy] = ndgrid(xi - 3072000,yi - 3072000);
+    uB = griddedInterpolant({xi - 3072000,yi - 3072000},tau(:,:,21));
     
     tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
         (subplus(uB(x,y)-floor)+floor)*scale;
@@ -41,8 +41,8 @@ function [tau_c] = defineTau(str,x0)
         stag = x0(1);
         moving = x0(2);
     else
-        stag = 1.7;%1.55
-        moving = 1.3;%.7
+        stag = 1.3;%1.55
+        moving = 1.0;%.7
     end
     load tauShiftable.mat;
     load gridSiple1000.mat;
