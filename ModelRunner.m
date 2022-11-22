@@ -55,16 +55,16 @@ for t_i = 1:500
     % Strain rate [s^-1]
         if t_i == 1
             % Real Strain initialization
-            [u,v] = measures_interp('velocity',xy(:,1),xy(:,2));
-            u = u/3.514e7;
-            v = v/3.514e7;
-            if(sum(isnan(u)) + sum(isnan(v)) > 0)
-                uFill = scatteredInterpolant(xy(~isnan(u),1),xy(~isnan(u),2),u(~isnan(u)));
-                vFill = scatteredInterpolant(xy(~isnan(v),1),xy(~isnan(v),2),v(~isnan(v)));
-                u(isnan(u)) = uFill(xy(isnan(u),1),xy(isnan(u),2));
-                v(isnan(v)) = vFill(xy(isnan(v),1),xy(isnan(v),2));
-                clear uFill vFill
-            end
+%             [u,v] = measures_interp('velocity',xy(:,1),xy(:,2));
+%             u = u/3.514e7;
+%             v = v/3.514e7;
+%             if(sum(isnan(u)) + sum(isnan(v)) > 0)
+%                 uFill = scatteredInterpolant(xy(~isnan(u),1),xy(~isnan(u),2),u(~isnan(u)));
+%                 vFill = scatteredInterpolant(xy(~isnan(v),1),xy(~isnan(v),2),v(~isnan(v)));
+%                 u(isnan(u)) = uFill(xy(isnan(u),1),xy(isnan(u),2));
+%                 v(isnan(v)) = vFill(xy(isnan(v),1),xy(isnan(v),2));
+%                 clear uFill vFill
+%             end
             % Zero Strain initialization
             u = zeros(size(xy(:,1)));
             v = zeros(size(xy(:,1)));
@@ -132,6 +132,8 @@ for t_i = 1:500
               F*(N_ef.*tau_c(xy(:,1),xy(:,2),u,v)) + ...
               rho*g*sum(h_av.*((A*h_s).*(D*u) + (B*h_s).*(D*v)));
         subject to
+            u(ne_bound) == spd_BC_u_ne./3.154E7;
+            v(ne_bound) == spd_BC_v_ne./3.154E7;
             u(ne_bound) == spd_BC_u_ne./3.154E7*speedUp;
             v(ne_bound) == spd_BC_v_ne./3.154E7*speedUp;
             u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
@@ -257,7 +259,7 @@ if(ismac)
     figure
     trisurf(t,xy(:,1),xy(:,2),N_ef,...
                'edgecolor','none')
-    title('Change in N')
+    title('Fraction of current N')
     xlabel('X')
     ylabel('Y')
     colorbar
