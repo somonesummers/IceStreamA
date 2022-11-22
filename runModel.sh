@@ -6,7 +6,7 @@
 #SBATCH --partition=serc
 #SBATCH --time=52:00:00
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=8G
+#SBATCH --mem=30G
 #SBATCH --mail-type=ALL
 module load matlab
 matlab -nodisplay < MainHelper.m
