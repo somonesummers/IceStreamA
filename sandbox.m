@@ -18,6 +18,20 @@ spd = measures_interp('speed',Xi,Yi);
 
 % pv = makePerimeter(pv, 10e3);
 
+x   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
+y   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
+tau  = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_ctrl.nc","strbasemag");
+[xx,yy] = ndgrid(x - 3072000,y - 3072000);
+tic
+uA = griddedInterpolant(xx,yy,tau(:,:,21));
+a = uA(0,0);
+toc
+tic
+uB = griddedInterpolant({x - 3072000,y - 3072000},tau(:,:,21));
+b = uB({0,0});
+toc
+
+
 %%
 figure(1)
 clf

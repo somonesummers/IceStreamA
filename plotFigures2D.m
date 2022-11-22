@@ -6,12 +6,12 @@ addpath('data');
 
 %% Cases of thickness
 groupName = 'GridD';
-cases = [-100,50,0,100];
-speeds = ["-5","-2","0","2","5"];
+cases = [0,-10,-20,-30];
+speeds = ["0"];
 figure('Position',[300 300 1300 680])
 tiledlayout(numel(speeds),numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/data_MachinegridRefinedRiseF02ISSM ShiftThin0SpeedUp0.mat";
+baseFile = "data/data_NgridFlowRiseB035ISSMThin0SpeedUp0.mat";
 data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
@@ -27,7 +27,7 @@ for i = 1:numel(speeds)
                 title("\Delta z = " + cases(j))
             end
             if(j == 1)
-                ylabel("Speed = " + speeds(i),'fontsize',18);
+                ylabel("Speed = " + (10+str2num(speeds(i)))*10 + "%",'fontsize',18);
             end
             if(j == numel(cases))
                 c = colorbar;
@@ -66,7 +66,7 @@ for i = 1:numel(speeds)
                 title("\Delta z = " + cases(j))
             end
             if(j == 1)
-                ylabel("Speed = " + speeds(i),'fontsize',18);
+                 ylabel("Speed = " + (10-str2num(speeds(i)))*10 + "%",'fontsize',18);
             end
             if(j == numel(cases))
                 c = colorbar;
@@ -93,11 +93,11 @@ end
 
 %% Plot speed
 ftsize = 20;
-load('grids/gridRefinedRiseF02.mat');
+load(baseFile);
 dx = 1e3;
 figure('Position',[300 300 700 850])
-x = [-5e5:dx:-2e5];
-y = [-6e5:dx: -3e5];
+x = [-7e5:dx:-2e5];
+y = [-10e5:dx: -3e5];
 [xx,yy] = meshgrid(x,y);
 sf_raw =  bedmachine_interp('surface',xx,yy);
 sf = imgaussfilt(sf_raw,5e3/dx);
@@ -135,20 +135,69 @@ f.XAxis.FontSize = ftsize-2;
 f.YAxis.FontSize = ftsize-2;
 view(2)
 axis equal
-xlim([-5e5, -2e5])
-ylim([-6e5, -3e5])
+xlim([min(x), max(x)])
+ylim([min(y), max(y)])
 if(saveFigs)
     fig = gcf;
     savePng("figs/fig_" + groupName + fig.Number);
 %     saveVect("figs/fig_" + fig.Number);
 end
 
+%% Plot Height Above Floatation
+ftsize = 20;
+load(baseFile);
+dx = 1e3;
+figure('Position',[300 300 700 850])
+x = [-7e5:dx:-2e5];
+y = [-10e5:dx: -3e5];
+[xx,yy] = meshgrid(x,y);
+bd_raw =  bedmachine_interp('bed',xx,yy);
+h  =  bedmachine_interp('thickness',xx,yy);
+spd        = measures_interp('speed',xx,yy);
+% [sx ,  sy] = gradient(sf,dx,dx);
+
+% p = surf(xx,yy,zeros(size(h)),h./(sqrt(sx.^2+sy.^2)*200e3));
+p = surf(xx,yy,zeros(size(h)),h+1000/917*bd_raw);
+hold on
+plot(pv(:,1),pv(:,2),'k-','LineWidth', 4)
+contour(x,y,spd, [10, 10] , 'k:','HandleVisibility','off')
+contour(x,y,spd, [30, 30] , 'k--','HandleVisibility','off')
+contour(x,y,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
+contour(x,y,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
+[C,hh] = contour(x,y,h+1000/917*bd_raw,[0:50:300], 'r-','HandleVisibility','off');  
+clabel(C,hh)
+f = gca;
+view(2)
+colorbar
+set(p, 'edgecolor', 'none');
+caxis([-10,500])
+axis equal
+ylabel('Northing [m]')
+xlabel('Easting [m]')
+c = colorbar;
+c.Label.String = 'Height Above Floatation';
+c.FontSize = ftsize;   
+view(2)
+f = gca;
+f.XAxis.FontSize = ftsize-2;
+f.YAxis.FontSize = ftsize-2;
+view(2)
+axis equal
+xlim([min(x), max(x)])
+ylim([min(y), max(y)])
+if(saveFigs)
+    fig = gcf;
+    savePng("figs/fig_" + groupName + fig.Number);
+%     saveVect("figs/fig_" + fig.Number);
+end
+
+
 %% Plot Chi
 ftsize = 20;
 dx = 1e3;
 figure('Position',[300 300 700 850])
-x = [-5e5:dx:-2e5];
-y = [-6e5:dx: -3e5];
+x = [-7e5:dx:-2e5];
+y = [-10e5:dx: -3e5];
 [xx,yy] = meshgrid(x,y);
 sf_raw =  bedmachine_interp('surface',xx,yy);
 sf = imgaussfilt(sf_raw,5e3/dx);
@@ -158,7 +207,7 @@ spd        = measures_interp('speed',xx,yy);
 
 p = surf(xx,yy,zeros(size(h)),h./(sqrt(sx.^2+sy.^2)*200e3));
 hold on
-plot(pv(:,1),pv(:,2),'k-','LineWidth', 4)
+plot(pv(:,1),pv(:,2),'w-','LineWidth', 4)
 contour(x,y,spd, [10, 10] , 'k:','HandleVisibility','off')
 contour(x,y,spd, [30, 30] , 'k--','HandleVisibility','off')
 contour(x,y,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
@@ -185,8 +234,8 @@ f.XAxis.FontSize = ftsize-2;
 f.YAxis.FontSize = ftsize-2;
 view(2)
 axis equal
-xlim([-5e5, -2e5])
-ylim([-6e5, -3e5])
+xlim([min(xy(:,1)), max(xy(:,1))])
+ylim([min(xy(:,2)), max(xy(:,2))])
 if(saveFigs)
     fig = gcf;
     savePng("figs/fig_" + groupName + fig.Number);
@@ -251,8 +300,8 @@ function [] = plotDiff(data1, data2, n,ax)
     f.YAxis.FontSize = ftsize-2;
     view(2)
     axis equal
-    xlim([-4.5e5 -2.5e5])
-    ylim([-5.75e5 -3.5e5])
+    xlim([min(data1.xy(:,1)), max(data1.xy(:,1))])
+    ylim([min(data1.xy(:,2)), max(data1.xy(:,2))])
 end
 
 function [] = plotSpeed(data1,n,ax)
@@ -296,8 +345,8 @@ function [] = plotSpeed(data1,n,ax)
     c.FontSize = ftsize;
     view(2)
     axis equal
-    xlim([-4.5e5 -2.5e5])
-    ylim([-5.75e5 -3.5e5])
+    xlim([min(data1.xy(:,1)), max(data1.xy(:,1))])
+    ylim([min(data1.xy(:,2)), max(data1.xy(:,2))])
 end
 
 function [] = plotThinning(data1,data2,n,ax)
