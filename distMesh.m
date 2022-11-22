@@ -1,4 +1,5 @@
 clear
+close all
 if(~ismac)
     %Start-up business on sherlock is hard 
     addpath('lib') 
@@ -12,7 +13,7 @@ end
 % xbox = [-4.517 -3.260   -2.4500   -3.742   -4.517]*1e5;
 % ybox = [-4.000 -3.658   -5.0350   -5.600   -4.000]*1e5;
 % % All of Ridge
-xbox = [-4.9000  -3.6000   -2.6500   -4.0000   -4.9000]*1e5;
+xbox = [-6.0000  -3.6000   -2.6500   -4.0000   -6.0000]*1e5;
 ybox = [-4.1500  -3.9000   -5.3000   -5.6700   -4.1500]*1e5;
 
 dx = 2e3;
@@ -31,7 +32,7 @@ yi = ymin-dx*overgrab:dx/2:ymax+dx*overgrab;
 [ui,vi] = measures_interp('velocity',Xi,Yi);
 spd = measures_interp('speed',Xi,Yi);
 
-%%
+
 figure
 quiver(Xi,Yi,ui,vi)
 hold on
@@ -195,5 +196,5 @@ if(ismac)
 	colorbar   
 end
 
-save("grids/gridFlowRiseA" + strrep(string(edgeLength),"0.","") + ".mat");
+save("grids/gridFlowRiseB" + strrep(string(edgeLength),"0.","") + ".mat");
 disp("Successfully Saved")

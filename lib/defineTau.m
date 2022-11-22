@@ -10,7 +10,7 @@ function [tau_c] = defineTau(str,x0)
         scale = x0(1);
         floor = x0(2);
     else
-        scale = 1.38;
+        scale = 1.2;%1.38;
         floor = 0e3;
     end
     if(ismac)
@@ -47,7 +47,7 @@ function [tau_c] = defineTau(str,x0)
         stag = x0(1);
         moving = x0(2);
     else
-        stag = 1.3;%1.55
+        stag = 1.4;%1.55
         moving = 1.0;%.7
     end
     load tauShiftable.mat;
