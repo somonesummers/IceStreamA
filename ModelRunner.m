@@ -132,12 +132,12 @@ for t_i = 1:500
               F*(N_ef.*tau_c(xy(:,1),xy(:,2),u,v)) + ...
               rho*g*sum(h_av.*((A*h_s).*(D*u) + (B*h_s).*(D*v)));
         subject to
-            u(ne_bound) == spd_BC_u_ne./3.154E7;
-            v(ne_bound) == spd_BC_v_ne./3.154E7;
             u(ne_bound) == spd_BC_u_ne./3.154E7*speedUp;
             v(ne_bound) == spd_BC_v_ne./3.154E7*speedUp;
             u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
             v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
+            A(se_bound_c,:)*u == 0;
+            B(se_bound_c,:)*v == 0;
             
         minimize(obj)
     cvx_end

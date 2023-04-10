@@ -42,3 +42,9 @@ t_c = delaunay(xy_c(:,1),xy_c(:,2));
 %% Driving F estimate for plotting/reference
 df = sqrt((A*h_s_init(xy(:,1),xy(:,2))).^2 + ... 
     (B*h_s_init(xy(:,1),xy(:,2))).^2)*rho*g.*h_av;
+
+%% Define boundary points on center grid (SE only now)
+uTmp = ones(size(u));
+aTmp =  A(:,se_bound)*uTmp(se_bound);
+se_bound_c = (aTmp ~= 0);
+

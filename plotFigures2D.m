@@ -11,7 +11,7 @@ speeds = ["0"];
 figure('Position',[300 300 1300 680])
 tiledlayout(numel(speeds),numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/data_NgridFlowRiseB035ISSMThin0SpeedUp0.mat";
+baseFile = "data/data_NgridFlowRiseB035ISSM ShiftThin0SpeedUp0.mat";
 data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
