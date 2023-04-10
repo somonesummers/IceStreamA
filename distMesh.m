@@ -50,8 +50,9 @@ set(line1,'Color','red');
 set(line2,'Color','red');
 plot(h1{1,1}(1:100:2700,1),h1{1,1}(1:100:2700,2),'*-','color',rgb('Forest Green'))
 plot(h2{1,1}(1:100:1300,1),h2{1,1}(1:100:1300,2),'*-','color',rgb('Forest Green'))
-pv_new = [h1{1,1}(1:10:2700,1),h1{1,1}(1:10:2700,2);flipud(h2{1,1}(1:10:1300,1)),flipud(h2{1,1}(1:10:1300,2));h1{1,1}(1,1), h1{1,1}(1,2)];
-plot(pv_new(:,1),pv_new(:,2))
+pv_new = [(h1{1,1}(1:10:2700,1)-40e3),h1{1,1}(1:10:2700,2)-10e3;flipud(h2{1,1}(1:10:1300,1)+35e3),flipud(h2{1,1}(1:10:1300,2))+10e3];
+pv_new = [pv_new ; pv_new(1,:)];
+plot(pv_new(:,1),pv_new(:,2),'c-*')
 
 pv = pv_new;
 %%
@@ -140,6 +141,7 @@ fd=@(p) dpoly(p,pv/1e5);
 fh=@(p) ones(size(p,1),1) - fun(p(:,1),p(:,2))/6;
 
 edgeLength = .02;
+
 [xy,t]=distmesh2d(fd,fh,edgeLength,[xmin,ymin;xmax,ymax]/1e5,[]);
 disp("Successfully meshed at " + edgeLength);
 xy = xy*1e5;
@@ -149,8 +151,8 @@ figure
 clf
 scatter(xy(:,1),xy(:,2),'k.')
 hold on
-idxSw = knnsearch(xy,[h1{1,1}(1:10:2700,1),h1{1,1}(1:10:2700,2)]);
-idxNe = knnsearch(xy,[h2{1,1}(1:10:1300,1),h2{1,1}(1:10:1300,2)]);
+idxSw = knnsearch(xy,[h1{1,1}(1:10:2700,1)-40e3,h1{1,1}(1:10:2700,2)-10e3]);
+idxNe = knnsearch(xy,[h2{1,1}(1:10:1300,1)+35e3,h2{1,1}(1:10:1300,2)+10e3]);
 idxNw = knnsearch(xy,[linspace(pv(end-1,1),pv(end,1),100)',linspace(pv(end-1,2),pv(end,2),100)']);
 pvPick = 270;
 idxSe = knnsearch(xy,[linspace(pv(pvPick,1),pv(pvPick+1,1),100)',linspace(pv(pvPick,2),pv(pvPick+1,2),100)']);
@@ -163,6 +165,8 @@ sw_bound(idxSw) = 1;
 ne_bound(idxNe) = 1;
 nw_bound(idxNw) = 1;
 se_bound(idxSe) = 1;
+
+
 
 % se_bound2 = (ybox(4)-ybox(3))/(xbox(4)-xbox(3))*xy(:,1) - xy(:,2)  > (ybox(4)-ybox(3))/(xbox(4)-xbox(3))*xbox(3) - ybox(3)-dx/3;
 % ne_bound2 = (ybox(3)-ybox(2))/(xbox(3)-xbox(2))*xy(:,1) - xy(:,2)  < (ybox(3)-ybox(2))/(xbox(3)-xbox(2))*xbox(2) - ybox(2)+dx/3;
@@ -196,5 +200,5 @@ if(ismac)
 	colorbar   
 end
 
-save("grids/gridFlowRiseB" + strrep(string(edgeLength),"0.","") + ".mat");
-disp("Successfully Saved")
+% save("grids/gridFlowRiseC" + strrep(string(edgeLength),"0.","") + ".mat");
+% disp("Successfully Saved")
