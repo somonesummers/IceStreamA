@@ -74,7 +74,7 @@ h_real =@(x,y) interp2(xi,yi,bm_s-bm_b,x,y);
 rock_mask =@(x,y) interp2(xi,yi,rock,x,y,'nearest');
 h_b_init =@(x,y) interp2(xi,yi,smoothbed,x,y);
 % h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) + thin_m;
-h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) + thin_m.* dhdt_interp(x,y);
+h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) - thin_m.* dhdt_interp(x,y); % minus to go back in time
 phi_init =@(x,y) rho/rho_w*h_s_init(x,y) + (rho_w-rho)/rho_w*h_b_init(x,y); %hydropotential per unit water weight
 clear bm_b bm_s;
 h_init =@(x,y) subplus(h_s_init(x,y) - h_b_init(x,y)-1)+1; %h: smoothed ice thickness [m]
