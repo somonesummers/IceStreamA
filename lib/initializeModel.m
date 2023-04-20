@@ -66,9 +66,13 @@ smoothsurf(smoothbed > smoothsurf) = smoothbed(smoothbed > smoothsurf) + 1; %Pe 
 
 
 %% Build bed and surf, correct for thinning and floatation
-load ALT15_dhdt.mat
-
-dhdt_interp = griddedInterpolant(xvec,yvec,dhdt,'linear','nearest');
+% pwd
+% ls
+% addpath .
+load ATL15_dhdt.mat
+[xgrid,ygrid] = ndgrid(xvec,yvec);
+dhdt_interp = griddedInterpolant(xgrid,ygrid,dhdt,'linear','nearest');
+clear xvec yvec xgrid ygrid;
 
 h_real =@(x,y) interp2(xi,yi,bm_s-bm_b,x,y);
 rock_mask =@(x,y) interp2(xi,yi,rock,x,y,'nearest');
