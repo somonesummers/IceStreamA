@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#SBATCH --job-name=1Rise02D
+#SBATCH --job-name=1Rise02DhDt
 #SBATCH --output=matlab_Main.“%j”.out
 #SBATCH --error=matlab_Main.“%j”.err
 #SBATCH --partition=serc
