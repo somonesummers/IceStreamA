@@ -19,7 +19,7 @@ colorbar
 colormap redblue
 
 %% 
-load Golledge21_GRL_T2_thick_22mar23_v2_Paul.mat
+load Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat
 
 [Xi,Yi] = meshgrid(is2xvec,is2yvec);
 spd = measures_interp('speed',Xi,Yi);
@@ -28,7 +28,7 @@ spd = measures_interp('speed',Xi,Yi);
 figure(2)
 clf
 n = 6;
-dn = floor(linspace(1,240,n));
+dn = floor(linspace(1,numel(surf_interp(1,1,:)),n));
 tiledlayout(1,n+1,"TileSpacing","compact") 
 for i = 1:n
     nexttile(i)
@@ -60,7 +60,7 @@ end
 figure(3)
 clf
 n = 6;
-dn = floor(linspace(1,240,n));
+dn = floor(linspace(1,numel(surf_interp(1,1,:)),n));
 tiledlayout(1,n+1,"TileSpacing","compact") 
 for i = 1:n
     nexttile(i)
@@ -92,7 +92,7 @@ end
  figure(4)
 clf
 n = 6;
-dn = floor(linspace(1,240,n));
+dn = floor(linspace(1,numel(surf_interp(1,1,:)),n));
 tiledlayout(1,n+1,"TileSpacing","compact") 
 for i = 1:n
     nexttile(i)

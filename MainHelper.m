@@ -23,8 +23,8 @@ if(~ismac)
 end
 fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
-nameToRun = ["ISSM Shift"];
-mapsToRun = ["gridFlowRiseC035.mat"];
+nameToRun = ["ISSM"];
+mapsToRun = ["gridFlowRiseB035.mat"];
 thinToRun = [0];
 speedUpToRun = [1];
 for j = 1:length(speedUpToRun)

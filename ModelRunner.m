@@ -15,7 +15,7 @@
 %% Initialization
 % Scenario to run if running one at a time comment out below, run this file
 % directly
-saveData = true;
+saveData = false;
 % str = 'Mixed';
 % mapFile = 'gridInstitute5000.mat';
 
@@ -136,8 +136,8 @@ for t_i = 1:500
             v(ne_bound) == spd_BC_v_ne./3.154E7*speedUp;
             u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
             v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
-            A(se_bound_c,:)*u == 0;
-            B(se_bound_c,:)*v == 0;
+%             A(se_bound_c,:)*u == 0; %trying stress boundary 
+%             B(se_bound_c,:)*v == 0; %trying stress boundary 
             
         minimize(obj)
     cvx_end
