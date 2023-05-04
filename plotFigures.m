@@ -5,19 +5,19 @@ saveFigs = false;
 
 %% Cases of thickness
 groupName = 'GridD';
-cases = [-50,-20,0,20,50];
+cases = [0,10,20,30,40,50];
 figure('Position',[300 300 1300 680])
 tiledlayout(2,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/data_gridRefinedRiseF02ISSM ShiftThin0SpeedUp0.mat";
+baseFile = "data/data_NgridFlowRiseA02ISSMDhDt0yrsAgo.mat";
 data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
     
-    if(isfile(strrep(baseFile,"Thin0","Thin" + cases(j))))
-        data1 = load(strrep(baseFile,"Thin0","Thin" + cases(j)));    
+    if(isfile(strrep(baseFile,"Dt0","Dt" + cases(j))))
+        data1 = load(strrep(baseFile,"Dt0","Dt" + cases(j)));    
         ax1 = nexttile(j);  
         plotSpeed(data1,0,ax1);
         if(j == 1)
@@ -36,7 +36,7 @@ for j = 1:numel(cases)
             title(groupName)
         end
         ax2 = nexttile(j+numel(cases));
-        plotDiff(data1,data2,0,ax2);
+        plotHeightDiff(data1,data2,0,ax2);
         if(j == 1)
             ylabel("Northing [m]",'fontsize',18);
         end
@@ -51,7 +51,7 @@ for j = 1:numel(cases)
 %         ax3 = nexttile(j+8);
 %         plotTau(data1,j,ax3);
     else
-        warning("File not found: data/data_ThwaitesBasinGrid" + cases(j) + "0_Uniform_ConstantFlux.mat");
+        warning("File not found:" + cases(j));
     end
 end
 
@@ -64,7 +64,7 @@ end
 
 %% Plot speed
 ftsize = 20;
-load('grids/gridRefinedRiseD02.mat');
+load('grids/gridFlowRiseA02.mat');
 dx = 1e3;
 figure('Position',[300 300 700 850])
 x = [-5e5:dx:-2e5];
@@ -113,58 +113,6 @@ if(saveFigs)
     savePng("figs/fig_" + groupName + fig.Number);
 %     saveVect("figs/fig_" + fig.Number);
 end
-
-%% Plot Chi
-ftsize = 20;
-load('gridSipleXXSmall3000.mat');
-dx = 1e3;
-figure('Position',[300 300 700 850])
-x = [-5e5:dx:-2e5];
-y = [-6e5:dx: -3e5];
-[xx,yy] = meshgrid(x,y);
-sf_raw =  bedmachine_interp('surface',xx,yy);
-sf = imgaussfilt(sf_raw,5e3/dx);
-h  =  bedmachine_interp('thickness',xx,yy);
-spd        = measures_interp('speed',xx,yy);
-[sx ,  sy] = gradient(sf,dx,dx);
-
-p = surf(xx,yy,zeros(size(h)),h./(sqrt(sx.^2+sy.^2)*200e3));
-hold on
-plot(pv(:,1),pv(:,2),'k-','LineWidth', 4)
-contour(x,y,spd, [10, 10] , 'k:','HandleVisibility','off')
-contour(x,y,spd, [30, 30] , 'k--','HandleVisibility','off')
-contour(x,y,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
-contour(x,y,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
-[C,hh] = contour(x,y,h./(sqrt(sx.^2+sy.^2)*200e3),[.1,.3,1,3,10], 'r-','HandleVisibility','off');  
-clabel(C,hh)
-title('\xi factor')
-f = gca;
-% f.ColorScale = 'log';
-view(2)
-colorbar
-colormap(cmocean('curl'))
-set(p, 'edgecolor', 'none');
-caxis([0 2]) 
-axis equal
-ylabel('Northing [m]')
-xlabel('Easting [m]')
-c = colorbar;
-c.Label.String = '\xi [ ]';
-c.FontSize = ftsize;   
-view(2)
-f = gca;
-f.XAxis.FontSize = ftsize-2;
-f.YAxis.FontSize = ftsize-2;
-view(2)
-axis equal
-xlim([-5e5, -2e5])
-ylim([-6e5, -3e5])
-if(saveFigs)
-    fig = gcf;
-    savePng("figs/fig_" + groupName + fig.Number);
-%     saveVect("figs/fig_" + fig.Number);
-end
-
 
 %% Functions
 function [] = plotDiff(data1, data2, n,ax)
@@ -424,4 +372,63 @@ function [] = plotDiffStress(data1, data2, ax)
 %     xlim([-1.56e6 -1.38e6])
 %     ylim([-5.75e5 -3e5])
    
+end
+
+function [] = plotHeightDiff(data1, data2, n,ax)
+    ftsize = 20;
+    trisurf(data1.t,data1.xy(:,1),data1.xy(:,2),...
+            0*data1.h_s,data1.h_s - data2.h_s ...
+               ,'edgecolor','none','facecolor','interp');
+    hold on
+    if(max(sqrt(data1.u.^2 + data1.v.^2)*3.154E7) > 30)
+        [~, H1] = tricontour(data1.t,data1.xy(:,1),data1.xy(:,2),...
+            sqrt(data1.u.^2 + data1.v.^2)*3.154E7,[30 30]);
+        for j = 1:numel(H1)
+        H1(j).EdgeColor = rgb('black');
+        H1(j).LineStyle = '--';
+        H1(j).LineWidth = 3;
+        end
+    else
+        warning('Speed 1 seems wrong, no 30 m/a contour')
+    end
+
+    if(max(sqrt(data2.u.^2 + data2.v.^2)*3.154E7) > 30)
+        [~, H2] = tricontour(data2.t,data2.xy(:,1),data2.xy(:,2),...
+            sqrt(data2.u.^2 + data2.v.^2)*3.154E7,[30 30]);
+        for j = 1:numel(H2)
+        H2(j).EdgeColor = rgb('grey');
+        H2(j).LineStyle = '--';
+        H2(j).LineWidth = 3;
+        end
+    else
+        warning('Speed 2 seems wrong, no 30 m/a contour')
+    end
+    
+    
+    
+%     CT = flipud(cbrewer('div','RdBu',256));
+    CT = cmocean('balance');
+    colormap(ax, CT)
+%     colormap(ax, 'redblue')
+    if(n == 2 || n < 0)
+        ylabel('Northing [m]')
+    end
+    xlabel('Easting [m]')
+    if(n == 4 || n < 0)
+        c = colorbar;
+        c.Label.String = '\Delta H [m]';
+        c.FontSize = ftsize;
+    end
+%     title(data1.thin_m)
+    f = gca;
+%     caxis([-750 750]) %observed diffs red blue
+    caxis([-100 100]) %observed diffs red blue
+    view(2)
+    f = gca;
+    f.XAxis.FontSize = ftsize-2;
+    f.YAxis.FontSize = ftsize-2;
+    view(2)
+    axis equal
+    xlim([-4.5e5 -2.5e5])
+    ylim([-5.75e5 -3.5e5])
 end
