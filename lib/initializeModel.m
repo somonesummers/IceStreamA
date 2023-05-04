@@ -70,8 +70,8 @@ smoothsurf(smoothbed > smoothsurf) = smoothbed(smoothbed > smoothsurf) + 1; %Pe 
 % ls
 % addpath .
 load ATL15_dhdt.mat
-[xgrid,ygrid] = ndgrid(xvec,yvec);
-dhdt_interp = griddedInterpolant(xgrid,ygrid,dhdt,'linear','nearest');
+[xgrid,ygrid] = meshgrid(xvec,yvec);
+dhdt_interp = griddedInterpolant(xgrid',ygrid',dhdt','linear','nearest');
 clear xvec yvec xgrid ygrid;
 
 h_real =@(x,y) interp2(xi,yi,bm_s-bm_b,x,y);
