@@ -5,19 +5,19 @@ saveFigs = false;
 
 %% Cases of thickness
 groupName = 'GridD';
-cases = [0,10,20,30,40,50];
+cases = [61,60,59];
 figure('Position',[300 300 1300 680])
 tiledlayout(2,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/data_NgridFlowRiseA02ISSMDhDt0yrsAgo.mat";
+baseFile = "data/data_NgridFlowRiseA05ISSMGoll61case.mat";
 data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
     
-    if(isfile(strrep(baseFile,"Dt0","Dt" + cases(j))))
-        data1 = load(strrep(baseFile,"Dt0","Dt" + cases(j)));    
+    if(isfile(strrep(baseFile,"Goll61","Goll" + cases(j))))
+        data1 = load(strrep(baseFile,"Goll61","Goll" + cases(j)));    
         ax1 = nexttile(j);  
         plotSpeed(data1,0,ax1);
         if(j == 1)
@@ -36,7 +36,7 @@ for j = 1:numel(cases)
             title(groupName)
         end
         ax2 = nexttile(j+numel(cases));
-        plotHeightDiff(data1,data2,0,ax2);
+        plotDiff(data1,data2,0,ax2);
         if(j == 1)
             ylabel("Northing [m]",'fontsize',18);
         end
