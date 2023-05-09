@@ -97,8 +97,8 @@ h_bm_b =@(x,y) interp2(xi,yi,smooth_bm_bed,x,y);
 h_bm_s =@(x,y) interp2(xi,yi,smooth_bm_surf,x,y);
 h_b_init =@(x,y) interp2(xi,yi,smoothbed,x,y);
 % h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) + thin_m;
-% h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) - thin_m.* dhdt_interp(x,y); % minus to go back in time
-h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y); %Case where thin_m controls case of Golledge runs
+h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) - thin_m.* dhdt_interp(x,y); % minus to go back in time
+%h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y); %Case where thin_m controls case of Golledge runs
 phi_init =@(x,y) rho/rho_w*h_s_init(x,y) + (rho_w-rho)/rho_w*h_b_init(x,y); %hydropotential per unit water weight
 clear bm_b bm_s;
 h_init =@(x,y) subplus(h_s_init(x,y) - h_b_init(x,y)-1)+1; %h: smoothed ice thickness [m]
