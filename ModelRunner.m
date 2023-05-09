@@ -162,8 +162,8 @@ end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
 if(saveData && contains(cvx_status,"Solved"))
-    save("data/data_N" + mpClean + str + "DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
-%     save("data/data_N" + mpClean + str + "Goll" + thin_m + "case" + ".mat");
+%     save("data/data_N" + mpClean + str + "DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
+    save("data/data_N" + mpClean + str + "Goll" + thin_m + "case" + ".mat");
 %  save("data/data_N" + mpClean + str + "Uniform" + thin_m + "case" + ".mat");
 else
     warning('Data not being saved');
