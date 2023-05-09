@@ -52,13 +52,13 @@ yi = ymin-dx*overgrab:dx/2:ymax+dx*overgrab;
 bm_b =  bedmachine_interp('bed',Xi,Yi);
 bm_s =  bedmachine_interp('surface',Xi,Yi);
 
-Golledge runs
-load Golledge21_GRL_T2_thick_22mar23_v2_Paul.mat
-[xgrid,ygrid] = meshgrid(is2xvec,is2yvec);
-s_interp = griddedInterpolant(xgrid',ygrid',surf_interp(:,:,thin_m)','linear','nearest');
-b_interp = griddedInterpolant(xgrid',ygrid',bed_interp(:,:,thin_m)','linear','nearest');
-goll_b =  b_interp(Xi,Yi);
-goll_s =  s_interp(Xi,Yi);
+%Golledge runs
+% load Golledge21_GRL_T2_thick_22mar23_v2_Paul.mat
+% [xgrid,ygrid] = meshgrid(is2xvec,is2yvec);
+% s_interp = griddedInterpolant(xgrid',ygrid',surf_interp(:,:,thin_m)','linear','nearest');
+% b_interp = griddedInterpolant(xgrid',ygrid',bed_interp(:,:,thin_m)','linear','nearest');
+% goll_b =  b_interp(Xi,Yi);
+% goll_s =  s_interp(Xi,Yi);
 
 clear is2xvec is2yvec xgrid ygrid;
 
@@ -66,11 +66,11 @@ clear is2xvec is2yvec xgrid ygrid;
 % Numerator is the window we're smoothing over in [m], spacing of these grids
 % is actually dx/2 for bm_X grids hence the extra "*2".
 % 
-smoothbed = goll_b;%imgaussfilt(bm_b,2e3*2/dx);
-smoothsurf = imgaussfilt(goll_s,10e3/dx);
+% smoothbed = goll_b;%imgaussfilt(bm_b,2e3*2/dx);
+% smoothsurf = imgaussfilt(goll_s,10e3/dx);
 
-% smoothbed = bm_b;%imgaussfilt(bm_b,2e3*2/dx);
-% smoothsurf = imgaussfilt(bm_s,10e3/dx);
+smoothbed = bm_b;%imgaussfilt(bm_b,2e3*2/dx);
+smoothsurf = imgaussfilt(bm_s,10e3/dx);
 
 smooth_bm_bed = bm_b;%imgaussfilt(bm_b,2e3*2/dx);
 smooth_bm_surf = imgaussfilt(bm_s,10e3/dx);
@@ -86,10 +86,10 @@ smoothsurf(smoothbed > smoothsurf) = smoothbed(smoothbed > smoothsurf) + 1; %Pe 
 % pwd
 % ls
 % % addpath .
-% load ATL15_dhdt.mat
-% [xgrid,ygrid] = meshgrid(xvec,yvec);
-% dhdt_interp = griddedInterpolant(xgrid',ygrid',dhdt','linear','nearest');
-% clear xvec yvec xgrid ygrid;
+load ATL15_dhdt.mat
+[xgrid,ygrid] = meshgrid(xvec,yvec);
+dhdt_interp = griddedInterpolant(xgrid',ygrid',dhdt','linear','nearest');
+clear xvec yvec xgrid ygrid;
 
 h_real =@(x,y) interp2(xi,yi,bm_s-bm_b,x,y);
 rock_mask =@(x,y) interp2(xi,yi,rock,x,y,'nearest');

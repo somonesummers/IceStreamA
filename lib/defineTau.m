@@ -10,7 +10,7 @@ function [tau_c] = defineTau(str,x0)
         scale = x0(1);
         floor = x0(2);
     else
-        scale = 1.2;%1.38;
+        scale = 1.38;%1.38;
         floor = 0e3;
     end
     if(ismac)
