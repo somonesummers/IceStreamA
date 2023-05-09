@@ -49,25 +49,31 @@ yi = ymin-dx*overgrab:dx/2:ymax+dx*overgrab;
 % % bm_b =  bedmap2_interp(Xi,Yi,'bed');
 % % bm_s =  bedmap2_interp(Xi,Yi,'surface');
 
-% bm_b =  bedmachine_interp('bed',Xi,Yi);
-% bm_s =  bedmachine_interp('surface',Xi,Yi);
+bm_b =  bedmachine_interp('bed',Xi,Yi);
+bm_s =  bedmachine_interp('surface',Xi,Yi);
 
 % Golledge runs
-load Golledge21_GRL_T2_thick_22mar23_v2_Paul.mat
-[xgrid,ygrid] = meshgrid(is2xvec,is2yvec);
-s_interp = griddedInterpolant(xgrid',ygrid',surf_interp(:,:,thin_m)','linear','nearest');
-b_interp = griddedInterpolant(xgrid',ygrid',bed_interp(:,:,thin_m)','linear','nearest');
-bm_b =  b_interp(Xi,Yi);
-bm_s =  s_interp(Xi,Yi);
+% load Golledge21_GRL_T2_thick_22mar23_v2_Paul.mat
+% [xgrid,ygrid] = meshgrid(is2xvec,is2yvec);
+% s_interp = griddedInterpolant(xgrid',ygrid',surf_interp(:,:,thin_m)','linear','nearest');
+% b_interp = griddedInterpolant(xgrid',ygrid',bed_interp(:,:,thin_m)','linear','nearest');
+% goll_b =  b_interp(Xi,Yi);
+% goll_s =  s_interp(Xi,Yi);
 
 clear is2xvec is2yvec xgrid ygrid;
 
 % Smoothing
 % Numerator is the window we're smoothing over in [m], spacing of these grids
 % is actually dx/2 for bm_X grids hence the extra "*2".
+% 
+% smoothbed = goll_b;%imgaussfilt(bm_b,2e3*2/dx);
+% smoothsurf = imgaussfilt(goll_s,10e3/dx);
 
 smoothbed = bm_b;%imgaussfilt(bm_b,2e3*2/dx);
 smoothsurf = imgaussfilt(bm_s,10e3/dx);
+
+smooth_bm_bed = bm_b;%imgaussfilt(bm_b,2e3*2/dx);
+smooth_bm_surf = imgaussfilt(bm_s,10e3/dx);
 
 % smoothbed = sgolayfilt(bm_b,2,2*floor(10e3/dx)+1);
 % smoothsurf = sgolayfilt(bm_s,2,2*floor(10e3/dx)+1);
@@ -80,20 +86,23 @@ smoothsurf(smoothbed > smoothsurf) = smoothbed(smoothbed > smoothsurf) + 1; %Pe 
 % pwd
 % ls
 % % addpath .
-% load ATL15_dhdt.mat
-% [xgrid,ygrid] = meshgrid(xvec,yvec);
-% dhdt_interp = griddedInterpolant(xgrid',ygrid',dhdt','linear','nearest');
-% clear xvec yvec xgrid ygrid;
+load ATL15_dhdt.mat
+[xgrid,ygrid] = meshgrid(xvec,yvec);
+dhdt_interp = griddedInterpolant(xgrid',ygrid',dhdt','linear','nearest');
+clear xvec yvec xgrid ygrid;
 
 h_real =@(x,y) interp2(xi,yi,bm_s-bm_b,x,y);
 rock_mask =@(x,y) interp2(xi,yi,rock,x,y,'nearest');
+h_bm_b =@(x,y) interp2(xi,yi,smooth_bm_bed,x,y);
+h_bm_s =@(x,y) interp2(xi,yi,smooth_bm_surf,x,y);
 h_b_init =@(x,y) interp2(xi,yi,smoothbed,x,y);
 % h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) + thin_m;
-% h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) - thin_m.* dhdt_interp(x,y); % minus to go back in time
-h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y); %Case where thin_m controls case of Golledge runs
+h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) - thin_m.* dhdt_interp(x,y); % minus to go back in time
+% h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y); %Case where thin_m controls case of Golledge runs
 phi_init =@(x,y) rho/rho_w*h_s_init(x,y) + (rho_w-rho)/rho_w*h_b_init(x,y); %hydropotential per unit water weight
 clear bm_b bm_s;
 h_init =@(x,y) subplus(h_s_init(x,y) - h_b_init(x,y)-1)+1; %h: smoothed ice thickness [m]
+h_bm =@(x,y) subplus(h_bm_s(x,y) - h_bm_b(x,y)-1)+1;
 h = h_init(xy(:,1),xy(:,2));
 
 %% Define a few globals vars
