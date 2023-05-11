@@ -47,8 +47,8 @@ Pe =@(x,y) rho*C_p.*Acc(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y))./K;
 
 % factor by which height above floation as changes from 0 thinning
 % (10.1098/rspa.2011.0422 for height above floatation check)
-N_ef = (h_bm(xy(:,1),xy(:,2))+rho_w/rho*h_bm_b(xy(:,1),xy(:,2)))...
-    ./(h_init(xy(:,1),xy(:,2))+rho_w/rho*h_b_init(xy(:,1),xy(:,2)));
+N_ef = (h_init(xy(:,1),xy(:,2))+rho_w/rho*h_b_init(xy(:,1),xy(:,2)))...
+    ./(h_bm(xy(:,1),xy(:,2))+rho_w/rho*h_bm_b(xy(:,1),xy(:,2)));
 
 %% Thermomechanical coupling loop
 for t_i = 1:500  
@@ -162,8 +162,8 @@ end
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
 if(saveData && contains(cvx_status,"Solved"))
-    save("data/data_N" + mpClean + str + "DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
-%     save("data/data_N" + mpClean + str + "Goll" + thin_m + "case" + ".mat");
+%     save("data/data_N" + mpClean + str + "DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
+    save("data/data_N" + mpClean + str + "Goll" + thin_m + "case" + ".mat");
 %  save("data/data_N" + mpClean + str + "Uniform" + thin_m + "case" + ".mat");
 else
     warning('Data not being saved');
