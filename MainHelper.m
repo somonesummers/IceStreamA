@@ -37,4 +37,5 @@ for j = 1:length(speedUpToRun)
         ModelRunner;
     end
 end
-disp('exit from MainHelper');
+disp('exit from MainHelper successfully');
+fprintf(fID,'exit from MainHelper successfully');
