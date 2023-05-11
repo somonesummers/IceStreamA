@@ -1,6 +1,8 @@
 clear
-load ATL15_dhdt.mat
+rho_w = 1000;
+rho   = 917;
 
+load ATL15_dhdt.mat
 [Xi,Yi] = meshgrid(xvec,yvec);
 spd = measures_interp('speed',Xi,Yi);
 
@@ -127,43 +129,44 @@ clf
 tiledlayout(2,2,"TileSpacing","compact") 
 
 nexttile(1)
-delta_bed = (bed_interp(:,:,end)-bed_interp(:,:,1));
-surf(is2xvec,is2yvec,zeros(size(delta_bed)),delta_bed,'edgecolor', 'none')
+HAF_end = (surf_interp(:,:,end) - bed_interp(:,:,end)) +  rho_w/rho*bed_interp(:,:,end);
+surf(is2xvec,is2yvec,zeros(size(HAF_end)),HAF_end,'edgecolor', 'none')
 hold on 
 contour(is2xvec,is2yvec,spd, [10, 10] , 'k:','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [30, 30] , 'k--','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
-title("Change in bed height")
+title("HAF at end")
 view(2)
-% caxis([-1.5,1.5])
+caxis([0 500])
 colorbar
-colormap redblue
+colormap parula
 
 nexttile(2)
-delta_surf = surf_interp(:,:,end)-surf_interp(:,:,1);
-surf(is2xvec,is2yvec,zeros(size(delta_surf)),delta_surf,'edgecolor', 'none')
+HAF_1 = (surf_interp(:,:,1) - bed_interp(:,:,1)) +  rho_w/rho*bed_interp(:,:,1);
+surf(is2xvec,is2yvec,zeros(size(delta_surf)),HAF_1,'edgecolor', 'none')
 hold on 
 contour(is2xvec,is2yvec,spd, [10, 10] , 'k:','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [30, 30] , 'k--','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
-title("Change in surface height")
+title("HAF at start")
 view(2)
-% caxis([-1.5,1.5])
+caxis([0 500])
 colorbar
-colormap redblue
+colormap parula
 
 nexttile(3)
-BM_delta = thick(:,:,end)-bedmachine_interp('surface',is2xvec,is2xvec);
-surf(is2xvec,is2yvec,zeros(size(BM_delta)),BM_delta,'edgecolor', 'none')
+[Xi,Yi] = ndgrid(is2xvec,is2yvec);
+HAF_bm = (bedmachine_interp('thickness',Xi,Yi)) +  rho_w/rho*bedmachine_interp('bed',Xi,Yi);
+surf(is2xvec,is2yvec,zeros(size(delta_surf)),HAF_bm,'edgecolor', 'none')
 hold on 
 contour(is2xvec,is2yvec,spd, [10, 10] , 'k:','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [30, 30] , 'k--','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
-title("Change in surface height end compared to today")
+title("HAF bedmachine")
 view(2)
-% caxis([-1.5,1.5])
+caxis([0 500])
 colorbar
-colormap redblue
+colormap parula
