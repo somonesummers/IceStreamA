@@ -52,6 +52,6 @@ function [] = plotDiffHeight(data1, data2, n,ax)
     f.YAxis.FontSize = ftsize-2;
     view(2)
     axis equal
-    xlim([-4.5e5 -2.5e5])
-    ylim([-5.75e5 -3.5e5])
+%     xlim([-4.5e5 -2.5e5])
+%     ylim([-5.75e5 -3.5e5])
 end

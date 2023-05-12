@@ -5,46 +5,55 @@ addpath lib/
 saveFigs = false;
 
 %% Cases of thickness
-groupName = 'GridD';
-cases = [-30,0,20,50];
+groupName = 'Goll';
+cases = [10,20,30,40];
 figure('Position',[300 300 1300 680])
 tiledlayout(3,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/data_NgridFlowRiseA02ISSMDhDt0SpeedUp0.mat";
+% baseFile = "data/data_NgridFlowRiseA02ISSMDhDt0case.mat";
+% baseFile = "data/data_NgridFlowRiseA05ISSMGoll61case.mat";
+
 % Below utilizes sshfs to directly use files on server. It is slow, but
 % allows me to not use up space on the laptop hardrive.
 % baseFile = "~/sherlock_home/IceStreamA/data/data_NgridFlowRiseA02ISSMDhDt0Tau1_30.mat";
+
+% Below is from external harddrive, faster, also not this HD
+% baseFile = '/Volumes/Extreme SSD/IceStreamAData/data_NgridFlowRiseA02ISSMDhDt0case.mat';
+baseFile = '/Volumes/Extreme SSD/IceStreamAData/data_NgridFlowRiseA02ISSMGoll10case.mat';
+
 data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
     
-    if(isfile(strrep(baseFile,"Dt0","Dt" + cases(j))))
-        data1 = load(strrep(baseFile,"Dt0","Dt" + cases(j)));    
+    if(isfile(strrep(baseFile,"ll10","ll" + cases(j))))
+        data1 = load(strrep(baseFile,"ll0","ll" + cases(j)));    
         ax1 = nexttile(j);  
-%         plotSpeed(data1,0,ax1);
-        plotNef(data1,0,ax1);
+        plotSpeed(data1,0,ax1);
+%         plotNef(data1,0,ax1);
         if(j == 1)
             ylabel("Northing [m]",'fontsize',18);
         end
         if(j == numel(cases))
           	c = colorbar;
+            c.Label.String = 'Speed [m/yr]';
+            c.FontSize = 18;
         end
         xlabel("");
-        title("Case " + cases(j))
+        title(cases(j) + " years ago")
         if(j == 3)
-            title(groupName)
+%             title(groupName)
         end
         ax2 = nexttile(j+numel(cases));
-%         plotDiffSpeed(data1,data2,0,ax2);
-        plotTau(data1,0,ax2);
+        plotDiffSpeed(data1,data2,0,ax2);
+%         plotTau(data1,0,ax2);
         if(j == 1)
             ylabel("Northing [m]",'fontsize',18);
         end
         if(j == numel(cases))
           	c = colorbar;
-%             c.Label.String = 'Speed Diff [m/yr]';
+            c.Label.String = 'Speed Diff [m/yr]';
             c.FontSize = 18;
         end
         xlabel("Easting [m]",'fontsize',18);
@@ -60,7 +69,7 @@ for j = 1:numel(cases)
         end
         if(j == numel(cases))
           	c = colorbar;
-            c.Label.String = 'Height Diff [m/yr]';
+            c.Label.String = 'Height Diff [m]';
 %             c.Label.String = 'Strength [kPa]';
             c.FontSize = 18;
         end
