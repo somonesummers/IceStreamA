@@ -54,14 +54,14 @@ bm_s =  bedmachine_interp('surface',Xi,Yi);
 
 if(runType == 3)
     %Golledge runs
-    load Golledge21_GRL_T2_thick_22mar23_v2_Paul.mat
-    [xgrid,ygrid] = meshgrid(is2xvec,is2yvec);
-    s_interp = griddedInterpolant(xgrid',ygrid',surf_interp(:,:,thin_m)','linear','nearest');
-    b_interp = griddedInterpolant(xgrid',ygrid',bed_interp(:,:,thin_m)','linear','nearest');
+    goData = load('Golledge21_GRL_T2_thick_22mar23_v2_Paul.mat');
+    [xgrid,ygrid] = meshgrid(goData.is2xvec,goData.is2yvec);
+    s_interp = griddedInterpolant(xgrid',ygrid',goData.surf_interp(:,:,thin_m)','linear','nearest');
+    b_interp = griddedInterpolant(xgrid',ygrid',goData.bed_interp(:,:,thin_m)','linear','nearest');
     goll_b =  b_interp(Xi,Yi);
     goll_s =  s_interp(Xi,Yi);
 
-    clear is2xvec is2yvec xgrid ygrid;
+    clear goData;
 
     smoothbed = goll_b;%imgaussfilt(bm_b,2e3*2/dx);
     smoothsurf = imgaussfilt(goll_s,10e3/dx);
