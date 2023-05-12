@@ -54,17 +54,32 @@ bm_s =  bedmachine_interp('surface',Xi,Yi);
 
 if(runType == 3)
     %Golledge runs
-    goData = load('Golledge21_GRL_T2_thick_22mar23_v2_Paul.mat');
-    [xgrid,ygrid] = meshgrid(goData.is2xvec,goData.is2yvec);
-    s_interp = griddedInterpolant(xgrid',ygrid',goData.surf_interp(:,:,thin_m)','linear','nearest');
-    b_interp = griddedInterpolant(xgrid',ygrid',goData.bed_interp(:,:,thin_m)','linear','nearest');
+    goData = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat');
+    [xgrid,ygrid] = ndgrid(goData.is2xvec,goData.is2yvec);
+    disp("case of goll " + thin_m);
+    s_interp = griddedInterpolant(xgrid,ygrid,goData.surf_interp(:,:,thin_m)','linear','nearest');
+    b_interp = griddedInterpolant(xgrid,ygrid,goData.bed_interp(:,:,thin_m)','linear','nearest');
     goll_b =  b_interp(Xi,Yi);
     goll_s =  s_interp(Xi,Yi);
-
+    
+    
+%     subplot(311) %useful for troubleshooting this section of code
+%     surf(Xi,Yi,goll_s-goll_b,'edgecolor','none')
+%     view(2)
+%     colorbar
+%     subplot(312)
+%     surf(goData.is2xvec,goData.is2yvec,goData.surf_interp(:,:,thin_m)-goData.bed_interp(:,:,thin_m),'edgecolor','none')
+%     view(2)
+%     colorbar
+%     subplot(313)
+%     surf(Xi,Yi,bm_s-bm_b,'edgecolor','none')
+%     view(2)
+%     colorbar
+    
     clear goData;
 
     smoothbed = goll_b;%imgaussfilt(bm_b,2e3*2/dx);
-    smoothsurf = imgaussfilt(goll_s,10e3/dx);
+    smoothsurf = goll_s;%imgaussfilt(goll_s,10e3/dx);
 else
     smoothbed = bm_b;%imgaussfilt(bm_b,2e3*2/dx);
     smoothsurf = imgaussfilt(bm_s,10e3/dx);
@@ -80,10 +95,6 @@ smooth_bm_surf = imgaussfilt(bm_s,10e3/dx);
 
 % smoothbed = sgolayfilt(bm_b,2,2*floor(10e3/dx)+1);
 % smoothsurf = sgolayfilt(bm_s,2,2*floor(10e3/dx)+1);
-
-% rectify rock above ice issue, force that ice is non-zero thickness everywhere
-smoothsurf(smoothbed > smoothsurf) = smoothbed(smoothbed > smoothsurf) + 1; %Pe and Br = 0 result in NaNs
-
 
 %% Build bed and surf, correct for thinning and floatation
 if(runType == 2)
@@ -111,10 +122,10 @@ end
 
 phi_init =@(x,y) rho/rho_w*h_s_init(x,y) + (rho_w-rho)/rho_w*h_b_init(x,y); %hydropotential per unit water weight
 clear bm_b bm_s;
-h_init =@(x,y) subplus(h_s_init(x,y) - h_b_init(x,y)-1)+1; %h: smoothed ice thickness [m]
+h_init =@(x,y) subplus(h_s_init(x,y) - h_b_init(x,y)-1)+1; %h: set min thickness to 1 [m]
 h_bm =@(x,y) subplus(h_bm_s(x,y) - h_bm_b(x,y)-1)+1;
 h = h_init(xy(:,1),xy(:,2));
-
+disp("Mean thickness is: " + mean(h));
 %% Define a few globals vars
 phi_max = max(max(phi_init(xy(:,1),xy(:,2))));
 phi_min = min(min(phi_init(xy(:,1),xy(:,2))));
@@ -128,3 +139,11 @@ rockSedMask = griddedInterpolant(Xi',Yi',rockSed','nearest');
 %% Create vectors of bed/surface for numerical solving
 h_s = h_s_init(xy(:,1),xy(:,2));
 h_b = h_b_init(xy(:,1),xy(:,2));
+
+disp("Mean surface is: " + mean(h_s));
+% 
+% figure
+% trisurf(t,xy(:,1),xy(:,2),h_s,'edgecolor','none')
+% title(thin_m)
+% view(2)
+% colorbar
