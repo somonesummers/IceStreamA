@@ -144,7 +144,7 @@ colormap parula
 
 nexttile(2)
 HAF_1 = (surf_interp(:,:,1) - bed_interp(:,:,1)) +  rho_w/rho*bed_interp(:,:,1);
-surf(is2xvec,is2yvec,zeros(size(delta_surf)),HAF_1,'edgecolor', 'none')
+surf(is2xvec,is2yvec,zeros(size(HAF_1)),HAF_1,'edgecolor', 'none')
 hold on 
 contour(is2xvec,is2yvec,spd, [10, 10] , 'k:','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [30, 30] , 'k--','HandleVisibility','off')
@@ -159,7 +159,7 @@ colormap parula
 nexttile(3)
 [Xi,Yi] = ndgrid(is2xvec,is2yvec);
 HAF_bm = (bedmachine_interp('thickness',Xi,Yi)) +  rho_w/rho*bedmachine_interp('bed',Xi,Yi);
-surf(is2xvec,is2yvec,zeros(size(delta_surf)),HAF_bm,'edgecolor', 'none')
+surf(is2xvec,is2yvec,zeros(size(HAF_bm)),HAF_bm,'edgecolor', 'none')
 hold on 
 contour(is2xvec,is2yvec,spd, [10, 10] , 'k:','HandleVisibility','off')
 contour(is2xvec,is2yvec,spd, [30, 30] , 'k--','HandleVisibility','off')
