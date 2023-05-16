@@ -59,23 +59,29 @@ if(runType == 3)
     disp("case of goll " + thin_m);
     s_interp = griddedInterpolant(xgrid',ygrid',goData.surf_interp(:,:,thin_m)','linear','nearest');
     b_interp = griddedInterpolant(xgrid',ygrid',goData.bed_interp(:,:,thin_m)','linear','nearest');
+    warning('off','MATLAB:griddedInterpolant:MeshgridEval2DWarnId')
     goll_b =  b_interp(Xi,Yi);
     goll_s =  s_interp(Xi,Yi);
+    warning('on','MATLAB:griddedInterpolant:MeshgridEval2DWarnId')
     
-    
-%     subplot(311) %useful for troubleshooting this section of code
-%     surf(Xi,Yi,goll_s-goll_b,'edgecolor','none')
-%     view(2)
-%     colorbar
-%     subplot(312)
-%     surf(goData.is2xvec,goData.is2yvec,goData.surf_interp(:,:,thin_m)-goData.bed_interp(:,:,thin_m),'edgecolor','none')
-%     view(2)
-%     colorbar
-%     subplot(313)
-%     surf(Xi,Yi,bm_s-bm_b,'edgecolor','none')
-%     view(2)
-%     colorbar
-    
+    if(ismac)
+        figure
+        subplot(311) %useful for troubleshooting this section of code
+        surf(Xi,Yi,goll_s-goll_b,'edgecolor','none')
+        view(2)
+        title('Goll thickness in frame')
+        colorbar
+        subplot(312)
+        surf(goData.is2xvec,goData.is2yvec,goData.surf_interp(:,:,thin_m)-goData.bed_interp(:,:,thin_m),'edgecolor','none')
+        view(2)
+        title('Goll thickness entire dataset')
+        colorbar
+        subplot(313)
+        surf(Xi,Yi,bm_s-bm_b,'edgecolor','none')
+        view(2)
+        title('Bedmachine in frame')
+        colorbar
+    end
     clear goData;
 
     smoothbed = goll_b;%imgaussfilt(bm_b,2e3*2/dx);
@@ -125,7 +131,7 @@ clear bm_b bm_s;
 h_init =@(x,y) subplus(h_s_init(x,y) - h_b_init(x,y)-1)+1; %h: set min thickness to 1 [m]
 h_bm =@(x,y) subplus(h_bm_s(x,y) - h_bm_b(x,y)-1)+1;
 h = h_init(xy(:,1),xy(:,2));
-disp("Mean thickness is: " + mean(h));
+% disp("Mean thickness is: " + mean(h));
 %% Define a few globals vars
 phi_max = max(max(phi_init(xy(:,1),xy(:,2))));
 phi_min = min(min(phi_init(xy(:,1),xy(:,2))));
@@ -140,7 +146,7 @@ rockSedMask = griddedInterpolant(Xi',Yi',rockSed','nearest');
 h_s = h_s_init(xy(:,1),xy(:,2));
 h_b = h_b_init(xy(:,1),xy(:,2));
 
-disp("Mean surface is: " + mean(h_s));
+% disp("Mean surface is: " + mean(h_s));
 % 
 % figure
 % trisurf(t,xy(:,1),xy(:,2),h_s,'edgecolor','none')

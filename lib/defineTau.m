@@ -13,6 +13,7 @@ function [tau_c] = defineTau(str,x0)
         scale = 1.38;%1.38;
         floor = 0e3;
     end
+    warning('off','MATLAB:imagesci:netcdf:fillValueTypeMismatch'); % try not to warn here
     if(ismac)
         xi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
         yi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
@@ -22,6 +23,7 @@ function [tau_c] = defineTau(str,x0)
         yi   = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
         tau  = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_ctrl.nc","strbasemag");
     end
+    warning('on','MATLAB:imagesci:netcdf:fillValueTypeMismatch'); % don't warn here
 %     [xx,yy] = ndgrid(xi - 3072000,yi - 3072000);
     uB = griddedInterpolant({xi - 3072000,yi - 3072000},tau(:,:,21));
     
