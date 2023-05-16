@@ -30,7 +30,7 @@ spd = measures_interp('speed',Xi,Yi);
 figure(2)
 clf
 n = 6;
-dn = floor(linspace(1,numel(surf_interp(1,1,:)),n));
+dn = floor(linspace(1,41,n));
 tiledlayout(1,n+1,"TileSpacing","compact") 
 for i = 1:n
     nexttile(i)
@@ -62,7 +62,7 @@ end
 figure(3)
 clf
 n = 6;
-dn = floor(linspace(1,numel(surf_interp(1,1,:)),n));
+dn = floor(linspace(1,41,n));
 tiledlayout(1,n+1,"TileSpacing","compact") 
 for i = 1:n
     nexttile(i)
@@ -94,7 +94,7 @@ end
  figure(4)
 clf
 n = 6;
-dn = floor(linspace(1,numel(surf_interp(1,1,:)),n));
+dn = floor(linspace(1,41,n));
 tiledlayout(1,n+1,"TileSpacing","compact") 
 for i = 1:n
     nexttile(i)
@@ -129,7 +129,7 @@ clf
 tiledlayout(2,2,"TileSpacing","compact") 
 
 nexttile(1)
-HAF_end = (surf_interp(:,:,end) - bed_interp(:,:,end)) +  rho_w/rho*bed_interp(:,:,end);
+HAF_end = (surf_interp(:,:,41) - bed_interp(:,:,41)) +  rho_w/rho*bed_interp(:,:,41);
 surf(is2xvec,is2yvec,zeros(size(HAF_end)),HAF_end,'edgecolor', 'none')
 hold on 
 contour(is2xvec,is2yvec,spd, [10, 10] , 'k:','HandleVisibility','off')

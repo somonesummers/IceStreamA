@@ -55,10 +55,10 @@ bm_s =  bedmachine_interp('surface',Xi,Yi);
 if(runType == 3)
     %Golledge runs
     goData = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat');
-    [xgrid,ygrid] = ndgrid(goData.is2xvec,goData.is2yvec);
+    [xgrid,ygrid] = meshgrid(goData.is2xvec,goData.is2yvec);
     disp("case of goll " + thin_m);
-    s_interp = griddedInterpolant(xgrid,ygrid,goData.surf_interp(:,:,thin_m)','linear','nearest');
-    b_interp = griddedInterpolant(xgrid,ygrid,goData.bed_interp(:,:,thin_m)','linear','nearest');
+    s_interp = griddedInterpolant(xgrid',ygrid',goData.surf_interp(:,:,thin_m)','linear','nearest');
+    b_interp = griddedInterpolant(xgrid',ygrid',goData.bed_interp(:,:,thin_m)','linear','nearest');
     goll_b =  b_interp(Xi,Yi);
     goll_s =  s_interp(Xi,Yi);
     
