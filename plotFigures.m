@@ -72,7 +72,7 @@ for j = 1:numel(cases)
         end
         if(j == numel(cases))
           	c = colorbar;
-            c.Label.String = 'Height Diff [m]';
+            c.Label.String = 'Surf Height Diff [m]';
 %             c.Label.String = 'Strength [kPa]';
             c.FontSize = 18;
         end
