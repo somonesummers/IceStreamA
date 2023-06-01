@@ -2,12 +2,13 @@ clear
 cd data/
 files = dir;
 directoryNames = {files.name};
-directoryNames = directoryNames(~ismember(directoryNames,{'.','..','.DS_Store','PreApril2023'}));
+directoryNames = directoryNames(~ismember(directoryNames,{,'._.DS_Store','.','..','.DS_Store','PreApril2023'}));
 currDir = pwd;
 cd ..
 for i = 1:numel(directoryNames)
     filename = append(currDir,'/',directoryNames{i});
 %     disp(filename)
+   
     data = load(filename);
     fix = 0;
     try
