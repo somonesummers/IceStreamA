@@ -2,7 +2,7 @@ clear
 cd data/
 files = dir;
 directoryNames = {files.name};
-directoryNames = directoryNames(~ismember(directoryNames,{,'._.DS_Store','.','..','.DS_Store','PreApril2023'}));
+directoryNames = directoryNames(~ismember(directoryNames,{'._.DS_Store','.','..','.DS_Store','PreApril2023'}));
 currDir = pwd;
 cd ..
 for i = 1:numel(directoryNames)
@@ -14,7 +14,7 @@ for i = 1:numel(directoryNames)
         try
             fields = {'bed','bed_interp','surface','surf_interp','thick','thick_interp'};
             data = rmfield(data,fields);
-            fix = 1 + 1;
+            fix = fix + 1;
         catch
             % no action if Goll fields already lacking
         end
@@ -33,6 +33,6 @@ for i = 1:numel(directoryNames)
             disp("No changes made for " + filename + " fix = " + fix)
         end
    catch
-       disp("Couldn't load " + filename + ". Skipping")
+        disp("Could not load item " + filename + ". Skipping")
    end
 end
