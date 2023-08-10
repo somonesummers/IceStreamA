@@ -2,11 +2,11 @@ clear
 rho_w = 1000;
 rho   = 917;
 
+%%
 load ATL15_dhdt.mat
 [Xi,Yi] = meshgrid(xvec,yvec);
 spd = measures_interp('speed',Xi,Yi);
 
-%%
 figure(1)
 clf
 surf(xvec,yvec,zeros(size(dhdt)),dhdt,'edgecolor', 'none')
@@ -20,6 +20,18 @@ caxis([-1.5,1.5])
 colorbar
 colormap redblue
 
+
+n_cases = 20;
+randX = floor(rand(1,n_cases)*501);
+randY = floor(rand(1,n_cases)*501);
+figure(2)
+clf
+for i = 1:n_cases
+    plot(squeeze(dhdt_pos(randX(i),randY(i),:)))
+    hold on
+    plot(squeeze(dhdt_neg(randX(i),randY(i),:)))
+end
+
 %% 
 load Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat
 
@@ -30,7 +42,7 @@ spd = measures_interp('speed',Xi,Yi);
 figure(2)
 clf
 n = 6;
-dn = floor(linspace(1,41,n));
+dn = floor(linspace(35,41,n));
 tiledlayout(1,n+1,"TileSpacing","compact") 
 for i = 1:n
     nexttile(i)

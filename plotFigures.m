@@ -1,13 +1,13 @@
 %% Plot all figures
 clear
-close all
+% close all
 addpath lib/
 saveFigs = true;
 
 %% Cases of thickness
 time = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat','time');
 groupName = 'Goll';
-cases = [61,60,58,55,50,40,30,20,10];
+cases = [60,61];
 figure('Position',[300 300 1300 680])
 tiledlayout(3,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
@@ -19,15 +19,16 @@ tiledlayout(3,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 % baseFile = "~/sherlock_home/IceStreamA/data/data_NgridFlowRiseA02ISSMDhDt0Tau1_30.mat";
 
 % Below is from external harddrive, faster, also not this HD
+% baseFile = '/Volumes/Extreme SSD/IceStreamAData/datagridFlowRiseA02ISSMDhDt0SpeedUp0.mat';
 % baseFile = '/Volumes/Extreme SSD/IceStreamAData/data_NgridFlowRiseA02ISSMDhDt0case.mat';
-baseFile = '/Volumes/Extreme SSD/IceStreamAData/data_NgridFlowRiseA02ISSMGoll40case.mat';
-
+% baseFile = '/Volumes/Extreme SSD/IceStreamAData/data_NgridFlowRiseA02ISSMGoll21caseMay15.mat';
+baseFile = '/Volumes/Extreme SSD/IceStreamAData/data_NgridFlowRiseA02ISSMGoll60case.mat';
 data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));z`
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
-    newFile = strrep(baseFile,"ll40","ll" + cases(j));
+    newFile = strrep(baseFile,"ll60","ll" + cases(j));
     if(isfile(newFile))
         data1 = load(newFile);    
         ax1 = nexttile(j);  
