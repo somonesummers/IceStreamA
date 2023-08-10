@@ -26,7 +26,7 @@ for i = 1:numel(directoryNames)
             % no action if DhDt fields already lacking
         end
 
-        if(fix == 1)
+        if(fix >= 1)
             save(filename,'-struct','data');
             disp("Succesfully reduced " + filename + " fix = " + fix)
         else

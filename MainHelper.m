@@ -25,9 +25,9 @@ fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
 nameToRun = ["ISSM"];
 mapsToRun = ["gridFlowRiseA05.mat"];
-thinToRun = [61,49,40];
+thinToRun = [-70,-50,-20,0,20,50,70];
 speedUpToRun = [1];
-runType = 3; %1 = dH explicit, 2 = DhDt based, 3 Golledge based
+runType = 2; %1 = dH explicit, 2 = DhDt based, 3 Golledge based
 for j = 1:length(speedUpToRun)
     for i = 1:length(thinToRun)
         clearvars -except nameToRun mapsToRun thinToRun speedUpToRun i j fID runType
