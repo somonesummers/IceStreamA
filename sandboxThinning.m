@@ -33,6 +33,8 @@ caxis([-1.5,1.5])
 colorbar
 colormap redblue
 
+save("PS_dhdt.mat",'dhdt','xvec','yvec')
+
 %% Checking entire map is linear with time
 % n_cases = 20;
 % randX = floor(rand(1,n_cases)*501);
