@@ -8,7 +8,8 @@ function [resid] = modelOpt(x0,str,fg1,fg2)
 
 %% Initialization
 
-mapFile = "gridRefinedXSM025.mat";
+mapFile = "gridFlowRiseA05.mat";
+runType = 2;
 % Load input files
 thin_m = 0;
 initializeInputs();
@@ -24,7 +25,7 @@ tau_c = defineTau(str,x0);
 buildSystem();
 
 %% Thermomechanical coupling loop
-for t_i = 1:100  
+for t_i = 1;%:100  
     % Thermocouple fields to update everyloop
     % Strain rate [s^-1]
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object
@@ -73,6 +74,7 @@ for t_i = 1:100
         end
     end
 
+    speedUp = 1;
     %% Solve
     % Unused BCs
     %       v(xy(:,2) > ymax - dx/2) == 0;
@@ -86,14 +88,10 @@ for t_i = 1:100
               F*tau_c(xy(:,1),xy(:,2),u,v) + ...
               rho*g*sum(h_av.*((A*h_s).*(D*u) + (B*h_s).*(D*v)));
         subject to
-            u(se_bound) == spd_BC_u_se./3.154E7;
-            v(se_bound) == spd_BC_v_se./3.154E7;
-            u(nw_bound) == spd_BC_u_nw./3.154E7;
-            v(nw_bound) == spd_BC_v_nw./3.154E7;
-            u(ne_bound) == spd_BC_u_ne./3.154E7;
-            v(ne_bound) == spd_BC_v_ne./3.154E7;
-            u(sw_bound) == spd_BC_u_sw./3.154E7;
-            v(sw_bound) == spd_BC_v_sw./3.154E7;
+            u(ne_bound) == spd_BC_u_ne./3.154E7*speedUp;
+            v(ne_bound) == spd_BC_v_ne./3.154E7*speedUp;
+            u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
+            v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
         minimize(obj)
     cvx_end
     if(~strcmp(cvx_status,"Solved"))

@@ -6,63 +6,86 @@ function [tau_c] = defineTau(str,x0)
         opt = true;
     end
     if(str == "ISSM")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
-    if(opt)
-        scale = x0(1);
-        floor = x0(2);
-    else
-        scale = 1.38;%1.38;
-        floor = 0e3;
-    end
-    warning('off','MATLAB:imagesci:netcdf:fillValueTypeMismatch'); % try not to warn here
-    if(ismac)
-        xi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
-        yi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
-        tau  = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_ctrl.nc","strbasemag");
-    else
-        xi   = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
-        yi   = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
-        tau  = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_ctrl.nc","strbasemag");
-    end
-    warning('on','MATLAB:imagesci:netcdf:fillValueTypeMismatch'); % don't warn here
-%     [xx,yy] = ndgrid(xi - 3072000,yi - 3072000);
-    uB = griddedInterpolant({xi - 3072000,yi - 3072000},tau(:,:,21));
-    
-    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
-        (subplus(uB(x,y)-floor)+floor)*scale;
+        if(opt)
+            scale = x0(1);
+            floor = x0(2);
+        else
+            scale = 1.38;%1.38;
+            floor = 0e3;
+        end
+        warning('off','MATLAB:imagesci:netcdf:fillValueTypeMismatch'); % try not to warn here
+        if(ismac)
+            xi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
+            yi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
+            tau  = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_ctrl.nc","strbasemag");
+        else
+            xi   = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
+            yi   = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
+            tau  = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_ctrl.nc","strbasemag");
+        end
+        warning('on','MATLAB:imagesci:netcdf:fillValueTypeMismatch'); % don't warn here
+    %     [xx,yy] = ndgrid(xi - 3072000,yi - 3072000);
+        uB = griddedInterpolant({xi - 3072000,yi - 3072000},tau(:,:,21));
+
+        tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+            (subplus(uB(x,y)-floor)+floor)*scale;
+        
+    elseif(str == "Uniform")
+        if(opt)
+            floor = x0;
+        else
+            floor = 58.867e3;
+        end
+        tau_c = @(x,y,u,v) norms([u,v],2,2) .* floor;
+    elseif(str == "Depth")
+        xi = -7e5:2e3:-2e5;
+        yi = -7e5:2e3:-2e5;
+        [Xi,Yi] = meshgrid(xi,yi);
+        depth = bedmachine_interp('bed',Xi,Yi);
+        depth_interp = griddedInterpolant(Xi',Yi',depth');
+        if(opt)
+            scale = x0(1);
+            floor = x0(2);
+        else
+            scale = 1;
+            floor = 50e3;
+        end
+        tau_c = @(x,y,u,v) norms([u,v],2,2) .* subplus(...
+            depth_interp(x,y)*scale + floor);
     elseif(str == "ISSM Tuned")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
-    if(opt)
-        scale = x0(1);
-        floor = x0(2);
-    else
-        scale = 1.05; %1.2
-        floor = 0e3;
-    end
-    load tau_tuned.mat;
-    load gridSiple10000.mat;
-    
-    uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_tuned,'natural');
-    
-    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
-        (subplus(uB(x,y)-floor)+floor)*scale;
+        if(opt)
+            scale = x0(1);
+            floor = x0(2);
+        else
+            scale = 1.05; %1.2
+            floor = 0e3;
+        end
+        load tau_tuned.mat;
+        load gridSiple10000.mat;
+
+        uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_tuned,'natural');
+
+        tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+            (subplus(uB(x,y)-floor)+floor)*scale;
     elseif(str == "ISSM Shift")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
-    if(opt)
-        stag = x0(1);
-        moving = x0(2);
-    else
-        stag = 1.3;%1.55
-        moving = 1.0;%.7
-    end
-    load tauShiftable.mat;
-    load gridSiple1000.mat;
-    
-    tau_shift = zeros(size(tau_ISSM));
-    tau_shift(spd<50) = tau_ISSM(spd<50).* stag; 
-    tau_shift(spd>50) = tau_ISSM(spd>50).* moving; 
-    
-    uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_shift,'natural');
-    
-    tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
-        (subplus(uB(x,y)));
+        if(opt)
+            stag = x0(1);
+            moving = x0(2);
+        else
+            stag = 1.3;%1.55
+            moving = 1.0;%.7
+        end
+        load tauShiftable.mat;
+        load gridSiple1000.mat;
+
+        tau_shift = zeros(size(tau_ISSM));
+        tau_shift(spd<50) = tau_ISSM(spd<50).* stag; 
+        tau_shift(spd>50) = tau_ISSM(spd>50).* moving; 
+
+        uB = scatteredInterpolant(xy(:,1),xy(:,2),tau_shift,'natural');
+
+        tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+            (subplus(uB(x,y)));
     elseif(str == "ISSM Overburden")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
     if(opt)
         stag = x0(1);
