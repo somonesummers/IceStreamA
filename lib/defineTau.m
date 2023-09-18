@@ -47,8 +47,8 @@ function [tau_c] = defineTau(str,x0)
             scale = x0(1);
             floor = x0(2);
         else
-            scale = 1.45;
-            floor = 60.8e3;
+            scale = 11.8;
+            floor = 72.9e3;
         end
         tau_c = @(x,y,u,v) norms([u,v],2,2) .* subplus(...
             depth_interp(x,y)*scale + floor);
