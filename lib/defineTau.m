@@ -62,6 +62,7 @@ function [tau_c] = defineTau(str,x0)
         end
         tau_c = @(x,y,u,v) norms([u,v],2,2) .* floor;
     elseif(str == "Depth")
+        warning("Ensure NW Bonudary has been updated")
         xi = -7e5:2e3:-2e5;
         yi = -7e5:2e3:-2e5;
         [Xi,Yi] = meshgrid(xi,yi);
