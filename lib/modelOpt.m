@@ -67,7 +67,7 @@ for t_i = 1;%:100
     if(t_i ~= 1) %first step we don't relax, we use E = 1 everywhere (zero strain is also an options)
         enhance = (1-nu) * enhance + nu*e_new;
         res = norm(e_new - enhance) / norm(e_new);
-        disp("Residual: " + res);
+%         disp("Residual: " + res); %Don't comment on this for opt search
         
         if (res < 1e-3) %check for thermal stabilization
             break; 
