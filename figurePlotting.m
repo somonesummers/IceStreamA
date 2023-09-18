@@ -2,10 +2,10 @@ clear; close all
 xbox = [-4.9500  -3.6000   -2.7000   -4.1000   -4.9500]*1e5;
 ybox = [-3.8000  -3.5300   -5.2250   -5.6700   -3.8000]*1e5;
 
-xmax =  -2.95e5;
-xmin = -4.75e5;
+xmax =  -2.55e5;
+xmin = -5.05e5;
 ymax =  -3.75e5;
-ymin =  -5.55e5;
+ymin =  -5.75e5;
 
 pv = [xbox; ybox]';
 
@@ -120,3 +120,54 @@ xlabel('Easting [km]')
 ylabel('Northing [km]')
 savePng('figs/RiseAMapHAF')
 % mapzoomps('nw','km')
+
+%%
+figure('Position',[50 500 800 600])
+
+surf(Xi/1e3,Yi/1e3,zeros(size(spd)),spd,'edgecolor','none');
+hold on
+axis equal
+c = colorbar;
+c.Label.String = 'Ice Surface Speed [m/yr]';
+caxis([1 700])
+ax = gca;
+ax.ColorScale = 'log';
+contour(xi/1e3,yi/1e3,spd, (0:2:30) , 'k-','HandleVisibility','off')
+contour(xi/1e3,yi/1e3,spd, [10,20,30] , 'k-','linewidth',2,'HandleVisibility','off');
+% contour(xi/1e3,yi/1e3,spd, [30:10:700] , '-','linewidth',1,'HandleVisibility','off','color',rgb('light gray'));
+% contour(xi/1e3,yi/1e3,spd, [100:100:700] , '-','linewidth',2,'HandleVisibility','off','color',rgb('light gray'));
+grid1 = load("grids/gridFlowRiseA02.mat");
+plot(grid1.pv(:,1)/1e3,grid1.pv(:,2)/1e3,'r--','linewidth',2)
+view(2)
+xlabel('Easting [km]')
+ylabel('Northing [km]')
+setFontSize(28)
+% mapzoomps('sw','km')
+% savePng('domainMap')
+
+%%
+tau_c = defineTau('ISSM');
+
+figure('Position',[50 500 800 600])
+
+surf(Xi/1e3,Yi/1e3,zeros(size(spd)),tau_c(Xi,Yi,1,1)/1e3,'edgecolor','none');
+shading flat
+hold on
+axis equal
+colormap(cmocean('thermal'))
+c = colorbar;
+c.Label.String = 'Basal Strength [kPa]';
+caxis([1 150])
+ax = gca;
+% ax.ColorScale = 'log';
+contour(xi/1e3,yi/1e3,spd, (0:2:30) , 'k-','HandleVisibility','off')
+contour(xi/1e3,yi/1e3,spd, [10,20,30] , 'k-','linewidth',2,'HandleVisibility','off');
+% contour(xi/1e3,yi/1e3,spd, [30:10:700] , '-','linewidth',1,'HandleVisibility','off','color',rgb('light gray'));
+% contour(xi/1e3,yi/1e3,spd, [100:100:700] , '-','linewidth',2,'HandleVisibility','off','color',rgb('light gray'));
+% grid1 = load("grids/gridFlowRiseA02.mat");
+% plot(grid1.pv(:,1)/1e3,grid1.pv(:,2)/1e3,'r--','linewidth',2)
+view(2)
+xlabel('Easting [km]')
+ylabel('Northing [km]')
+setFontSize(28)
+% savePng('taucMap')
