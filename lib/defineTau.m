@@ -29,7 +29,31 @@ function [tau_c] = defineTau(str,x0)
 
         tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
             (subplus(uB(x,y)-floor)+floor)*scale;
-        
+    elseif(str == "ISSMsmooth")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
+        if(opt)
+            scale = x0(1);
+            floor = x0(2);
+        else
+            scale = 1.38;%1.38;
+            floor = 0e3;
+        end
+        warning('off','MATLAB:imagesci:netcdf:fillValueTypeMismatch'); % try not to warn here
+        if(ismac)
+            xi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
+            yi   = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
+            tau  = ncread("~/Documents/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_ctrl.nc","strbasemag");
+        else
+            xi   = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","x");
+            yi   = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_init/strbasemag_AIS_JPL1_ISSM_init.nc","y");
+            tau  = ncread("/home/groups/jsuckale/psummers/MATLAB/ISSM/JPL1_ISSM_ctrl/strbasemag_AIS_JPL1_ISSM_ctrl.nc","strbasemag");
+        end
+        warning('on','MATLAB:imagesci:netcdf:fillValueTypeMismatch'); % don't warn here
+    %     [xx,yy] = ndgrid(xi - 3072000,yi - 3072000);
+        dxi = 8000; %grid spacing of ISSM output
+        uB = griddedInterpolant({xi - 3072000,yi - 3072000},imgaussfilt(tau(:,:,21),10e3/dxi));
+
+        tau_c = @(x,y,u,v) norms([u,v],2,2) .*... %Plastic
+            (subplus(uB(x,y)-floor)+floor)*scale;    
     elseif(str == "Uniform")
         if(opt)
             floor = x0;
