@@ -104,8 +104,8 @@ smooth_bm_surf = imgaussfilt(bm_s,10e3/dx);
 
 %% Build bed and surf, correct for thinning and floatation
 if(runType == 2)
-%    dhdtData = load(ATL15_dhdt.mat);
-    dhdtData = load('PS_dhdt.mat');
+   dhdtData = load('ATL15_dhdt.mat');
+%     dhdtData = load('PS_dhdt.mat');
     [xgrid,ygrid] = meshgrid(dhdtData.xvec,dhdtData.yvec);
     dhdt_interp = griddedInterpolant(xgrid',ygrid',dhdtData.dhdt','linear','nearest');
     clear dhdtData xgrid ygrid;

@@ -167,7 +167,7 @@ if(saveData && contains(cvx_status,"Solved"))
     if(runType == 1)
         save("data/data_N" + mpClean + str + "Uniform" + thin_m + "case" + ".mat");
     elseif(runType == 2)
-        save("data/data_N" + mpClean + str + "PS_DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
+        save("data/data_N" + mpClean + str + "DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
     elseif(runType == 3)
         save("data/data_N" + mpClean + str + "Goll" + thin_m + "case" + ".mat");
     else
