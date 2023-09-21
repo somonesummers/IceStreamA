@@ -8,7 +8,7 @@ function [resid] = modelOpt(x0,str,fg1,fg2)
 
 %% Initialization
 
-mapFile = "gridFlowRiseA05.mat";
+mapFile = "gridFlowRiseA035.mat";
 runType = 2;
 % Load input files
 thin_m = 0;
@@ -25,7 +25,7 @@ tau_c = defineTau(str,x0);
 buildSystem();
 
 %% Thermomechanical coupling loop
-for t_i = 1;%:100  
+for t_i = 1:100  
     % Thermocouple fields to update everyloop
     % Strain rate [s^-1]
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object

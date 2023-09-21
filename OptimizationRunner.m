@@ -8,8 +8,8 @@ if(~ismac)
 end
 fID = fopen('log.txt','w');
 
-x0 = [30,62e3];
-str = "Depth";
+x0 = [58e3];
+str = "Uniform";
 fg1 = figure(1);
 fg2 = figure(2);
 fun = @(x)modelOpt(x,str,fg1,fg2);
