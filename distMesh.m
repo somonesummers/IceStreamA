@@ -32,7 +32,7 @@ yi = ymin-dx*overgrab:dx/2:ymax+dx*overgrab;
 [ui,vi] = measures_interp('velocity',Xi,Yi);
 spd = measures_interp('speed',Xi,Yi);
 
-
+%%
 figure
 quiver(Xi,Yi,ui,vi)
 hold on
@@ -53,7 +53,7 @@ plot(h2{1,1}(1:100:1300,1),h2{1,1}(1:100:1300,2),'*-','color',rgb('Forest Green'
 pv_new = [(h1{1,1}(1:10:2700,1)-40e3),h1{1,1}(1:10:2700,2)-10e3;flipud(h2{1,1}(1:10:1300,1)+35e3),flipud(h2{1,1}(1:10:1300,2))+10e3];
 pv_new = [pv_new ; pv_new(1,:)];
 plot(pv_new(:,1),pv_new(:,2),'c-*')
-
+%%
 pv = pv_new;
 %%
 [xy,t]=distmesh2d(@dpoly,@huniform,.05,[xmin,ymin;xmax,ymax]/1e5,[],pv/1e5);
