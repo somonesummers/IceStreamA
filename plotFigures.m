@@ -6,12 +6,12 @@ saveFigs = false;
 
 %% Cases of thickness
 % time = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat','time');
-groupName = 'PS_DhDt';
-cases = [-70,-50,-20,0,20,50,70];
+groupName = 'ISSM';
+cases = [50,25,0,-25];
 figure('Position',[300 300 1300 680])
 tiledlayout(3,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/PS_DhDt/data_NgridFlowRiseA05ISSMPS_DhDt0SpeedUp0.mat";
+baseFile = "data/PreApril2023/data_MachinegridFlowRiseA02ISSM ShiftThin0SpeedUp0.mat";
 % baseFile = "data/data_NgridFlowRiseA05ISSMGoll61case.mat";
 
 % Below utilizes sshfs to directly use files on server. It is slow, but
@@ -28,7 +28,7 @@ data2 = load(baseFile);
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
-    newFile = strrep(baseFile,"dt0","dt" + cases(j));
+    newFile = strrep(baseFile,"Dt0","Dt" + cases(j));
     if(isfile(newFile))
         data1 = load(newFile);    
         ax1 = nexttile(j);  

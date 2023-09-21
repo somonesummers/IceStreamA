@@ -143,7 +143,7 @@ xlabel('Easting [km]')
 ylabel('Northing [km]')
 setFontSize(28)
 % mapzoomps('sw','km')
-% savePng('domainMap')
+% savePng('figs/domainMap')
 
 %%
 tau_c = defineTau('ISSM');
@@ -170,4 +170,4 @@ view(2)
 xlabel('Easting [km]')
 ylabel('Northing [km]')
 setFontSize(28)
-% savePng('taucMap')
+% savePng('figs/taucMap')
