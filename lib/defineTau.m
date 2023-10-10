@@ -62,7 +62,7 @@ function [tau_c] = defineTau(str,x0)
         end
         tau_c = @(x,y,u,v) norms([u,v],2,2) .* floor;
     elseif(str == "Depth")
-        warning("Ensure NW Bonudary has been updated")
+        warning("Ensure NW Boundary has been updated to velocity BC")
         xi = -7e5:2e3:-2e5;
         yi = -7e5:2e3:-2e5;
         [Xi,Yi] = meshgrid(xi,yi);
@@ -77,6 +77,21 @@ function [tau_c] = defineTau(str,x0)
         end
         tau_c = @(x,y,u,v) norms([u,v],2,2) .* subplus(...
             depth_interp(x,y)*scale + floor);
+     elseif(str == "Overburden")
+        xi = -7e5:2e3:-2e5;
+        yi = -7e5:2e3:-2e5;
+        [Xi,Yi] = meshgrid(xi,yi);
+        thick = bedmachine_interp('thickness',Xi,Yi);
+        thick_interp = griddedInterpolant(Xi',Yi',thick');
+        if(opt)
+            scale = x0(1);
+            base = x0(2);
+        else
+            scale = 39.55;
+            base = 3.798e3;
+        end
+        tau_c = @(x,y,u,v) norms([u,v],2,2) .* subplus(...
+            thick_interp(x,y)*scale + base);
     elseif(str == "ISSM Tuned")  % from https://tc.copernicus.org/articles/13/1441/2019/tc-13-1441-2019.html
         if(opt)
             scale = x0(1);
