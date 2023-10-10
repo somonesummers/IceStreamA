@@ -47,9 +47,13 @@ Pe =@(x,y) rho*C_p.*Acc(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y))./K;
 
 % factor by which height above floation as changes from 0 thinning
 % (10.1098/rspa.2011.0422 for height above floatation check)
-% N_ef = (h_init(xy(:,1),xy(:,2))+rho_w/rho*h_b_init(xy(:,1),xy(:,2)))...
-%     ./(h_bm(xy(:,1),xy(:,2))+rho_w/rho*h_bm_b(xy(:,1),xy(:,2)));
-N_ef = 1;
+
+if(N_adjust == 1)
+    N_ef = (h_init(xy(:,1),xy(:,2))+rho_w/rho*h_b_init(xy(:,1),xy(:,2)))...
+             ./(h_bm(xy(:,1),xy(:,2))+rho_w/rho*h_bm_b(xy(:,1),xy(:,2)));
+else
+    N_ef = 1;
+end
 
 %% Thermomechanical coupling loop
 for t_i = 1:500  
@@ -167,7 +171,9 @@ mpClean = erase(mapFile, [".mat","workingGrid_"]);
 if(saveData && contains(cvx_status,"Solved"))
     if(runType == 1)
         save("data/data_N" + mpClean + str + "Uniform" + thin_m + "case" + ".mat");
-    elseif(runType == 2)
+    elseif(runType == 2 && N_adjust == 1)
+        save("data/data_N" + mpClean + str + "DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
+    elseif(runType == 2 && N_adjust == 0)
         save("data/data" + mpClean + str + "DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
     elseif(runType == 3)
         save("data/data_N" + mpClean + str + "Goll" + thin_m + "case" + ".mat");
@@ -267,18 +273,19 @@ if(ismac)
         axis equal
     end
     
-    figure
-    trisurf(t,xy(:,1),xy(:,2),N_ef,...
-               'edgecolor','none')
-    title('Fraction of current N')
-    xlabel('X')
-    ylabel('Y')
-    colorbar
-    colormap(cmocean('curl'))
-    mm = max(abs(1-N_ef))+eps;
-    caxis([1-mm 1+mm]);
-    view(2)
-   
+    if(numel(N_ef) > 1)
+        figure
+        trisurf(t,xy(:,1),xy(:,2),N_ef,...
+                   'edgecolor','none')
+        title('Fraction of current N')
+        xlabel('X')
+        ylabel('Y')
+        colorbar
+        colormap(cmocean('curl'))
+        mm = max(abs(1-N_ef))+eps;
+        caxis([1-mm 1+mm]);
+        view(2)
+    end
     
 %     figure
 %     alpha = atan(v./u);
