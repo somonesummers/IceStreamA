@@ -12,9 +12,15 @@ end
 % xsmall
 % xbox = [-4.517 -3.260   -2.4500   -3.742   -4.517]*1e5;
 % ybox = [-4.000 -3.658   -5.0350   -5.600   -4.000]*1e5;
-% % All of Ridge
-xbox = [-6.0000  -3.6000   -2.6500   -4.0000   -6.0000]*1e5;
-ybox = [-4.1500  -3.9000   -5.3000   -5.6700   -4.1500]*1e5;
+% All of Ridge (D)
+% xbox = [-6.0000  -3.6000   -2.6500   -4.0000   -6.0000]*1e5;
+% ybox = [-4.1500  -3.9000   -5.3000   -5.6700   -4.1500]*1e5;
+% Conway only (A)
+% xbox = [-4.9000   -3.6000   -2.6500   -4.0000   -4.9000] *1e5;
+% ybox = [-4.1500   -3.9000   -5.3000   -5.6700   -4.1500] *1e5;
+% Lower Conway only (AA)
+xbox = [-4.6500   -3.4200   -2.6500   -4.0000   -4.6500] *1e5;
+ybox = [-4.6000   -4.3200   -5.3000   -5.6700   -4.6000] *1e5;
 
 dx = 2e3;
 overgrab = 10;
@@ -32,7 +38,7 @@ yi = ymin-dx*overgrab:dx/2:ymax+dx*overgrab;
 [ui,vi] = measures_interp('velocity',Xi,Yi);
 spd = measures_interp('speed',Xi,Yi);
 
-%%
+
 figure
 quiver(Xi,Yi,ui,vi)
 hold on
@@ -42,20 +48,23 @@ contour(xi,yi,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(xi,yi,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
 title('Quiver')
 plot(pv(:,1),pv(:,2),'-*b')
-h1 = stream2(xi,yi,ui,vi,pv(1,1)-1e4,pv(1,2));
+h1 = stream2(xi,yi,ui,vi,pv(1,1),pv(1,2));
 h2 = stream2(xi,yi,ui,vi,pv(2,1),pv(2,2));
 line1 = streamline(h1);
 line2 = streamline(h2);
 set(line1,'Color','red');
 set(line2,'Color','red');
-plot(h1{1,1}(1:100:2700,1),h1{1,1}(1:100:2700,2),'*-','color',rgb('Forest Green'))
-plot(h2{1,1}(1:100:1300,1),h2{1,1}(1:100:1300,2),'*-','color',rgb('Forest Green'))
-pv_new = [(h1{1,1}(1:10:2700,1)-40e3),h1{1,1}(1:10:2700,2)-10e3;flipud(h2{1,1}(1:10:1300,1)+35e3),flipud(h2{1,1}(1:10:1300,2))+10e3];
+plot(h1{1,1}(1:100:end,1),h1{1,1}(1:100:end,2),'*-','color',rgb('Forest Green'))
+plot(h2{1,1}(1:100:end,1),h2{1,1}(1:100:end,2),'*-','color',rgb('Forest Green'))
+l_end = 2100;
+r_end = 900;
+pv_new = [(h1{1,1}(1:10:l_end,1)),h1{1,1}(1:10:l_end,2);flipud(h2{1,1}(1:10:r_end,1)),flipud(h2{1,1}(1:10:r_end,2))];
 pv_new = [pv_new ; pv_new(1,:)];
 plot(pv_new(:,1),pv_new(:,2),'c-*')
 %%
 pv = pv_new;
 %%
+figure;
 [xy,t]=distmesh2d(@dpoly,@huniform,.05,[xmin,ymin;xmax,ymax]/1e5,[],pv/1e5);
 xy = xy*1e5;
 disp("inital mesh complete")
@@ -140,21 +149,25 @@ fd=@(p) dpoly(p,pv/1e5);
 % fh=@(p) 10-log(measures_interp('speed',p(:,1)*1e5,p(:,2)*1e5)+1);
 fh=@(p) ones(size(p,1),1) - fun(p(:,1),p(:,2))/6;
 
-edgeLength = .02;
+edgeLength = .05;
 
 [xy,t]=distmesh2d(fd,fh,edgeLength,[xmin,ymin;xmax,ymax]/1e5,[]);
+%watch this figure, sometimes it get stuck flipping 2 nodes for ever, just
+%restart and try again if so. 
 disp("Successfully meshed at " + edgeLength);
 xy = xy*1e5;
 
 %%
-figure
-clf
-scatter(xy(:,1),xy(:,2),'k.')
-hold on
-idxSw = knnsearch(xy,[h1{1,1}(1:10:2700,1)-40e3,h1{1,1}(1:10:2700,2)-10e3]);
-idxNe = knnsearch(xy,[h2{1,1}(1:10:1300,1)+35e3,h2{1,1}(1:10:1300,2)+10e3]);
+
+% Iding the boundaries
+% figure
+% clf
+% scatter(xy(:,1),xy(:,2),'k.')
+% hold on
+idxSw = knnsearch(xy,[h1{1,1}(1:10:l_end,1),h1{1,1}(1:10:l_end,2)]);
+idxNe = knnsearch(xy,[h2{1,1}(1:10:r_end,1),h2{1,1}(1:10:r_end,2)]);
 idxNw = knnsearch(xy,[linspace(pv(end-1,1),pv(end,1),100)',linspace(pv(end-1,2),pv(end,2),100)']);
-pvPick = 270;
+pvPick = 210; %Manually pick se bound
 idxSe = knnsearch(xy,[linspace(pv(pvPick,1),pv(pvPick+1,1),100)',linspace(pv(pvPick,2),pv(pvPick+1,2),100)']);
 
 sw_bound = false(size(xy(:,1)));
@@ -165,7 +178,9 @@ sw_bound(idxSw) = 1;
 ne_bound(idxNe) = 1;
 nw_bound(idxNw) = 1;
 se_bound(idxSe) = 1;
-
+if(sum(se_bound) < 3)
+    warning('SE bound might be set wrong, you should manually configure')
+end
 
 
 % se_bound2 = (ybox(4)-ybox(3))/(xbox(4)-xbox(3))*xy(:,1) - xy(:,2)  > (ybox(4)-ybox(3))/(xbox(4)-xbox(3))*xbox(3) - ybox(3)-dx/3;
@@ -200,5 +215,5 @@ if(ismac)
 	colorbar   
 end
 
-% save("grids/gridFlowRiseC" + strrep(string(edgeLength),"0.","") + ".mat");
-% disp("Successfully Saved")
+save("grids/gridFlowRiseAA" + strrep(string(edgeLength),"0.","") + ".mat");
+disp("Successfully Saved")
