@@ -27,14 +27,14 @@ nameToRun = ["ISSM"];
 mapsToRun = ["gridFlowRiseA02.mat"];
 thinToRun = [100,80,60,40,20,0]; 
 speedUpToRun = [1];
-NToRun = [0,1]
+NToRun = [0,1];
 runType = 2; %1 = dH explicit, 2 = DhDt based, 3=  Golledge based
 %N_adjust = 1; %1 = change Tau with N, 0 Tau fixed
 for j = 1:length(NToRun)
     for i = 1:length(thinToRun)
-        clearvars -except nameToRun mapsToRun thinToRun speedUpToRun i j fID runType N_adjust
+        clearvars -except nameToRun mapsToRun thinToRun speedUpToRun i j fID runType N_adjust NToRun
         thin_m = thinToRun(i);
-	N_adjust = NToRun(j);
+        N_adjust = NToRun(j);
         speedUp = speedUpToRun(1);
         str = nameToRun(1);
         mapFile = mapsToRun(1);
