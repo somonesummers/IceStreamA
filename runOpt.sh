@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#SBATCH --job-name=OptThm035
+#SBATCH --job-name=Opt035
 #SBATCH --output=matlab_Opt.“%j”.out
 #SBATCH --error=matlab_Opt.“%j”.err
 #SBATCH --partition=serc

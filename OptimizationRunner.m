@@ -8,7 +8,7 @@ if(~ismac)
 end
 fID = fopen('log.txt','w');
 
-x0 = [43,5e3];
+x0 = [39.5,3.7e3];
 str = "Overburden";
 fg1 = figure(1);
 fg2 = figure(2);
