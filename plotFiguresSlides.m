@@ -6,13 +6,13 @@ saveFigs = false;
 
 %% Cases of thickness
 % time = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat','time');
-groupName = 'ISSM';
+groupName = 'SlidesNoHAF';
 cases = [40,0];
-figure('Position',[300 300 1300 680])
-tiledlayout(3,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
+figure('Position',[300 300 1000 680])
+tiledlayout(2,2, 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0case.mat";
-% baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0SpeedUp0.mat";
+baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0Speedup0.mat";
+% baseFile = "data/NoHAF/datagridFlowRiseA02ISSMDhDt0SpeedUp0.mat";
 % baseFile = "data/data_NgridFlowRiseA05ISSMGoll61case.mat";
 
 % Below utilizes sshfs to directly use files on server. It is slow, but
@@ -28,64 +28,44 @@ data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));z`
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
-for j = 1:numel(cases)
-    newFile = strrep(baseFile,"Dt0","Dt" + cases(j));
-    if(isfile(newFile))
-        data1 = load(newFile);    
-        ax1 = nexttile(j);  
-        plotSpeed(data1,0,ax1);
-%         plotNef(data1,0,ax1);
-        if(j == 1)
-            ylabel("Northing [m]",'fontsize',18);
-        end
-        if(j == numel(cases))
-          	c = colorbar;
-            c.Label.String = 'Speed [m/yr]';
-            c.FontSize = 18;
-        end
-        xlabel("");
-        title(cases(j) + " years ago")
-%         title("Year " + time.time(cases(j)))
-        if(j == 3)
-%             title(groupName)
-        end
-        ax2 = nexttile(j+numel(cases));
+newFile = strrep(baseFile,"Dt0","Dt" + cases(1));
+data1 = load(newFile);    
+ax1 = nexttile(1);  
+plotSpeed(data1,0,ax1);
+ylabel("Northing [m]",'fontsize',18);
+title(cases(1)*.5 + " meters case")
+
+ax1 = nexttile(2);  
+plotSpeed(data2,0,ax1);
+c = colorbar;
+c.Label.String = 'Speed [m/yr]';
+c.FontSize = 18;
+title(cases(2)*.5 + " meters case")
+
+ax2 = nexttile(3);
 %         plotThickness(data1,0,ax2);
-        plotDiffSpeed(data1,data2,0,ax2);
+plotDiffSpeed(data1,data2,0,ax2);
 %         plotTau(data1,0,ax2);
-        if(j == 1)
-            ylabel("Northing [m]",'fontsize',18);
-        end
-        if(j == numel(cases))
-          	c = colorbar;
-            c.Label.String = 'Speed Diff [m/yr]';
-            c.FontSize = 18;
-        end
-        xlabel("Easting [m]",'fontsize',18);
-%         caxis([-100,100])
-        xlabel("");
-        
-        ax3 = nexttile(j+2*numel(cases));
-        plotDiffHeight(data1,data2,0,ax3);
-%         plotTau(data1,0,ax3);
-%         plotDiffTau(data1,data2,0,ax3);
-        if(j == 1)
-            ylabel("Northing [m]",'fontsize',18);
-        end
-        if(j == numel(cases))
-          	c = colorbar;
-            c.Label.String = 'Surf Height Diff [m]';
+
+ylabel("Northing [m]",'fontsize',18);
+c = colorbar;
+c.Label.String = 'Speed Diff [m/yr]';
+c.FontSize = 18;
+xlabel("Easting [m]",'fontsize',18);
+
+
+ax3 = nexttile(4);
+plotDiffHeight(data1,data2,0,ax3);
+ylabel("Northing [m]",'fontsize',18);
+
+c = colorbar;
+c.Label.String = 'Surf Height Diff [m]';
 %             c.Label.String = 'Strength [kPa]';
-            c.FontSize = 18;
-        end
-    else
-        warning("File not found:" + cases(j));
-    end
-end
+c.FontSize = 18;
 
 if(saveFigs)
     fig = gcf;
-    savePng("figs/fig_" + groupName + fig.Number);
+    savePng("figs/fig_" + groupName);
 %     saveVect("figs/fig_groupName" + fig.Number);
 end
 

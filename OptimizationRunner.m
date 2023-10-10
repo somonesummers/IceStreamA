@@ -1,5 +1,5 @@
 clear; clc; close all
-
+tic
 if(~ismac)
     %Start-up business on sherlock is hard 
     addpath('lib') 
@@ -8,8 +8,8 @@ if(~ismac)
 end
 fID = fopen('log.txt','w');
 
-x0 = [58e3];
-str = "Uniform";
+x0 = [43,5e3];
+str = "Overburden";
 fg1 = figure(1);
 fg2 = figure(2);
 fun = @(x)modelOpt(x,str,fg1,fg2);
@@ -18,3 +18,4 @@ options = optimset('Display','iter','PlotFcns',@optimplotfval,'TolX',1e-1    ,'T
 
 clear fg1 fg2
 save("optOutput_"+ str); 
+toc

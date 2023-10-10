@@ -25,7 +25,7 @@ tau_c = defineTau(str,x0);
 buildSystem();
 
 %% Thermomechanical coupling loop
-for t_i = 1:100  
+for t_i = 1:1%00  
     % Thermocouple fields to update everyloop
     % Strain rate [s^-1]
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object
@@ -119,10 +119,14 @@ if(sum(isnan(u2)) + sum(isnan(v2)) > 0)
 end
 
 spd2 = sqrt(u2.^2 + v2.^2);
-spd_star = sqrt(v.^2+u.^2)*3.154E7;		
-gamma = 1e3; % 4e3 is about even point
-resid_xy = ((u*3.154e7-u2).^2 + (v*3.154e7-v2).^2 + gamma*log((spd_star+1)./(spd2+1)).^2).*F'/1e7; %% should weight each by D matrix
-resid_xy(xy(:,2)>-4.4e5) = 0; %don't care about upper region.
+spd_star = sqrt(v.^2+u.^2)*3.154E7;
+resid1 = sum((u*3.154e7-u2).^2);
+resid2 = sum((v*3.154e7-v2).^2);
+resid3 = sum(log((spd_star+1)./(spd2+1)).^2);
+gamma = (resid1+resid2)./resid3; 
+% gamma = 5e3; % 5e3 is even weight roughly
+resid_xy = ((u*3.154e7-u2).^2 + (v*3.154e7-v2).^2 + gamma*log((spd_star+1)./(spd2+1)).^2).*F'/1e7; %% weight each by F matrix
+resid_xy(xy(:,2)>-4.5e5) = 0; %don't care about upper region.
 resid = sum(resid_xy);
 
 if exist('fg1','var') == 1
@@ -143,7 +147,7 @@ drawnow
 resid1 = sum((u*3.154e7-u2).^2);
 resid2 = sum((v*3.154e7-v2).^2);
 resid3 = sum(log((spd_star+1)./(spd2+1)).^2);
-gamma = (resid1+resid2)./resid3;
+gamma = (resid1+resid2)./resid3; 
 % figure
 % clf
 % trisurf(t_c,xy_c(:,1),xy_c(:,2),enhance.^(-nn),...
