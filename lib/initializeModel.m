@@ -105,7 +105,15 @@ smooth_bm_surf = imgaussfilt(bm_s,10e3/dx);
 %% Build bed and surf, correct for thinning and floatation
 if(runType == 2)
 %   dhdtData = load('ATL15_dhdt.mat');
-     dhdtData = load('PS_dhdt.mat');
+    dhdtData = load('PS_dhdt.mat');
+    [xgrid,ygrid] = meshgrid(dhdtData.xvec,dhdtData.yvec);
+    dhdt_interp = griddedInterpolant(xgrid',ygrid',dhdtData.dhdt','linear','nearest');
+    clear dhdtData xgrid ygrid;
+end
+
+if(runType == 4)
+%   dhdtData = load('ATL15_dhdt.mat');
+     dhdtData = load('NoLakes_dhdt.mat');
     [xgrid,ygrid] = meshgrid(dhdtData.xvec,dhdtData.yvec);
     dhdt_interp = griddedInterpolant(xgrid',ygrid',dhdtData.dhdt','linear','nearest');
     clear dhdtData xgrid ygrid;
@@ -119,7 +127,7 @@ h_b_init =@(x,y) interp2(xi,yi,smoothbed,x,y);
 
 if(runType == 1)
     h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) + thin_m;
-elseif(runType == 2)
+elseif(runType == 2 || runType == 4)
     h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) - thin_m.* dhdt_interp(x,y); % minus to go back in time
 elseif(runType == 3)
     h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y); %Case where thin_m controls case of Golledge runs
