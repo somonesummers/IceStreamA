@@ -170,13 +170,13 @@ end
 mpClean = erase(mapFile, [".mat","workingGrid_"]);
 if(saveData && contains(cvx_status,"Solved"))
     if(runType == 1)
-        save("data/data_N" + mpClean + str + "Uniform" + thin_m + "case" + ".mat");
+        save("data/data_N" + mpClean + str + "Uniform" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
     elseif(runType == 2 && N_adjust == 1)
         save("data/data_N" + mpClean + str + "PS_DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
     elseif(runType == 2 && N_adjust == 0)
         save("data/data" + mpClean + str + "PS_DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
     elseif(runType == 3)
-        save("data/data_N" + mpClean + str + "Goll" + thin_m + "case" + ".mat");   
+        save("data/data_N" + mpClean + str + "Goll" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");   
     elseif(runType == 4 && N_adjust == 1)
         save("data/data_N" + mpClean + str + "NoLakes_DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
     elseif(runType == 4 && N_adjust == 0)
