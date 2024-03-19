@@ -1,4 +1,4 @@
-%% Plot all figures
+%% Plot all figures, This is best plotting option, use
 clear
 % close all
 addpath lib/
@@ -7,13 +7,13 @@ saveFigs = false;
 %% Cases of thickness
 % time = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat','time');
 groupName = 'ISSM';
-cases = [40,0];
+cases = [60,50,40,30,20,10,0];
 figure('Position',[300 300 1300 680])
 tiledlayout(3,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
 
-baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0case.mat";
+% baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0case.mat";
 % baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0SpeedUp0.mat";
-% baseFile = "data/data_NgridFlowRiseA05ISSMGoll61case.mat";
+baseFile = "data/data_NgridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
 
 % Below utilizes sshfs to directly use files on server. It is slow, but
 % allows me to not use up space on the laptop hardrive.
@@ -29,7 +29,10 @@ data2 = load(baseFile);
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
 for j = 1:numel(cases)
+%     baseFile = "data/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
     newFile = strrep(baseFile,"Dt0","Dt" + cases(j));
+%     baseFile = strrep(newFile,"_N","");
+    data2 = load(baseFile);
     if(isfile(newFile))
         data1 = load(newFile);    
         ax1 = nexttile(j);  
