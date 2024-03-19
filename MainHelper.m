@@ -25,10 +25,10 @@ fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
 nameToRun = ["ISSM"];
 mapsToRun = ["gridFlowRiseA02.mat"];
-thinToRun = [100,80,60,40,20,0]; 
+thinToRun = [100,80,60,50,40,30,20,10,0,-20]; 
 speedUpToRun = [1];
 NToRun = [0,1];
-runType = 2; %1 = dH explicit, 2 = DhDt based, 3=  Golledge based
+runType = 4; %1 = dH explicit, 2 = DhDt based, 3=  Golledge based
 %N_adjust = 1; %1 = change Tau with N, 0 Tau fixed
 for j = 1:length(NToRun)
     for i = 1:length(thinToRun)
