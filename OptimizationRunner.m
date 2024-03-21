@@ -8,8 +8,8 @@ if(~ismac)
 end
 fID = fopen('log.txt','w');
 
-x0 = [39.5,3.7e3];
-str = "Overburden";
+x0 = [1.38, 0];
+str = "ISSM";
 fg1 = figure(1);
 fg2 = figure(2);
 fun = @(x)modelOpt(x,str,fg1,fg2);

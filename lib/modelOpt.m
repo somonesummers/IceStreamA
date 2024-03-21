@@ -8,8 +8,8 @@ function [resid] = modelOpt(x0,str,fg1,fg2)
 
 %% Initialization
 
-mapFile = "gridFlowRiseA035.mat";
-runType = 2;
+mapFile = "gridFlowRiseA02.mat";
+runType = 4;
 % Load input files
 thin_m = 0;
 initializeInputs();
