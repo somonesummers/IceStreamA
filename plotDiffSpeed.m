@@ -1,12 +1,13 @@
 function [] = plotDiffSpeed(data1, data2, n,ax)
+%plots speed difference between data1 (exp) and data2 (control)
     ftsize = 20;
-    trisurf(data1.t,data1.xy(:,1),data1.xy(:,2),...
+    trisurf(data1.t,data1.xy(:,1)/1e3,data1.xy(:,2)/1e3,...
             0*data1.h_s,(sqrt(data1.u.^2 + data1.v.^2)*3.154E7...
             - sqrt(data2.u.^2 + data2.v.^2)*3.154E7)...
                ,'edgecolor','none','facecolor','interp');
     hold on
     if(max(sqrt(data1.u.^2 + data1.v.^2)*3.154E7) > 30)
-        [~, H1] = tricontour(data1.t,data1.xy(:,1),data1.xy(:,2),...
+        [~, H1] = tricontour(data1.t,data1.xy(:,1)/1e3,data1.xy(:,2)/1e3,...
             sqrt(data1.u.^2 + data1.v.^2)*3.154E7,[30 30]);
         for j = 1:numel(H1)
         H1(j).EdgeColor = rgb('black');
@@ -18,7 +19,7 @@ function [] = plotDiffSpeed(data1, data2, n,ax)
     end
 
     if(max(sqrt(data2.u.^2 + data2.v.^2)*3.154E7) > 30)
-        [~, H2] = tricontour(data2.t,data2.xy(:,1),data2.xy(:,2),...
+        [~, H2] = tricontour(data2.t,data2.xy(:,1)/1e3,data2.xy(:,2)/1e3,...
             sqrt(data2.u.^2 + data2.v.^2)*3.154E7,[30 30]);
         for j = 1:numel(H2)
         H2(j).EdgeColor = rgb('grey');
@@ -36,7 +37,7 @@ function [] = plotDiffSpeed(data1, data2, n,ax)
     colormap(ax, CT)
 %     colormap(ax, 'redblue')
     if(n == 2 || n < 0)
-        ylabel('Northing [m]')
+        ylabel('Northing [km]')
     end
     xlabel('Easting [m]')
     if(n == 4 || n < 0)
