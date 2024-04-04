@@ -1,19 +1,24 @@
-%% Plot all figures, This is best plotting option, use
+%% Plot all figures for 1D change, This is best plotting option
 clear
 % close all
 addpath lib/
 saveFigs = false;
 
+if(saveFigs)
+    disp("Please confirm you'd like to save figures");
+    pause()
+end
 %% Cases of thickness
 % time = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat','time');
-groupName = 'ISSM';
-cases = [60,50,40,30,20,10,0];
-figure('Position',[300 300 1300 680])
-tiledlayout(3,numel(cases), 'Padding', 'none', 'TileSpacing', 'tight');
+groupName = 'ISSM_N_thinning';
+cases = [50:-10:-10]; %thinning cases
+% cases = [5:-1:-1]; %speed cases
+figure('Position',[300 300 1800 733])
+tiledlayout(3,numel(cases), 'Padding', 'tight', 'TileSpacing', 'tight');
 
 % baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0case.mat";
-% baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0SpeedUp0.mat";
-baseFile = "data/data_NgridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
+% baseFile = "data/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
+baseFile = "data/spdChange/data_NgridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
 
 % Below utilizes sshfs to directly use files on server. It is slow, but
 % allows me to not use up space on the laptop hardrive.
@@ -28,9 +33,21 @@ data2 = load(baseFile);
 % [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));z`
 % data2.u = uu/3.154E7;
 % data2.v = vv/3.154E7;
+
+%Whole Ice Rise
+xLimits = [-5.1e2 -2.5e2];
+yLimits = [-5.75e2 -3.5e2];
+
+%Promontory
+xLimits = [-3.71e2 -2.95e2];
+yLimits = [-5.32e2 -4.66e2];
+
+
+
 for j = 1:numel(cases)
 %     baseFile = "data/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
     newFile = strrep(baseFile,"Dt0","Dt" + cases(j));
+%     newFile = strrep(baseFile,"Up0","Up" + cases(j));
 %     baseFile = strrep(newFile,"_N","");
     data2 = load(baseFile);
     if(isfile(newFile))
@@ -38,8 +55,14 @@ for j = 1:numel(cases)
         ax1 = nexttile(j);  
         plotSpeed(data1,0,ax1);
 %         plotNef(data1,0,ax1);
+        axis equal
+        xlim(xLimits)
+        ylim(yLimits)
+        xticklabels([])
         if(j == 1)
-            ylabel("Northing [m]",'fontsize',18);
+            ylabel("Northing [km]",'fontsize',18);
+        else
+            yticklabels([])
         end
         if(j == numel(cases))
           	c = colorbar;
@@ -48,37 +71,49 @@ for j = 1:numel(cases)
         end
         xlabel("");
         title(cases(j) + " years ago")
-%         title("Year " + time.time(cases(j)))
+%         title((cases(j)+10)*10 +"% Velocity")
         if(j == 3)
 %             title(groupName)
         end
         ax2 = nexttile(j+numel(cases));
 %         plotThickness(data1,0,ax2);
         plotDiffSpeed(data1,data2,0,ax2);
+        xlim(xLimits)
+        ylim(yLimits)
+        xticklabels([])
 %         plotTau(data1,0,ax2);
         if(j == 1)
-            ylabel("Northing [m]",'fontsize',18);
+            ylabel("Northing [km]",'fontsize',18);
+        else
+            yticklabels([])
         end
         if(j == numel(cases))
           	c = colorbar;
             c.Label.String = 'Speed Diff [m/yr]';
             c.FontSize = 18;
         end
-        xlabel("Easting [m]",'fontsize',18);
-%         caxis([-100,100])
-        xlabel("");
+        xlabel("")
+        xticklabels([])
         
         ax3 = nexttile(j+2*numel(cases));
-        plotDiffHeight(data1,data2,0,ax3);
+        plotStress(data1,0,ax3)
+        xlim(xLimits)
+        ylim(yLimits)
+
+        title("")
+%         plotDiffHeight(data1,data2,0,ax3);
 %         plotTau(data1,0,ax3);
 %         plotDiffTau(data1,data2,0,ax3);
         if(j == 1)
-            ylabel("Northing [m]",'fontsize',18);
+            ylabel("Northing [km]",'fontsize',18);
+        else
+            yticklabels([])
         end
         if(j == numel(cases))
           	c = colorbar;
-            c.Label.String = 'Surf Height Diff [m]';
+%             c.Label.String = 'Surf Height Diff [m]';
 %             c.Label.String = 'Strength [kPa]';
+            c.Label.String = 'Surface Stress [Pa]';
             c.FontSize = 18;
         end
     else
@@ -88,59 +123,8 @@ end
 
 if(saveFigs)
     fig = gcf;
-    savePng("figs/fig_" + groupName + fig.Number);
+    labelTiledLayout(fig, 18)
+    savePng("figs/paper/" + groupName + fig.Number);
 %     saveVect("figs/fig_groupName" + fig.Number);
 end
 
-
-%% Plot speed
-% ftsize = 20;
-% load('grids/gridFlowRiseA02.mat');
-% dx = 1e3;
-% figure('Position',[300 300 700 850])
-% x = [-5e5:dx:-2e5];
-% y = [-6e5:dx: -3e5];
-% [xx,yy] = meshgrid(x,y);
-% sf_raw =  bedmachine_interp('surface',xx,yy);
-% sf = imgaussfilt(sf_raw,5e3/dx);
-% h  =  bedmachine_interp('thickness',xx,yy);
-% spd        = measures_interp('speed',xx,yy);
-% [sx ,  sy] = gradient(sf,dx,dx);
-% 
-% % p = surf(xx,yy,zeros(size(h)),h./(sqrt(sx.^2+sy.^2)*200e3));
-% p = surf(xx,yy,zeros(size(h)),spd);
-% hold on
-% plot(pv(:,1),pv(:,2),'k-','LineWidth', 4)
-% contour(x,y,spd, [10, 10] , 'k:','HandleVisibility','off')
-% contour(x,y,spd, [30, 30] , 'k--','HandleVisibility','off')
-% contour(x,y,spd, [100, 300, 3000] , 'k-','HandleVisibility','off')
-% contour(x,y,spd, [1000, 1000] , 'k-','HandleVisibility','off','LineWidth',2)
-% % [C,hh] = contour(x,y,h./(sqrt(sx.^2+sy.^2)*200e3),[.1,.3,1,3,10], 'r-','HandleVisibility','off');  
-% % clabel(C,hh)
-% % title('\xi factor')
-% f = gca;
-% f.ColorScale = 'log';
-% view(2)
-% colorbar
-% % colormap(cmocean('curl'))
-% set(p, 'edgecolor', 'none');
-% caxis([10^1 10^3.6]) 
-% axis equal
-% ylabel('Northing [m]')
-% xlabel('Easting [m]')
-% c = colorbar;
-% c.Label.String = 'Ice Speed [m/yr]';
-% c.FontSize = ftsize;   
-% view(2)
-% f = gca;
-% f.XAxis.FontSize = ftsize-2;
-% f.YAxis.FontSize = ftsize-2;
-% view(2)
-% axis equal
-% xlim([-5e5, -2e5])
-% ylim([-6e5, -3e5])
-% if(saveFigs)
-%     fig = gcf;
-%     savePng("figs/fig_" + groupName + fig.Number);
-% %     saveVect("figs/fig_" + fig.Number);
-% end
