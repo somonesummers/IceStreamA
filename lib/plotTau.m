@@ -1,7 +1,7 @@
 function[] = plotTau(data1,n,ax)
     ftsize = 20;
     load Dawn.mat
-    trisurf(data1.t,data1.xy(:,1),data1.xy(:,2),zeros(size(data1.xy(:,1))),data1.N_ef.*data1.tau_c(data1.xy(:,1),...
+    trisurf(data1.t,data1.xy(:,1)/1e3,data1.xy(:,2)/1e3,zeros(size(data1.xy(:,1))),data1.N_ef.*data1.tau_c(data1.xy(:,1),...
         data1.xy(:,2),data1.u,data1.v)./norms([data1.u,data1.v],2,2)/1e3,...
        'edgecolor','none','facecolor','interp')
 %     hold on
@@ -22,17 +22,17 @@ function[] = plotTau(data1,n,ax)
     axis equal
     hold on 
     
-    if(max(sqrt(data1.u.^2 + data1.v.^2)*3.154E7) > 30)
-        [~, H2] = tricontour(data1.t,data1.xy(:,1),data1.xy(:,2),...
-            sqrt(data1.u.^2 + data1.v.^2)*3.154E7,[30 30]);
-        for j = 1:numel(H2)
-        H2(j).EdgeColor = rgb('black');
-        H2(j).LineStyle = '-';
-        H2(j).LineWidth = 1;
-        end
-    else
-        warning('Speed 2 seems wrong, no 30 m/a contour')
-    end
+%     if(max(sqrt(data1.u.^2 + data1.v.^2)*3.154E7) > 30)
+%         [~, H2] = tricontour(data1.t,data1.xy(:,1)/1e3,data1.xy(:,2)/1e3,...
+%             sqrt(data1.u.^2 + data1.v.^2)*3.154E7,[30 30]);
+%         for j = 1:numel(H2)
+%         H2(j).EdgeColor = rgb('black');
+%         H2(j).LineStyle = '--';
+%         H2(j).LineWidth = 2;
+%         end
+%     else
+%         warning('Speed 2 seems wrong, no 30 m/a contour')
+%     end
     % axis off
     f = gca;
     f.XAxis.FontSize = ftsize-2;
