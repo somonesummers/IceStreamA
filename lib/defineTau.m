@@ -58,7 +58,7 @@ function [tau_c] = defineTau(str,x0)
         if(opt)
             floor = x0;
         else
-            floor = 62.121e3;
+            floor = 6.1826e4;
         end
         tau_c = @(x,y,u,v) norms([u,v],2,2) .* floor;
     elseif(str == "Depth")

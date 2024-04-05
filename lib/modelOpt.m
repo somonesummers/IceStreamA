@@ -25,7 +25,7 @@ tau_c = defineTau(str,x0);
 buildSystem();
 
 %% Thermomechanical coupling loop
-for t_i = 1:1%00  
+for t_i = 1:100  
     % Thermocouple fields to update everyloop
     % Strain rate [s^-1]
         ep_dot = calcTrigridStrain(u,v,xy,dx); %returns intperolation object
@@ -92,6 +92,8 @@ for t_i = 1:1%00
             v(ne_bound) == spd_BC_v_ne./3.154E7*speedUp;
             u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
             v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
+            u(nw_bound) == spd_BC_u_nw./3.154E7*speedUp;
+            v(nw_bound) == spd_BC_v_nw./3.154E7*speedUp;
         minimize(obj)
     cvx_end
     if(~strcmp(cvx_status,"Solved"))
