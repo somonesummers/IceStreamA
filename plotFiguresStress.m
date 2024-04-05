@@ -95,7 +95,7 @@ for j = 1:numel(cases)
         title("")
         if(j == 1)
 %             ylabel("Northing [km]",'fontsize',18);
-            ylabel("HAF + 50% Speed",'fontsize',18);
+            ylabel("HAF + 50% Speed Up",'fontsize',18);
         else
             yticklabels([])
         end

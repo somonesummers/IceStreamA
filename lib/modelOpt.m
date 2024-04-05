@@ -125,9 +125,10 @@ spd_star = sqrt(v.^2+u.^2)*3.154E7;
 resid1 = sum((u*3.154e7-u2).^2);
 resid2 = sum((v*3.154e7-v2).^2);
 resid3 = sum(log((spd_star+1)./(spd2+1)).^2);
-gamma = (resid1+resid2)./resid3; 
-% gamma = 5e3; % 5e3 is even weight roughly
+% disp((resid1+resid2)./resid3);
+gamma = 5e3; % 5e3 is even weight roughly
 resid_xy = ((u*3.154e7-u2).^2 + (v*3.154e7-v2).^2 + gamma*log((spd_star+1)./(spd2+1)).^2).*F'/1e7; %% weight each by F matrix
+resid_xy(xy(:,1)>-3e5) = 0; %don't care about far right region of tongue.
 resid_xy(xy(:,2)>-4.5e5) = 0; %don't care about upper region.
 resid = sum(resid_xy);
 
@@ -146,10 +147,6 @@ colorbar
 view(2)
 % axis equal
 drawnow
-resid1 = sum((u*3.154e7-u2).^2);
-resid2 = sum((v*3.154e7-v2).^2);
-resid3 = sum(log((spd_star+1)./(spd2+1)).^2);
-gamma = (resid1+resid2)./resid3; 
 % figure
 % clf
 % trisurf(t_c,xy_c(:,1),xy_c(:,2),enhance.^(-nn),...

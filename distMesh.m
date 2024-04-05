@@ -18,12 +18,20 @@ end
 % Conway only (A)
 % xbox = [-4.9000   -3.6000   -2.6500   -4.0000   -4.9000] *1e5;
 % ybox = [-4.1500   -3.9000   -5.3000   -5.6700   -4.1500] *1e5;
+% Ridges too (C)
+xbox = [-5.7000   -3.6000   -2.6500   -4.0000   -5.7000] *1e5;
+ybox = [-4.4500   -3.9000   -5.3000   -5.6700   -4.4500] *1e5;
 % Lower Conway only (AA)
-xbox = [-4.6500   -3.4200   -2.6500   -4.0000   -4.6500] *1e5;
-ybox = [-4.6000   -4.3200   -5.3000   -5.6700   -4.6000] *1e5;
+% xbox = [-4.6500   -3.4200   -2.6500   -4.0000   -4.6500] *1e5;
+% ybox = [-4.6000   -4.3200   -5.3000   -5.6700   -4.6000] *1e5;
+% Lower Conway only (CC) pushes out later
+% xbox = [-5.4000   -3.4200   -2.6500   -4.0000   -5.4000] *1e5;
+% ybox = [-5.0000   -4.3200   -5.3000   -5.6700   -5.0000] *1e5;
+
+
 
 dx = 2e3;
-overgrab = 10;
+overgrab = 50;
 xmax =  max(xbox);
 xmin = min(xbox);
 ymax =  max(ybox);
@@ -56,19 +64,32 @@ set(line1,'Color','red');
 set(line2,'Color','red');
 plot(h1{1,1}(1:100:end,1),h1{1,1}(1:100:end,2),'*-','color',rgb('Forest Green'))
 plot(h2{1,1}(1:100:end,1),h2{1,1}(1:100:end,2),'*-','color',rgb('Forest Green'))
-l_end = 2100;
-r_end = 900;
+l_end = 2000; %grid west side
+r_end = 1600; %grid east side
+
+%bump flowlines into the ridges if wanting a ridge BC
+% h1{1,1}(:,1) = h1{1,1}(:,1) - 4e4;
+% h1{1,1}(:,2) = h1{1,1}(:,2) - 2e4;
+% h2{1,1}(:,1) = h2{1,1}(:,1) + 4e4;
+% h2{1,1}(:,2) = h2{1,1}(:,2) + 2e4;
+
+%wrap flow lines into one polygon
 pv_new = [(h1{1,1}(1:10:l_end,1)),h1{1,1}(1:10:l_end,2);flipud(h2{1,1}(1:10:r_end,1)),flipud(h2{1,1}(1:10:r_end,2))];
 pv_new = [pv_new ; pv_new(1,:)];
 plot(pv_new(:,1),pv_new(:,2),'c-*')
+drawnow
 %%
 pv = pv_new;
+pause() %This is a nice spot to pause and make sure the grid looks OK
+% before refining
 %%
 figure;
-[xy,t]=distmesh2d(@dpoly,@huniform,.05,[xmin,ymin;xmax,ymax]/1e5,[],pv/1e5);
+localScale = max(max(pv)-min(pv))/1e5; %length scale of frame
+%localScale used to insure initial mesh is not too refined
+[xy,t]=distmesh2d(@dpoly,@huniform,localScale*.03,[xmin,ymin;xmax,ymax]/1e5,[],pv/1e5);
 xy = xy*1e5;
 disp("inital mesh complete")
-
+clear localScale
 [u,v] = measures_interp('velocity',xy(:,1),xy(:,2));
 
 [xx,yy] = meshgrid(xmin:1e3:xmax,ymin:1e3:ymax);
@@ -149,7 +170,7 @@ fd=@(p) dpoly(p,pv/1e5);
 % fh=@(p) 10-log(measures_interp('speed',p(:,1)*1e5,p(:,2)*1e5)+1);
 fh=@(p) ones(size(p,1),1) - fun(p(:,1),p(:,2))/6;
 
-edgeLength = .05;
+edgeLength = .03;
 
 [xy,t]=distmesh2d(fd,fh,edgeLength,[xmin,ymin;xmax,ymax]/1e5,[]);
 %watch this figure, sometimes it get stuck flipping 2 nodes for ever, just
@@ -164,10 +185,13 @@ xy = xy*1e5;
 % clf
 % scatter(xy(:,1),xy(:,2),'k.')
 % hold on
-idxSw = knnsearch(xy,[h1{1,1}(1:10:l_end,1),h1{1,1}(1:10:l_end,2)]);
-idxNe = knnsearch(xy,[h2{1,1}(1:10:r_end,1),h2{1,1}(1:10:r_end,2)]);
+%% So this section is a bit of a mess. Basically it looks for all the points
+% that are closest to the orginal bounding box and calls those the
+% boundaries. Figure with color coded boundaries helps double check this
+idxSw = knnsearch(xy,[h1{1,1}(1:50:l_end,1),h1{1,1}(1:50:l_end,2)]);
+idxNe = knnsearch(xy,[h2{1,1}(1:50:r_end,1),h2{1,1}(1:50:r_end,2)]);
 idxNw = knnsearch(xy,[linspace(pv(end-1,1),pv(end,1),100)',linspace(pv(end-1,2),pv(end,2),100)']);
-pvPick = 210; %Manually pick se bound
+pvPick = l_end/10; %smart pick of SE bound, may have to adjust manually if you get warning
 idxSe = knnsearch(xy,[linspace(pv(pvPick,1),pv(pvPick+1,1),100)',linspace(pv(pvPick,2),pv(pvPick+1,2),100)']);
 
 sw_bound = false(size(xy(:,1)));
@@ -215,5 +239,5 @@ if(ismac)
 	colorbar   
 end
 
-save("grids/gridFlowRiseAA" + strrep(string(edgeLength),"0.","") + ".mat");
+save("grids/gridFlowRiseB" + strrep(string(edgeLength),"0.","") + ".mat");
 disp("Successfully Saved")
