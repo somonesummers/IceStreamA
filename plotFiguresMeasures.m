@@ -10,13 +10,13 @@ if(saveFigs)
 end
 %% Cases of thickness
 % time = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat','time');
-groupName = 'ISSM_Base';
+groupName = 'Uni_Base';
 figure('Position',[300 300 1800 350])
 tiledlayout(1,4, 'Padding', 'tight', 'TileSpacing', 'tight');
 
 % baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0case.mat";
-% baseFile = "data/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
-baseFile = "data/spdChange/data_NgridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
+% baseFile = "data/spdChange/data_NgridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
+baseFile = "data/spdChange/data_NgridFlowRiseA02UniformNoLakes_DhDt0SpeedUp0.mat";
 
 data2 = load(baseFile);
 

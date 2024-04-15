@@ -142,10 +142,8 @@ for t_i = 1:500
             v(ne_bound) == spd_BC_v_ne./3.154E7*speedUp;
             u(sw_bound) == spd_BC_u_sw./3.154E7*speedUp;
             v(sw_bound) == spd_BC_v_sw./3.154E7*speedUp;
-%             u(nw_bound) == spd_BC_u_nw./3.154E7*speedUp; % only for depth based tau
-%             v(nw_bound) == spd_BC_v_nw./3.154E7*speedUp; % only for depth based tau
-%             A(se_bound_c,:)*u == 0; %trying stress boundary 
-%             B(se_bound_c,:)*v == 0; %trying stress boundary 
+            u(nw_bound) == spd_BC_u_nw./3.154E7*speedUp; % For depth based, uniform tau
+            v(nw_bound) == spd_BC_v_nw./3.154E7*speedUp; % For depth based, uniform tau
             
         minimize(obj)
     cvx_end
@@ -167,7 +165,7 @@ if(ismac)
     clear fg1 fg2
 end
 %% Save data to data file
-mpClean = erase(mapFile, [".mat","workingGrid_"]);
+mpClean = erase(mapFile, [".mat","workingGrid_"]) + "UpBC";
 if(saveData && contains(cvx_status,"Solved"))
     if(runType == 1)
         save("data/data_N" + mpClean + str + "Uniform" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
