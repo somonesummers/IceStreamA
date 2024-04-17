@@ -1,3 +1,5 @@
+%Used to compare basal strength between different cases of bed strength
+
 clear
 close all
 load gridSiple5000.mat
