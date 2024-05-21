@@ -1,3 +1,4 @@
+% Plot figures of region for overview figures
 clear; close all
 xbox = [-4.9500  -3.6000   -2.7000   -4.1000   -4.9500]*1e5;
 ybox = [-3.8000  -3.5300   -5.2250   -5.6700   -3.8000]*1e5;

@@ -14,33 +14,21 @@ groupName = 'ISSM_N_thinning';
 cases = [50:-10:-10]; %thinning cases
 % cases = [5:-1:-1]; %speed cases
 figure('Position',[300 300 1800 733])
-tiledlayout(3,numel(cases), 'Padding', 'tight', 'TileSpacing', 'tight');
+tiledlayout(2,numel(cases), 'Padding', 'tight', 'TileSpacing', 'tight');
 
 % baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0case.mat";
 % baseFile = "data/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
 baseFile = "data/spdChange/data_NgridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
 
-% Below utilizes sshfs to directly use files on server. It is slow, but
-% allows me to not use up space on the laptop hardrive.
-% baseFile = "~/sherlock_home/IceStreamA/data/data_NgridFlowRiseA02ISSMDhDt0Tau1_30.mat";
-
-% Below is from external harddrive, faster, also not this HD
-% baseFile = '/Volumes/Extreme SSD/IceStreamAData/datagridFlowRiseA02ISSMDhDt0SpeedUp0.mat';
-% baseFile = '/Volumes/Extreme SSD/IceStreamAData/data_NgridFlowRiseA02ISSMDhDt0case.mat';
-% baseFile = '/Volumes/Extreme SSD/IceStreamAData/data_NgridFlowRiseA02ISSMGoll21caseMay15.mat';
-% baseFile = '/Volumes/Extreme SSD/IceStreamAData/data_NgridFlowRiseA02ISSMGoll60case.mat';
 data2 = load(baseFile);
-% [uu,vv] = measures_interp('velocity',data2.xy(:,1),data2.xy(:,2));z`
-% data2.u = uu/3.154E7;
-% data2.v = vv/3.154E7;
 
 %Whole Ice Rise
 xLimits = [-5.1e2 -2.5e2];
 yLimits = [-5.75e2 -3.5e2];
 
-%Promontory
-xLimits = [-3.71e2 -2.95e2];
-yLimits = [-5.32e2 -4.66e2];
+% %Promontory
+% xLimits = [-3.71e2 -2.95e2];
+% yLimits = [-5.32e2 -4.66e2];
 
 
 
@@ -77,7 +65,8 @@ for j = 1:numel(cases)
         end
         ax2 = nexttile(j+numel(cases));
 %         plotThickness(data1,0,ax2);
-        plotDiffSpeed(data1,data2,0,ax2);
+        plotDiffHeight(data1,data2,0,ax2);
+%         plotDiffSpeed(data1,data2,0,ax2);
         xlim(xLimits)
         ylim(yLimits)
         xticklabels([])
@@ -89,33 +78,33 @@ for j = 1:numel(cases)
         end
         if(j == numel(cases))
           	c = colorbar;
-            c.Label.String = 'Speed Diff [m/yr]';
+            c.Label.String = 'Change in Thickness [m]';
             c.FontSize = 18;
         end
         xlabel("")
-        xticklabels([])
+%         xticklabels([])
         
-        ax3 = nexttile(j+2*numel(cases));
-        plotStress(data1,0,ax3)
-        xlim(xLimits)
-        ylim(yLimits)
-
-        title("")
-%         plotDiffHeight(data1,data2,0,ax3);
-%         plotTau(data1,0,ax3);
-%         plotDiffTau(data1,data2,0,ax3);
-        if(j == 1)
-            ylabel("Northing [km]",'fontsize',18);
-        else
-            yticklabels([])
-        end
-        if(j == numel(cases))
-          	c = colorbar;
-%             c.Label.String = 'Surf Height Diff [m]';
-%             c.Label.String = 'Strength [kPa]';
-            c.Label.String = 'Surface Stress [Pa]';
-            c.FontSize = 18;
-        end
+%         ax3 = nexttile(j+2*numel(cases));
+%         plotStress(data1,0,ax3)
+%         xlim(xLimits)
+%         ylim(yLimits)
+% 
+%         title("")
+% %         plotDiffHeight(data1,data2,0,ax3);
+% %         plotTau(data1,0,ax3);
+% %         plotDiffTau(data1,data2,0,ax3);
+%         if(j == 1)
+%             ylabel("Northing [km]",'fontsize',18);
+%         else
+%             yticklabels([])
+%         end
+%         if(j == numel(cases))
+%           	c = colorbar;
+% %             c.Label.String = 'Surf Height Diff [m]';
+% %             c.Label.String = 'Strength [kPa]';
+%             c.Label.String = 'Surface Stress [Pa]';
+%             c.FontSize = 18;
+%         end
     else
         warning("File not found:" + cases(j));
     end

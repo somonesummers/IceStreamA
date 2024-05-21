@@ -27,8 +27,9 @@ icey = cbrewer('div','BrBG',48);
 rho = 917;
 rho_w = 1000;
 g = 9.81;
-B = 1.6e8; % A = 2.4e-25 Pa^(-3) s^(-1)
-A = 2.4e-25;
+% B = 1.419e8; % A = 3.5e-25 Pa^(-3) s^(-1)
+A = 3.5e-25;
+B = A^(-1/3);
 overgrab = 50;
 % xmax =  -2.5e5;
 % xmin =  -5.0e5;
@@ -36,7 +37,7 @@ overgrab = 50;
 % ymin =  -6.0e5;
 
 dx = 1e3;
-smth = 6e3;
+smth = 2e3;
 xi = xmin-dx*overgrab:dx:xmax+dx*overgrab;
 yi = ymin-dx*overgrab:dx:ymax+dx*overgrab;
 [Xi,Yi] = meshgrid(xi,yi);
@@ -153,9 +154,9 @@ bed = bed .* mask;
 spd2 = spd2 .* mask;
 
 % Internal Deformation expected over a locked bed [m/yr]
-% u_int = dr^3 * H * A;
+% u_int = 2*A / (n+1) dr^3 *H ; %Cuffey eq 8.35
 
-u_int = 2 / 4 *abs(bed).^3 .* h * A * 3.154e7;
+u_int = 2 / 4 *abs(dr).^3 .* h * A * 3.154e7;
 %%
 figure(1)
 clf
@@ -415,32 +416,30 @@ set(p, 'edgecolor', 'none');
 %%
 figure(8)
 clf
-subplot(121)
-p = surf(Xi,Yi,zeros(size(ss)),u_int);
-title('Vertical Creep (Idealized)')
+spd2 = fillmissing(spd2,'linear');
+p = surf(Xi/1e3,Yi/1e3,zeros(size(ss)),(spd2 - abs(u_int)),'edgecolor','none');
+% title('Estimated Basal Sliding')
+view(2)
 hold on
-contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
-contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-allfig2(p,u_int)
-caxis([0 100])
+% contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
+contour(xi/1e3,yi/1e3,spd2, [5,15,25] , 'k-','HandleVisibility','off')
+contour(xi/1e3,yi/1e3,spd2, [10,20,30] , 'k-','LineWidth',2)
+% allfig2(p,u_int./spd2*100)
 c = colorbar;
-c.Label.String = '[m/yr]';
-
-
-subplot(122)
-p = surf(Xi,Yi,zeros(size(ss)),(abs(u_int)./spd2*100));
-title('Internal Creep Factor')
-hold on
-contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
-contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-allfig2(p,u_int./spd2*100)
-c = colorbar;
-caxis([0,100]);
-c.Label.String = '[%]';
+axLocal = gca;
+colormap(cbrewer('seq','Greens',64));
+caxis([0,30]);
+c.Label.String = 'Est Basal Speed [m/yr]';
 f = gca;
 f.ColorScale = 'linear';
+axis equal
+setFontSize(24)
+% axis off
+xlabel("Easting [km]")
+ylabel("Northing [km]")
+xlim([-4.7347   -2.8804]*1e2);
+ylim([-5.5556   -3.7640]*1e2);
+savePng('figs/basalSliding')
 %%
 figure(9)
 clf
