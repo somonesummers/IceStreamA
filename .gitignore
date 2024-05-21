@@ -19,6 +19,7 @@
 *.zip
 *.asv
 lib/._*
+WritingDraft/*
 ._*
 sherlockOutputs*
 log*.txt
