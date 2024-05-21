@@ -81,8 +81,9 @@ for t_i = 1:500
         Br =@(x,y) 2*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y))).*((subplus(ep_dot(x,y)).^(nn+1))/A_m).^(1/nn);
 
         % Horizontal Peclet number  [ ]
-%       La =@(x,y) lambda(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y)));
-        La =@(x,y) zeros(size(x)); %exclude advection
+        lambda  = calcAdvection(T,u,v,xy,dx/4,rho,C_p);
+        La =@(x,y) lambda(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y)));
+%         La =@(x,y) zeros(size(x)); %exclude advection
         
         % Critical Strain [s^-1]
         ep_star =@(x,y) ((La(x,y)/2 + ((Pe(x,y).^2)/2)./(Pe(x,y)-1+exp(-Pe(x,y))))).^(nn/(nn+1))...

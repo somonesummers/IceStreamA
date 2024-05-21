@@ -23,11 +23,11 @@ if(~ismac)
 end
 fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
-nameToRun = ["Uniform"];
+nameToRun = ["ISSM"];
 mapsToRun = ["gridFlowRiseA035.mat"];
-thinToRun = [0]; 
+thinToRun = [50]; 
 speedUpToRun = [1];
-NToRun = [0]; % 0 = constant Eff, 1 = adjust Eff with HAF 
+NToRun = [1]; % 0 = constant Eff, 1 = adjust Eff with HAF 
 runType = 4; %1 = dH explicit, 2 = DhDt based, 3 =  Golledge based, 4 = No Lakes
 %N_adjust = 1; %1 = change Tau with N, 0 Tau fixed
 for j = 1:length(NToRun)

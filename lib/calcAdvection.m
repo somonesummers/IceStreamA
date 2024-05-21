@@ -13,7 +13,7 @@ function [lambda] = calcAdvection(T,u,v,xy,dx,rho_i,C_p)
     vs = scatteredInterpolant(xy(:,1),xy(:,2),v,'linear','nearest');
     Ts = scatteredInterpolant(xy(:,1),xy(:,2),T,'linear','linear');
     
-%% grid to find derivatives
+%% grid to find derivatives (g for grid)
     ug = us(Xi,Yi); % [m/s]
     vg = vs(Xi,Yi); % [m/s]
     Tg = Ts(Xi,Yi); % [m/s]
