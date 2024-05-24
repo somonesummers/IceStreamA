@@ -168,6 +168,9 @@ end
 if(ismac)
     clear fg1 fg2
 end
+
+% Reduce file size
+clear Acc T_s 
 %% Save data to data file
 mpClean = erase(mapFile, [".mat","workingGrid_"]) + "UpBC";
 if(saveData && contains(cvx_status,"Solved"))
