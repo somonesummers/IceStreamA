@@ -83,6 +83,7 @@ for t_i = 1:500
         % Horizontal Peclet number  [ ]
         lambda  = calcAdvection(T,u,v,xy,dx/4,rho,C_p);
         La =@(x,y) lambda(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y)));
+%         La =@(x,y) .5*Br(x,y); %exclude advection
 %         La =@(x,y) zeros(size(x)); %exclude advection
         
         % Critical Strain [s^-1]
@@ -97,19 +98,21 @@ for t_i = 1:500
 
         % Mean Temp [K]
         T_bar = @(x,y) trapz(t_z(x,y),2)*dz;
-
+        
     % Calc Enhancement Factors, relax into solution. Have max value for
     % stabilization
 %     cap = 20^(-1/nn); %stability cap on enhancement
     e_new = (E_t(xy_c(:,1),xy_c(:,2))).^(-1/nn);
 %     e_new(e_new < cap) = cap;  % max enhancement is a min viscosity
-    
+%     T_new = max(T_s(xy(:,1),xy(:,2)),T_bar(xy(:,1),xy(:,2)));
+    T_new = T_bar(xy(:,1),xy(:,2));
     if(t_i == 1)
         enhance = e_new;
     end
 
     if(t_i ~= 1) %first step we don't relax, we use E = 1 everywhere (zero strain is also an options)
         enhance = (1-nu) * enhance + nu*e_new;
+        T = (1-nu) * T + nu * T_new;
         res = norm(e_new - enhance) / norm(e_new);
         disp("    [" + t_i + "]" + " Residual: " + res);
         fprintf(fID,'\t[%d]Residual: %f \n',t_i,res);

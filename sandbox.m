@@ -2,37 +2,38 @@ clear
 close all
 
 file = "data_NgridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0";
-data1 = load("data/spdChange/" + file + ".mat");
+load("data/spdChange/" + file + ".mat");
 
-[u,v] = measures_interp('velocity',data1.xy(:,1),data1.xy(:,2));
+fg1 = figure;
+fg2 = figure;
 
-data1.u = u/3.154e7;
-data1.v = v/3.154e7;
+inLoopPlotting
 
-xLimits = [-5.1e2 -2.5e2];
-yLimits = [-5.75e2 -3.5e2];
+lambda = calcAdvection(T,u,v,xy,dx,rho,C_p);
+La =@(x,y) lambda(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y)));
 
 figure
-tiledlayout(1,3)
-ax = nexttile(1);
-plotLogStrain(data1,1,ax)
-xlim(xLimits)
-ylim(yLimits)
-title('Long')
+trisurf(t,xy(:,1),xy(:,2),La(xy(:,1),xy(:,2)),'edgecolor','none')
+view(2)
+colorbar
+title('surf T')
 
-ax = nexttile(2);
-plotLogStrain(data1,2,ax)
-xlim(xLimits)
-ylim(yLimits)
-title('Trans')
+T_adj = max(T,T_bar(xy(:,1),xy(:,2))); % Ice can't be colder than surf
+lambda = calcAdvection(T_bar(xy(:,1),xy(:,2)),u,v,xy,dx,rho,C_p);
+La =@(x,y) lambda(x,y).*subplus(h_s_init(x,y)-h_b_init(x,y)).^2./(K*(T_m-T_s(x,y)));
+ 
+figure
+trisurf(t,xy(:,1),xy(:,2),La(xy(:,1),xy(:,2)),'edgecolor','none')
+view(2)
+colorbar
+title('T bar')
 
-ax = nexttile(3);
-plotLogStrain(data1,3,ax)
-xlim(xLimits)
-ylim(yLimits)
-title('Shear')
+figure
+trisurf(t,xy(:,1),xy(:,2),T_bar(xy(:,1),xy(:,2)),'edgecolor','none')
+view(2)
+colorbar
 
-setFontSize(24)
-
-
-
+figure
+trisurf(t,xy(:,1),xy(:,2),T,'edgecolor','none')
+view(2)
+colorbar
