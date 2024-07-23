@@ -22,11 +22,11 @@ function [] = plotSpeed(data1,n,ax)
         warning('Speed 1 seems wrong, no 30 m/a contour')
     end
 
-    if(n == 1 || n < 0)
+    if(n == 1)
         ylabel('Northing [km]')
     end
     xlabel('Easting [km]')
-    if(n == 4 || n < 0)
+    if(n == 4)
         c = colorbar;
         c.Label.String = 'Ice Speed [m/yr]';
     end
