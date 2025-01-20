@@ -15,6 +15,7 @@
 *.bin
 *.b
 *cvx/*
+*cvxold/*
 *cvx_mac/*
 *.zip
 *.asv
