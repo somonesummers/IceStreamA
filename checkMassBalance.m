@@ -52,6 +52,7 @@ vv_b = imgaussfilt(vv.*hh,2/dx);
 [~,vv_y] = gradient(vv_b,dx*1e3);
 divFlowMeasures = (uu_x+vv_y);
 
+
 uu_sm = imgaussfilt(uu,2/dx);
 vv_sm = imgaussfilt(vv,2/dx);
 hh_sm = imgaussfilt(hh,2/dx);
@@ -60,7 +61,7 @@ hh_sm = imgaussfilt(hh,2/dx);
 [hh_x,hh_y] = gradient(hh_sm,dx*1e3);
 
 bedComp = uu_sm .* hh_x + vv_sm .* hh_y;
-velComp = uu_xh.*hh_sm + vv_ysh.*hh_sm;
+velComp = uu_xh.*hh_sm + vv_yh.*hh_sm;
 
 figure('Position',[300 300 1800 460])
 tiledlayout(1,3, 'Padding', 'compact', 'TileSpacing', 'compact');
@@ -178,7 +179,8 @@ axis equal
 
 
 ax3 = nexttile(3);
-surf(xx/1e3,yy/1e3,zeros(size(xx)),Acc(xx,yy)*3.154e7 - divFlowMeasures,'edgecolor','none')
+surf(xx/1e3,yy/1e3,zeros(size(xx)),Acc(xx,yy)*3.154e7 - imgaussfilt(divFlowMeasures,4),'edgecolor','none')
+% surf(xx/1e3,yy/1e3,zeros(size(xx)),Acc(xx,yy)*3.154e7 - divFlowMeasures,'edgecolor','none')
 hold on 
 contour(xx/1e3,yy/1e3,sqrt(uu.^2 + vv.^2),[30 30],'k')
 view(2)

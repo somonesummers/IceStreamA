@@ -14,7 +14,7 @@
 clear
 close all
 clc
-addpath('grids')
+addpath('grids','lib')
 if(~ismac)
     %Start-up business on sherlock is hard 
     addpath('lib') 
@@ -25,7 +25,7 @@ fID = fopen('log.txt','w');
 % Name of scenarios to run, only 1 map file used here.
 nameToRun = ["ISSM"];
 mapsToRun = ["gridFlowRiseA035.mat"];
-thinToRun = [50]; 
+thinToRun = [0]; 
 speedUpToRun = [1];
 NToRun = [1]; % 0 = constant Eff, 1 = adjust Eff with HAF 
 runType = 4; %1 = dH explicit, 2 = DhDt based, 3 =  Golledge based, 4 = No Lakes

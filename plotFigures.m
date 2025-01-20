@@ -10,15 +10,17 @@ if(saveFigs)
 end
 %% Cases of thickness
 % time = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat','time');
-groupName = 'ISSM_N_thinning';
+groupName = 'ISSM_N_thinningAdvect';
 cases = [50:-10:-10]; %thinning cases
 % cases = [5:-1:-1]; %speed cases
 figure('Position',[300 300 1800 733])
-tiledlayout(2,numel(cases), 'Padding', 'tight', 'TileSpacing', 'tight');
+tiledlayout(3,numel(cases), 'Padding', 'tight', 'TileSpacing', 'tight');
 
 % baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0case.mat";
 % baseFile = "data/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
-baseFile = "data/spdChange/data_NgridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
+% baseFile = "data/spdChange/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
+baseFile = "data/spdChange/datagridFlowRiseA02UpBCISSMAdvect2_DhDt0SpeedUp0.mat";
+
 
 data2 = load(baseFile);
 
@@ -65,8 +67,8 @@ for j = 1:numel(cases)
         end
         ax2 = nexttile(j+numel(cases));
 %         plotThickness(data1,0,ax2);
-        plotDiffHeight(data1,data2,0,ax2);
-%         plotDiffSpeed(data1,data2,0,ax2);
+%         plotDiffHeight(data1,data2,0,ax2);
+        plotDiffSpeed(data1,data2,0,ax2);
         xlim(xLimits)
         ylim(yLimits)
         xticklabels([])
@@ -82,29 +84,29 @@ for j = 1:numel(cases)
             c.FontSize = 18;
         end
         xlabel("")
-%         xticklabels([])
+        xticklabels([])
         
-%         ax3 = nexttile(j+2*numel(cases));
-%         plotStress(data1,0,ax3)
-%         xlim(xLimits)
-%         ylim(yLimits)
-% 
-%         title("")
-% %         plotDiffHeight(data1,data2,0,ax3);
-% %         plotTau(data1,0,ax3);
-% %         plotDiffTau(data1,data2,0,ax3);
-%         if(j == 1)
-%             ylabel("Northing [km]",'fontsize',18);
-%         else
-%             yticklabels([])
-%         end
-%         if(j == numel(cases))
-%           	c = colorbar;
-% %             c.Label.String = 'Surf Height Diff [m]';
-% %             c.Label.String = 'Strength [kPa]';
-%             c.Label.String = 'Surface Stress [Pa]';
-%             c.FontSize = 18;
-%         end
+        ax3 = nexttile(j+2*numel(cases));
+        plotStress(data1,0,ax3)
+        xlim(xLimits)
+        ylim(yLimits)
+
+        title("")
+%         plotDiffHeight(data1,data2,0,ax3);
+%         plotTau(data1,0,ax3);
+%         plotDiffTau(data1,data2,0,ax3);
+        if(j == 1)
+            ylabel("Northing [km]",'fontsize',18);
+        else
+            yticklabels([])
+        end
+        if(j == numel(cases))
+          	c = colorbar;
+%             c.Label.String = 'Surf Height Diff [m]';
+%             c.Label.String = 'Strength [kPa]';
+            c.Label.String = 'Surface Stress [Pa]';
+            c.FontSize = 18;
+        end
     else
         warning("File not found:" + cases(j));
     end
