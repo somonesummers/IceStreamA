@@ -1,8 +1,8 @@
-%% Plot all figures for 1D change, This is best plotting option
+%% Plot figures for 1D change, comparing to MEASURES data
 clear
 % close all
 addpath lib/
-saveFigs = true;
+saveFigs = false;
 
 if(saveFigs)
     disp("Please confirm you'd like to save figures");

@@ -120,6 +120,12 @@ if(runType == 4)
     clear dhdtData xgrid ygrid;
 end
 
+if(runType == 5)
+     dhdtData = load('mbDhDt.mat');
+    dhdt_interp = griddedInterpolant(dhdtData.xx',dhdtData.yy',dhdtData.smoothMbDhDt','linear','nearest');
+    clear dhdtData;
+end
+
 h_real =@(x,y) interp2(xi,yi,bm_s-bm_b,x,y);
 rock_mask =@(x,y) interp2(xi,yi,rock,x,y,'nearest');
 h_bm_b =@(x,y) interp2(xi,yi,smooth_bm_bed,x,y);
@@ -128,7 +134,7 @@ h_b_init =@(x,y) interp2(xi,yi,smoothbed,x,y);
 
 if(runType == 1)
     h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) + thin_m;
-elseif(runType == 2 || runType == 4)
+elseif(runType == 2 || runType == 4 || runType == 5)
     h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y) - thin_m.* dhdt_interp(x,y); % minus to go back in time
 elseif(runType == 3)
     h_s_init =@(x,y) interp2(xi,yi,smoothsurf,x,y); %Case where thin_m controls case of Golledge runs

@@ -2,12 +2,12 @@
 clear
 close all
 addpath lib/
-saveFigs = true;
+saveFigs = false;
 
-% if(saveFigs)
-%     disp("Please confirm you'd like to save figures");
-%     pause()
-% end
+if(saveFigs)
+    disp("Please confirm you'd like to save figures");
+    pause()
+end
 
 [Acc, T_s] = loadALBMAP();
 
@@ -17,7 +17,7 @@ groupName = 'DhDt_';
 % cases = [5:-1:-1]; %speed cases
 baseFile = "data/spdChange/data_NgridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
 
-cValues = [-3 3];
+cValues = [-1 1];
 cMapToUse = flipud(cbrewer('div','PiYG',256));
 data2 = load(baseFile);
 
@@ -46,6 +46,8 @@ hh = bedmachine_interp('thickness',xx,yy);
 divFlow = (data2.A*(data2.u .* data2.h)+ data2.B*(data2.v .* data2.h))*3.154e7;
 
 [uu, vv] = measures_interp('velocity',xx,yy);
+uu = cleanNan(xx,yy,uu);
+vv = cleanNan(xx,yy,vv);
 uu_b = imgaussfilt(uu.*hh,2/dx);
 vv_b = imgaussfilt(vv.*hh,2/dx);
 [uu_x,~] = gradient(uu_b,dx*1e3);
@@ -179,8 +181,8 @@ axis equal
 
 
 ax3 = nexttile(3);
-surf(xx/1e3,yy/1e3,zeros(size(xx)),Acc(xx,yy)*3.154e7 - imgaussfilt(divFlowMeasures,4),'edgecolor','none')
-% surf(xx/1e3,yy/1e3,zeros(size(xx)),Acc(xx,yy)*3.154e7 - divFlowMeasures,'edgecolor','none')
+% surf(xx/1e3,yy/1e3,zeros(size(xx)),Acc(xx,yy)*3.154e7 - imgaussfilt(divFlowMeasures,25),'edgecolor','none')
+surf(xx/1e3,yy/1e3,zeros(size(xx)),Acc(xx,yy)*3.154e7 - divFlowMeasures,'edgecolor','none')
 hold on 
 contour(xx/1e3,yy/1e3,sqrt(uu.^2 + vv.^2),[30 30],'k')
 view(2)

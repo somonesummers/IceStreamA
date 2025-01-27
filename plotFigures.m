@@ -2,7 +2,7 @@
 clear
 % close all
 addpath lib/
-saveFigs = false;
+saveFigs = true;
 
 if(saveFigs)
     disp("Please confirm you'd like to save figures");
@@ -10,16 +10,17 @@ if(saveFigs)
 end
 %% Cases of thickness
 % time = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat','time');
-groupName = 'ISSM_N_thinningAdvect';
-cases = [50:-10:-10]; %thinning cases
+groupName = 'massBlanceDhDt';
+cases = [30,20,10,0]; %thinning cases
+titleCases = ["-9m elevation","-6m elevation","-3m elevation","-0m elevation"];
 % cases = [5:-1:-1]; %speed cases
-figure('Position',[300 300 1800 733])
-tiledlayout(3,numel(cases), 'Padding', 'tight', 'TileSpacing', 'tight');
+figure('Position',[300 300 1200 733])
+tiledlayout(3,numel(cases), 'Padding', 'compact', 'TileSpacing', 'compact');
 
 % baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0case.mat";
 % baseFile = "data/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
 % baseFile = "data/spdChange/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
-baseFile = "data/spdChange/datagridFlowRiseA02UpBCISSMAdvect2_DhDt0SpeedUp0.mat";
+baseFile = "data/datagridFlowRiseA02UpBCISSMMb_DhDt0SpeedUp0.mat";
 
 
 data2 = load(baseFile);
@@ -60,7 +61,7 @@ for j = 1:numel(cases)
             c.FontSize = 18;
         end
         xlabel("");
-        title(cases(j) + " years ago")
+        title(titleCases(j))
 %         title((cases(j)+10)*10 +"% Velocity")
         if(j == 3)
 %             title(groupName)
@@ -80,7 +81,7 @@ for j = 1:numel(cases)
         end
         if(j == numel(cases))
           	c = colorbar;
-            c.Label.String = 'Change in Thickness [m]';
+            c.Label.String = 'Speed Diff [m/yr]';
             c.FontSize = 18;
         end
         xlabel("")

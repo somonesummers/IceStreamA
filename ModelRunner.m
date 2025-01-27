@@ -187,6 +187,8 @@ if(saveData && contains(cvx_status,"Solved"))
         save("data/data_N" + mpClean + str + "NoLakes_DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
     elseif(runType == 4 && N_adjust == 0)
         save("data/data" + mpClean + str + "NoLakes_DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
+    elseif(runType == 5)
+        save("data/data" + mpClean + str + "Mb_DhDt" + thin_m + "SpeedUp" + strrep(string(speedUp-1),["0."],"") + ".mat");
     else
         warning('Data not being saved, unknown runType'); 
     end
