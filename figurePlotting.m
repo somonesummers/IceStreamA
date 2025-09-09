@@ -15,15 +15,15 @@ rho = 917;
 rho_w = 1000;
 g = 9.81;
 B = 1.6e8; % A = 2.4e-25 Pa^(-3) s^(-1)
-A = 2.4e-25;
+A = 3.5e-25;
 overgrab = 0;
 % xmax =  -2.5e5;
 % xmin =  -5.0e5;
 % ymax =  -3.5e5;
 % ymin =  -6.0e5;
 
-dx = 1e3;
-smth = 6e3;
+dx = 500;
+% smth = 6e3;
 xi = xmin-dx*overgrab:dx:xmax+dx*overgrab;
 yi = ymin-dx*overgrab:dx:ymax+dx*overgrab;
 [Xi,Yi] = meshgrid(xi,yi);
@@ -34,20 +34,40 @@ yi = ymin-dx*overgrab:dx:ymax+dx*overgrab;
 % mask(isnan(mask)) = 0;
  mask = ones(size(Xi)); %make mask all ones for now
 
-%Raw fields
+%% Raw fields
+[u, v] = measures_interp('velocity',Xi,Yi);
 b_raw =  bedmachine_interp('bed',Xi,Yi);
 sf_raw =  bedmachine_interp('surface',Xi,Yi);
+
+%% Cleaning NANs in velocity [do cautiously]
+valid_u     = ~isnan(u);
+u_interp = scatteredInterpolant(Xi(valid_u),Yi(valid_u),u(valid_u),'natural');
+u(~valid_u) = u_interp(Xi(~valid_u),Yi(~valid_u));
+valid_v     = ~isnan(v);
+v_interp = scatteredInterpolant(Xi(valid_v),Yi(valid_v),v(valid_v),'natural');
+v(~valid_v) = v_interp(Xi(~valid_v),Yi(~valid_v));
+
+%% Smoothing
+sf_smooth = imgaussfilt(sf_raw,5e3/dx);
+b_smooth = imgaussfilt(b_raw,5e3/dx);
+u_smooth = imgaussfilt(u,2e3/dx);
+v_smooth = imgaussfilt(v,2e3/dx);
 % b_raw =  bedmap2_interp(Xi,Yi,'bed');
 % sf_raw =  bedmap2_interp(Xi,Yi,'surface');
 
-[u, v] = measures_interp('velocity',Xi,Yi);
-spd = sqrt(u.^2 + v.^2);
-[ux ,  uy] = gradient(u,dx,dx);
-[vx ,  vy] = gradient(v,dx,dx);
+h = sf_smooth - b_smooth;
+[sx ,  sy] = gradient(sf_smooth,dx,dx);
+[ux ,  uy] = gradient(u_smooth,dx,dx);
+[vx ,  vy] = gradient(v_smooth,dx,dx);
+e_eff = sqrt(.5*(ux.^2 + vy.^2) + (.5*(ux + uy).^2) + (.25*(uy + vx)).^2);
 spd = sqrt(u.^2 + v.^2);
 alpha = atan(v./u);
 e_xy = .5 * (uy + vx);
 e_shr = (vy-ux).*cos(alpha).*sin(alpha) + e_xy.*(cos(alpha).^2 - (sin(alpha).^2));
+Tdx = -rho * g * h .* sx;
+Tdy = -rho * g * h .* sy;
+Td  = sqrt(Tdx.^2 +  Tdy.^2);
+e_xz = A * Td.^3 * 3.154e7; %[1/year]
 
 sf_ridge = zeros(size(sf_raw));
 sf_ridge(spd < 30) = sf_raw(spd < 30);
@@ -147,28 +167,91 @@ setFontSize(28)
 % savePng('figs/domainMap')
 
 %%
-tau_c = defineTau('ISSM');
+% tau_c = defineTau('ISSM');
+% 
+% figure('Position',[50 500 800 600])
+% 
+% surf(Xi/1e3,Yi/1e3,zeros(size(spd)),tau_c(Xi,Yi,1,1)/1e3,'edgecolor','none');
+% shading flat
+% hold on
+% axis equal
+% colormap(cmocean('thermal'))
+% c = colorbar;
+% c.Label.String = 'Basal Strength [kPa]';
+% caxis([1 150])
+% ax = gca;
+% % ax.ColorScale = 'log';
+% contour(xi/1e3,yi/1e3,spd, (0:2:30) , 'k-','HandleVisibility','off')
+% contour(xi/1e3,yi/1e3,spd, [10,20,30] , 'k-','linewidth',2,'HandleVisibility','off');
+% % contour(xi/1e3,yi/1e3,spd, [30:10:700] , '-','linewidth',1,'HandleVisibility','off','color',rgb('light gray'));
+% % contour(xi/1e3,yi/1e3,spd, [100:100:700] , '-','linewidth',2,'HandleVisibility','off','color',rgb('light gray'));
+% % grid1 = load("grids/gridFlowRiseA02.mat");
+% % plot(grid1.pv(:,1)/1e3,grid1.pv(:,2)/1e3,'r--','linewidth',2)
+% view(2)
+% xlabel('Easting [km]')
+% ylabel('Northing [km]')
+% setFontSize(28)
+% % savePng('figs/taucMap')
 
-figure('Position',[50 500 800 600])
-
-surf(Xi/1e3,Yi/1e3,zeros(size(spd)),tau_c(Xi,Yi,1,1)/1e3,'edgecolor','none');
-shading flat
+%%
+figure('Position',[50 500 1600 600])
+tiledlayout(1,3, 'Padding', 'tight', 'TileSpacing', 'tight');
+clf
+sgtitle('Strain Estimates')
+ax = nexttile(1);
+surf(Xi/1e3,Yi/1e3,40*ones(size(e_xz)),e_xz,'edgecolor','none','facealpha',.9);
 hold on
-axis equal
-colormap(cmocean('thermal'))
+colormap(ax,cbrewer('seq','Reds',128))
+% colormap(ax,'parula')
 c = colorbar;
-c.Label.String = 'Basal Strength [kPa]';
-caxis([1 150])
-ax = gca;
-% ax.ColorScale = 'log';
+axis equal
+title('Vertical Shear Strain Rate')
+c.Label.String = '[1/yr]';
 contour(xi/1e3,yi/1e3,spd, (0:2:30) , 'k-','HandleVisibility','off')
-contour(xi/1e3,yi/1e3,spd, [10,20,30] , 'k-','linewidth',2,'HandleVisibility','off');
-% contour(xi/1e3,yi/1e3,spd, [30:10:700] , '-','linewidth',1,'HandleVisibility','off','color',rgb('light gray'));
-% contour(xi/1e3,yi/1e3,spd, [100:100:700] , '-','linewidth',2,'HandleVisibility','off','color',rgb('light gray'));
-% grid1 = load("grids/gridFlowRiseA02.mat");
-% plot(grid1.pv(:,1)/1e3,grid1.pv(:,2)/1e3,'r--','linewidth',2)
+[cc, hh] = contour(xi/1e3,yi/1e3,spd, [10,20,30] , 'k-','linewidth',2,'HandleVisibility','off');
 view(2)
+clim([2e-5 2e-3]);
+setFontSize(14)
 xlabel('Easting [km]')
 ylabel('Northing [km]')
-setFontSize(28)
-% savePng('figs/taucMap')
+
+ax = nexttile(2);
+surf(Xi/1e3,Yi/1e3,40*ones(size(e_eff)),abs(e_eff),'edgecolor','none','facealpha',.9);
+hold on
+colormap(ax,cbrewer('seq','Reds',128))
+% colormap(ax,'parula');
+c = colorbar;
+axis equal
+c.Label.String = '[1/yr]';
+title('Horizontal Effective Strain Rate')
+contour(xi/1e3,yi/1e3,spd, (0:2:30) , 'k-','HandleVisibility','off')
+[cc, hh] = contour(xi/1e3,yi/1e3,spd, [10,20,30] , 'k-','linewidth',2,'HandleVisibility','off');
+view(2)
+clim([2e-5 2e-3]);
+setFontSize(14)
+xlabel('Easting [km]')
+ylabel('Northing [km]')
+
+
+
+ax = nexttile(3);
+surf(Xi/1e3,Yi/1e3,40*ones(size(e_xz)),e_eff./e_xz,'edgecolor','none','facealpha',.8);
+hold on
+tempMap = (cbrewer('seq','Oranges',400));
+tempMap2 = flipud(cbrewer('seq','Purples',50));
+colormap(ax,[tempMap2;tempMap])
+% colormap(ax,'parula')
+c = colorbar;
+axis equal
+title("Ratio of Effective Horizontal Strain to Vertical Strain");
+c.Label.String = "[ ]";
+contour(xi/1e3,yi/1e3,spd, (0:2:30) , 'k-','HandleVisibility','off')
+[cc, hh] = contour(xi/1e3,yi/1e3,spd, [10,20,30] , 'k-','linewidth',2,'HandleVisibility','off');
+view(2)
+clim([0 10])
+setFontSize(14)
+xlabel('Easting [km]')
+ylabel('Northing [km]')
+
+% mapzoomps('nw','km')
+% savePng('figs/RiseAMapShear')

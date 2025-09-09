@@ -101,15 +101,15 @@ h = sf-b;
 
 
 % Effective Strain
-e_eff = sqrt(.5*(ux.^2 + vy.^2) + (.5*(uy + vx)).^2);
+e_eff = sqrt(.5*(ux.^2 + vy.^2) + (.5*(ux + uy).^2) + (.25*(uy + vx)).^2);
 [e_effx, e_effy] = gradient(e_eff.^(1/3-1),dx,dx);
 
 % Deviatoric Stress
 prefactor = B * e_eff.^(1/3 - 1);
 
 % Driving Stress
-Tdx = -rho * g * h .* sx.^2;
-Tdy = -rho * g * h .* sy.^2;
+Tdx = -rho * g * h .* sx;
+Tdy = -rho * g * h .* sy;
 Td  = sqrt(Tdx.^2 +  Tdy.^2);
 
 ss   = zeros(size(u));
@@ -131,8 +131,8 @@ for i = 2:length(xi)-1
         vv_t = [-sin(ang), cos(ang)];%Direction Vectors Perp to flow
         R = [ cos(ang) sin(-ang) ; sin(ang) cos(ang) ];
         ss(j,i) = max([ui , vi] * R); %x speed in new ref frame
-        dr(j,i) = -(vv(1)*sx(j,i) + vv(2)*sy(j,i))* rho * g * h(j,i); %Driving Force
-        
+        % dr(j,i) = -(vv(1)*sx(j,i) + vv(2)*sy(j,i))* rho * g * h(j,i); %Driving Force
+        dr(j,i) = Td(j,i);
         lon(j,i) =  2*B*((vv(1)*sx(j,i) + vv(2)*sy(j,i)) .* e_eff(j,i).^(1/3-1) .* (vv(1)*spdx(j,i) + vv(2)*spdy(j,i))...
                     + h(j,i) .* (vv(1)*e_effx(j,i) + vv(2)*e_effy(j,i)) .* (vv(1)*spdx(j,i) + vv(2)*spdy(j,i))...
                     + h(j,i) .* e_eff(j,i).^(1/3-1) .* (spdxx(j,i).*vv(1).^2 + spdxy(j,i).*vv(1).*vv(2) + spdyx(j,i).*vv(1).*vv(2) + spdyy(j,i).*vv(2).^2));
@@ -157,90 +157,75 @@ spd2 = spd2 .* mask;
 % u_int = 2*A / (n+1) dr^3 *H ; %Cuffey eq 8.35
 
 u_int = 2 / 4 *abs(dr).^3 .* h * A * 3.154e7;
+max_vert_shear = A * dr.^3 * 3.154e7; %[1/year]
+%log stain rates using face formula
+[elon, etrans, eshear, x_strain, y_strain] = strainRates([Xi(:),Yi(:)],u(:),v(:),h(:)); 
+%more basic approach
+alpha = atan(v./u);
+e_xy = .5 * (uy + vx);
+e_shr = (vy-ux).*cos(alpha).*sin(alpha) + e_xy.*(cos(alpha).^2 - (sin(alpha).^2));
+%
 %%
-figure(1)
+figure(6)
+tiledlayout(1,3, 'Padding', 'tight', 'TileSpacing', 'tight');
 clf
-ax(1) = subplot(121);
-p = surf(Xi,Yi,zeros(size(ss)),log10(spd2));
-hold on 
-utmp = cos(angs);
-vtmp = sin(angs);
-% quiver(Xi,Yi,utmp,vtmp)
-title('Ice Speed')
-set(p, 'edgecolor', 'none');
-view(2)
-axis equal
-setFontSize(16);
-c = colorbar;
-c.Label.String = 'Log_{10} Speed [m/yr]';
-ax(2) = subplot(122);
-% p = surf(Xi,Yi,zeros(size(ss)),b_raw);
-p = surf(Xi,Yi,zeros(size(b_raw)),b_raw);
+sgtitle('Strain Estimates')
+colormap parula
+ax = nexttile(1);
+p = surf(Xi,Yi,zeros(size(ss)),max_vert_shear);
 hold on
-contour(xi,yi,spd2, [10, 10] , 'k:','HandleVisibility','off')
 contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
 contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-title('Bed elevation')
-set(p, 'edgecolor', 'none');
-colormap(ax(2),icey);
-% caxis([-2000 500])
+bedmachine('gl','c-','linewidth',2)
 view(2)
+clim([2e-5 2e-3]);
+set(p, 'edgecolor', 'none');
+xlabel('Easting')
+ylabel('Northing')
+title('Estimated Vertical Shear Strain Maximum')
 axis equal
-setFontSize(16);
 c = colorbar;
-c.Label.String = 'Bed Elevation [m]';
+c.Label.String = '[1/year ]';
 
-%% Hydropotential
-figure(2)
-clf
-tiledlayout(1,2, 'Padding', 'tight', 'TileSpacing', 'tight');
-ax1 = nexttile(1);
-p = surf(Xi,Yi,zeros(size(phi_raw)),phi_raw);
+ax = nexttile(2);
+% p = surf(x_strain,y_strain,zeros(size(eshear)),abs(eshear)*3.154e7);
+p = surf(xi,yi,zeros(size(e_shr)),abs(e_shr)*3.154e7);
 hold on
-contour(xi,yi,spd2, [10, 10] , 'k:','HandleVisibility','off')
 contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
 contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-
-contour(xi,yi,phi_raw, [0:10:700] ,'color',rgb('purple'),'LineWidth',1,'HandleVisibility','off')
-contour(xi,yi,phi_raw, [0:50:700] ,'color',rgb('purple'),'LineWidth',2,'HandleVisibility','off')
-title('Hydro Potential (hydroequalib assumption)')
-set(p, 'edgecolor', 'none');
-colormap(ax1,cbrewer('seq','BuPu',256));
-caxis([0 700])
+bedmachine('gl','c-','linewidth',2)
 view(2)
-axis equal
-setFontSize(16);
-c = colorbar;
-c.Label.String = '\Phi [?]';
-
-ax2 = nexttile(2);
-[phi_x, phi_y] = gradient(phi,dx,dx);
-phi_x_n = phi_x./sqrt(phi_x.^2 + phi_y.^2);
-phi_y_n = phi_y./sqrt(phi_x.^2 + phi_y.^2);
-[b_x, b_y] = gradient(b,dx,dx);
-sp = 3;
-p = surf(Xi,Yi,zeros(size(phi_raw)),sqrt(phi_x.^2 + phi_y.^2));
-hold on
+clim([2e-5 2e-3]);
 set(p, 'edgecolor', 'none');
-quiver(xi(1:sp:end),yi(1:sp:end),-phi_x_n(1:sp:end,1:sp:end),-phi_y_n(1:sp:end,1:sp:end));
-% quiver(xi(1:sp:end),yi(1:sp:end),-b_x(1:sp:end,1:sp:end),-b_y(1:sp:end,1:sp:end));
-contour(xi,yi,spd2, [10, 10] , 'k:','HandleVisibility','off')
+xlabel('Easting')
+ylabel('Northing')
+title('Estimated Lateral Shear Strain from Obs')
+axis equal
+c = colorbar;
+c.Label.String = '[1/year ]';
+
+ax = nexttile(3);
+p = surf(xi,yi,zeros(size(e_shr)),abs(e_shr)*3.154e7./max_vert_shear);
+hold on
 contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
 contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-hold off
-colorbar
-colormap(ax2,flipud(pink))
-caxis([0 .05])
-title('Gradients')
-legend('|\nabla \Phi|','\nabla \Phi')
+contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
+bedmachine('gl','c-','linewidth',2)
 view(2)
+clim([0 1]);
+set(p, 'edgecolor', 'none');
+colormap(ax,redblue)
+xlabel('Easting')
+ylabel('Northing')
+title('Ratio of Horizontal to Vertical Shear')
 axis equal
-setFontSize(16);
+c = colorbar;
+c.Label.String = '[ ]';
 
 %% 
-figure(3)
+figure(1)
 clf
 sgtitle('Force Budget (Positive is Along Flow)')
 colormap redblue
@@ -292,129 +277,9 @@ allfig2(p,bed)
 save("bedDragDx" + string(dx) + "smth" + string(smth) +".mat",'Xi','Yi','bed')
 
 setFontSize(16)
-%% 
-% figure(3)
-% clf
-% sgtitle('Force Budget Fraction (Positive is Along Flow)')
-% colormap redblue
-% caxis([-1e5 1e5])
-% subplot(221)
-% p = surf(Xi,Yi,zeros(size(ss)),dr);
-% hold on
-% contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
-% contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-% contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-% title('Driving Force')
-% allfig(p)
-% 
-% subplot(222)
-% p = surf(Xi,Yi,zeros(size(ss)),lon./dr);
-% hold on
-% contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
-% contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-% contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-% title('Longitudinal Stresses')
-% allfig(p)
-% caxis([-1, 1])
-% c = colorbar;
-% c.Label.String = '[%]';
-% 
-% subplot(223)
-% p = surf(Xi,Yi,zeros(size(ss)),lat./dr);
-% hold on
-% contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
-% contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-% contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-% title('Lateral Stresses')
-% allfig(p)
-% caxis([-1, 1])
-% c = colorbar;
-% c.Label.String = '[%]';
-% 
-% subplot(224)
-% p = surf(Xi,Yi,zeros(size(ss)),bed./dr);
-% title('Bed Drag')
-% hold on
-% contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
-% contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-% contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-% allfig(p)
-% caxis([-1, 1])
-% c = colorbar;
-% c.Label.String = '[%]';
-% 
-% setFontSize(16)
-%% 
 
 %%
-figure(5)
-clf
-colormap redblue
-p = surf(Xi,Yi,zeros(size(ss)),lat);
-hold on
-contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
-contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-title('Lateral Stresses')
-bedmachine('gl','k','linewidth',2)
-allfig2(p,lat)
-
-%%
-
-figure(6)
-clf
-ax1 = axes;
-r = 4;
-surf(ax1,Xi(1:r:end,1:r:end),Yi(1:r:end,1:r:end),b_raw(1:r:end,1:r:end),...
-    b_raw(1:r:end,1:r:end),'facealpha',[.9],'edgecolor', 'k');
-colormap(copper)
-% lighting gouraud
-c = colorbar('south');
-c.Label.String = 'Bed Elevation [m ASL]';
-hold on
-ax2 = axes;
-p = surf(ax2,Xi,Yi,sf_raw,(spd2),'facealpha',0.9);
-title('Elevation with Bed')
-set(p, 'edgecolor', 'none');
-colormap(parula);
-% caxis([-2000 2000])
-% axis equal
-setFontSize(16);
-c = colorbar('north');
-c.Label.String = 'Ice Surface Speed [m/yr]';
-f = gca;
-f.ColorScale = 'log';
-set(p, 'edgecolor', 'none');
-
-hLink = linkprop([ax1,ax2],{'XLim','YLim','ZLim','CameraUpVector','CameraPosition','CameraTarget'});
-ax2.Visible = 'off';
-ax2.XTick = [];
-ax2.YTick = [];
-colormap(ax1,'copper')
-colormap(ax2,'parula')
-%%
-
-figure(7)
-clf
-
-p = surf(Xi,Yi,sf_raw,(spd2),'facealpha',1);
-hold on
-contour3(Xi,Yi,sf_raw,[-1000:100:2000],'-','color',rgb('gray'))
-contour3(Xi,Yi,sf_raw,[-1000:500:2000],'k-')
-title('Elevation')
-set(p, 'edgecolor', 'none');
-colormap(parula);
-% caxis([-2000 2000])
-% axis equal
-setFontSize(16);
-c = colorbar;
-c.Label.String = 'Ice Surface Speed [m/yr]';
-f = gca;
-f.ColorScale = 'log';
-set(p, 'edgecolor', 'none');
-
-%%
-figure(8)
+figure(2)
 clf
 spd2 = fillmissing(spd2,'linear');
 p = surf(Xi/1e3,Yi/1e3,zeros(size(ss)),(spd2 - abs(u_int)),'edgecolor','none');
@@ -440,39 +305,9 @@ ylabel("Northing [km]")
 xlim([-4.7347   -2.8804]*1e2);
 ylim([-5.5556   -3.7640]*1e2);
 savePng('figs/basalSliding')
+
 %%
-figure(9)
-clf
-p = surf(Xi,Yi,zeros(size(ss)),h);
-title('Thickness')
-hold on
-contour(xi,yi,spd2, [10, 10] , 'k:','HandleVisibility','off')
-contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
-contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-allfig2(p,h)
-c = colorbar;
-c.Label.String = '[m]';
-caxis([0 3000])
-%%
-figure(10)
-clf
-p = contourf(Xi,Yi,imgaussfilt(b_raw,3),10);
-hold on
-contour(xi,yi,spd2, [10, 10] , 'k:','HandleVisibility','off')
-contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
-contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
-contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
-title('Bed elevation')
-colormap(ax(2),icey);
-caxis([-2000 500])
-view(2)
-axis equal
-setFontSize(16);
-c = colorbar;
-c.Label.String = 'Bed Elevation [m]';
-%%
-figure
+figure(3)
 p = surf(Xi,Yi,zeros(size(ss)),sqrt(sx.^2+sy.^2));
 hold on
 contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
@@ -483,8 +318,11 @@ clabel(C,hh)
 hold on
 sx_hat = sx./sqrt(sx.^2+sy.^2);
 sy_hat = sy./sqrt(sx.^2+sy.^2);
+u_hat = u./sqrt(u.^2 + v.^2);
+v_hat = v./sqrt(u.^2 + v.^2);
 quiver(xi(1:8:end),yi(1:8:end),-sx_hat(1:8:end,1:8:end),-sy_hat(1:8:end,1:8:end),.5,'k')
-title('Surface Slope')
+quiver(xi(1:8:end),yi(1:8:end),u_hat(1:8:end,1:8:end),v_hat(1:8:end,1:8:end),.5,'r')
+title('Surface Slope (k = surface slope, r = velocity)')
 bedmachine('gl','k','linewidth',2)
 f = gca;
 f.ColorScale = 'log';
@@ -493,7 +331,7 @@ colorbar
 set(p, 'edgecolor', 'none');
 caxis([1e-6 1e-2])
 %%
-figure
+figure(4)
 p = surf(Xi,Yi,zeros(size(ss)),measures_interp('err',Xi,Yi)./measures_interp('speed',Xi,Yi),...
     'edgecolor', 'none');
 hold on
@@ -506,49 +344,24 @@ caxis([0 1])
 colorbar
 title('Percent error in speed')
 
-% figure
-% clf
-% sgtitle('Input sources isnan')
-% subplot(221)
-% surf(Xi,Yi,zeros(size(ss)),int16(isnan(b)),'edgecolor','none');
-% view(2)
-% colorbar
-% title('bed')
-% 
-% subplot(222)
-% surf(Xi,Yi,zeros(size(ss)),int16(isnan(sf)),'edgecolor','none');
-% view(2)
-% colorbar
-% title('surface')
-% 
-% 
-% subplot(223)
-% surf(Xi,Yi,zeros(size(ss)),int16(isnan(u)),'edgecolor','none');
-% view(2)
-% colorbar
-% title('u')
-% 
-% subplot(224)
-% surf(Xi,Yi,zeros(size(ss)),int16(isnan(v)),'edgecolor','none');
-% view(2)
-% colorbar
-% title('v')
-
-figure
+figure(5)
 clf
-
+sgtitle('Fractional Contributions Lat/Driving (positive along flow)')
 colormap redblue
-p = surf(Xi,Yi,zeros(size(ss)),abs(dr)-abs(bed),'edgecolor','none');
-view(2)
+p = surf(Xi,Yi,zeros(size(ss)),abs(lat)./abs(dr));
 hold on
-colorbar
-caxis([-1.5 1.5]*1e5)
-title('abs(Driving Force) - abs(Drag)')
 contour(xi,yi,spd2, [30, 30] , 'k--','HandleVisibility','off')
 contour(xi,yi,spd2, [100, 300, 3000] , 'k-','HandleVisibility','off')
 contour(xi,yi,spd2, [1000, 1000] , 'k-','LineWidth',2)
 bedmachine('gl','c-','linewidth',2)
-
+view(2)
+caxis([0 2]);
+set(p, 'edgecolor', 'none');
+xlabel('Easting')
+ylabel('Northing')
+axis equal
+c = colorbar;
+c.Label.String = '[ ]';
 
 
 function [] = allfig(p)
