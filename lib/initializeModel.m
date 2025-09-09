@@ -13,7 +13,7 @@ eB = foo(accumarray(ifoo,1) == 1,:); %eB: boundary edges
 res = 1; %start residual arb high number
 
 %% Physical parameters
-a     = 3.5e-25^(-1/3);     % a:     flow parameter pre-factor [Pa s^1/3] @-10C from cuffey 
+a     = 3.5e-25^(-1/3);     % a: stiffness (often B) from flow parameter pre-factor [Pa s^1/3] @-10C from cuffey converted from [Pa-3 s^-1]
 nn    = 3;                  % Glens law power
 p     = 4/3;                % p:     flow parameter power [ ]
 g     = 9.81;               % g:     acceleration due to gravity [m/s^2]

@@ -10,9 +10,9 @@ if(saveFigs)
 end
 %% Cases of thickness
 % time = load('Golledge21_GRL_T1_thick_22mar23_v2_Paul.mat','time');
-groupName = 'massBlanceDhDt';
-cases = [30,20,10,0]; %thinning cases
-titleCases = ["-9m elevation","-6m elevation","-3m elevation","-0m elevation"];
+groupName = 'aVsbEnhancement';
+cases = ['A','B'];%[30,20,10,0]; %thinning cases
+titleCases = ["A","B","-3m elevation","-0m elevation"];
 % cases = [5:-1:-1]; %speed cases
 figure('Position',[300 300 1200 733])
 tiledlayout(3,numel(cases), 'Padding', 'compact', 'TileSpacing', 'compact');
@@ -20,8 +20,8 @@ tiledlayout(3,numel(cases), 'Padding', 'compact', 'TileSpacing', 'compact');
 % baseFile = "data/DhDt/data_NgridFlowRiseA02ISSMDhDt0case.mat";
 % baseFile = "data/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
 % baseFile = "data/spdChange/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
-baseFile = "data/datagridFlowRiseA02UpBCISSMMb_DhDt0SpeedUp0.mat";
-
+% baseFile = "data/datagridFlowRiseA02UpBCISSMMb_DhDt0SpeedUp0.mat";
+baseFile = "data/Adata_NgridFlowRiseA02UpBCISSMPS_DhDt0SpeedUp0.mat";
 
 data2 = load(baseFile);
 
@@ -37,7 +37,8 @@ yLimits = [-5.75e2 -3.5e2];
 
 for j = 1:numel(cases)
 %     baseFile = "data/datagridFlowRiseA02ISSMNoLakes_DhDt0SpeedUp0.mat";
-    newFile = strrep(baseFile,"Dt0","Dt" + cases(j));
+    newFile = strrep(baseFile,"ta/A","ta/" + cases(j));
+    % newFile = strrep(baseFile,"Dt0","Dt" + cases(j));
 %     newFile = strrep(baseFile,"Up0","Up" + cases(j));
 %     baseFile = strrep(newFile,"_N","");
     data2 = load(baseFile);
@@ -102,7 +103,7 @@ for j = 1:numel(cases)
             yticklabels([])
         end
         if(j == numel(cases))
-          	c = colorbar;
+              	c = colorbar;
 %             c.Label.String = 'Surf Height Diff [m]';
 %             c.Label.String = 'Strength [kPa]';
             c.Label.String = 'Surface Stress [Pa]';

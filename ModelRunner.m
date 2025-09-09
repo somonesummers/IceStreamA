@@ -94,7 +94,7 @@ for t_i = 1:500
         t_z =@(x,y) tempProfile(ep_dot(x,y),ep_star(x,y),Pe(x,y),Br(x,y),La(x,y),T_s(x,y),T_m,dz); 
 
         % Enhancement Factor []
-        E_t =@(x,y) depthIntEnhancement(t_z(x,y),a.^(-3),dz);
+        E_t =@(x,y) depthIntEnhancement(t_z(x,y),a,nn,dz);
 
         % Mean Temp [K]
         T_bar = @(x,y) trapz(t_z(x,y),2)*dz;
@@ -102,7 +102,7 @@ for t_i = 1:500
     % Calc Enhancement Factors, relax into solution. Have max value for
     % stabilization
 %     cap = 20^(-1/nn); %stability cap on enhancement
-    e_new = (E_t(xy_c(:,1),xy_c(:,2))).^(-1/nn);
+    e_new = (E_t(xy_c(:,1),xy_c(:,2))); % now this is purely a B enhancement
 %     e_new(e_new < cap) = cap;  % max enhancement is a min viscosity
     T_new = max(T_s(xy(:,1),xy(:,2)),T_bar(xy(:,1),xy(:,2)));
 %     T_new = T_bar(xy(:,1),xy(:,2));
